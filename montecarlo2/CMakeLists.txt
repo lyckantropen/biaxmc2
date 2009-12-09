@@ -8,8 +8,9 @@ include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
 link_libraries(${Boost_LIBRARIES})
 
-pkg_check_modules(SQLITE sqlite3)
-link_libraries(${SQLITE_LIBRARIES})
+#pkg_check_modules(SQLITE sqlite3)
+#link_libraries(${SQLITE_LIBRARIES})
+link_libraries(sqlite3)
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARIY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
