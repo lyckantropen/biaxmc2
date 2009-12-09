@@ -23,7 +23,10 @@
 
 int main(int argc, char** argv)
 {
-    Settings setup("/home/karol/simulation.ini");
+    std::string cfg("simulation.ini");
+    if(argc>1)
+        cfg=argv[1];
+    Settings setup(cfg);
     SimulationDB db(setup);
     if(setup.scanning.enabled){
         PRE79Scanning scanning(setup,db);
