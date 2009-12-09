@@ -10,7 +10,7 @@ link_libraries(${Boost_LIBRARIES})
 
 #pkg_check_modules(SQLITE sqlite3)
 #link_libraries(${SQLITE_LIBRARIES})
-link_libraries(sqlite3)
+link_libraries("/usr/lib/libsqlite3.so.0")
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARIY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
