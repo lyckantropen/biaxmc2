@@ -47,8 +47,12 @@ namespace boostbase {
             int result = 0;
             sqlite3_stmt * stmt;
 
+	    int k=0;
             do {
+		k++;
                 result = sqlite3_prepare_v2(sqlite_db, statement.c_str(), statement.size(), &stmt, 0);
+		if(k%1000==0)
+			std::cout << "Waiting for database lock 1\n";
             } while(result==SQLITE_BUSY || result==SQLITE_LOCKED);
 
             if (result != SQLITE_OK) {
@@ -57,8 +61,12 @@ namespace boostbase {
                 throw exception::sqlite_command_error();
             }
 
+	    k=0;
             do {
+		k++;
                 result = sqlite3_step(stmt);
+		if(k%1000==0)
+			std::cout << "Waiting for database lock 2\n";
             } while(result==SQLITE_BUSY || result==SQLITE_LOCKED);
 
             if (result == SQLITE_ERROR) {
@@ -67,8 +75,12 @@ namespace boostbase {
                 throw exception::sqlite_command_error();
             }
 
+	k=0;
             do {
+		k++;
                 sqlite3_finalize(stmt);
+		if(k%1000==0)
+			std::cout << "Waiting for database lock 3\n";
             } while(result==SQLITE_BUSY || result==SQLITE_LOCKED);
         }
 
