@@ -19,7 +19,7 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARIY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 link_directories(${PROJECT_SOURCE_DIR}/bin)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -fPIC")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp")
 
 add_subdirectory(boostbase)
 add_subdirectory(mc2)
