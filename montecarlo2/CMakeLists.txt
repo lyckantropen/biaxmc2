@@ -3,14 +3,17 @@ include(FindPkgConfig)
 project(montecarlo2)
 
 set(Boost_ADDITIONAL_VERSIONS "1.34.1" "1.35.0" "1.35.1" "1.36.0" "1.38.0" "1.39.0")
-find_package(Boost 1.38.0 COMPONENTS filesystem program_options system date_time iostreams)
+set(Boost_USE_STATIC_LIBS ON)
+find_package(Boost 1.38.0 COMPONENTS filesystem program_options system date_time iostreams REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
 link_libraries(${Boost_LIBRARIES})
 
-#pkg_check_modules(SQLITE sqlite3)
-#link_libraries(${SQLITE_LIBRARIES})
-link_libraries("/usr/lib/libsqlite3.so.0")
+pkg_check_modules(SQLITE sqlite3)
+find_package(ZLIB REQUIRED)
+
+link_libraries(${ZLIB_LIBRARIES})
+link_libraries(${SQLITE_LIBRARIES})
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARIY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
