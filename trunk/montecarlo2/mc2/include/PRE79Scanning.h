@@ -39,6 +39,7 @@ public:
     void RunNonParallel(){
         Lattice state;
         Settings current_settings = settings ;
+	Log() << "Calculating expected time of execution\n";
         pt::time_duration timeof1000cycles = PRE79Simulation(settings,db).DurationOf1000Cycles();
         int nkcycles = ((nscans-1)*settings.simulation.supplementary_thermalization_cycles + nscans*settings.simulation.production_cycles + settings.simulation.thermalization_cycles)/1000;
         Log() << "Expected time of execution: " << pt::to_simple_string(timeof1000cycles*nkcycles) << std::endl;
@@ -93,6 +94,7 @@ public:
         Log() << "Scanning " << variable << " from " << start << " to " << end << " with interval " << delta << std::endl;
         Log() << "Trying to set the number of concurrent simulations to " << settings.scanning.number_of_threads << std::endl;
 
+	omp_set_dynamic(1);
         omp_set_num_threads(settings.scanning.number_of_threads);
         #pragma omp parallel for
         for(int i=0;i<nscans;i++){
