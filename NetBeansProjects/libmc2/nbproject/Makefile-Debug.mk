@@ -1,0 +1,119 @@
+#
+# Generated Makefile - do not edit!
+#
+# Edit the Makefile in the project folder instead (../Makefile). Each target
+# has a -pre and a -post target defined where you can add customized code.
+#
+# This makefile implements configuration specific macros and targets.
+
+
+# Environment
+MKDIR=mkdir
+CP=cp
+CCADMIN=CCadmin
+RANLIB=ranlib
+CC=gcc
+CCC=g++
+CXX=g++
+FC=
+AS=as
+
+# Macros
+CND_PLATFORM=GNU-Linux-x86
+CND_CONF=Debug
+CND_DISTDIR=dist
+
+# Include project Makefile
+include Makefile
+
+# Object Directory
+OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
+
+# Object Files
+OBJECTFILES= \
+	${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Lattice.o \
+	${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Statistical.o \
+	${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Particle.o \
+	${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Contractions.o \
+	${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/valarray_external.o \
+	${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/4DSphereRW.o \
+	${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Random.o
+
+# C Compiler Flags
+CFLAGS=
+
+# CC Compiler Flags
+CCFLAGS=
+CXXFLAGS=
+
+# Fortran Compiler Flags
+FFLAGS=
+
+# Assembler Flags
+ASFLAGS=
+
+# Link Libraries and Options
+LDLIBSOPTIONS=
+
+# Build Targets
+.build-conf: ${BUILD_SUBPROJECTS}
+	${MAKE}  -f nbproject/Makefile-Debug.mk dist/Debug/GNU-Linux-x86/liblibmc2.a
+
+dist/Debug/GNU-Linux-x86/liblibmc2.a: ${OBJECTFILES}
+	${MKDIR} -p dist/Debug/GNU-Linux-x86
+	${RM} dist/Debug/GNU-Linux-x86/liblibmc2.a
+	${AR} rv ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/liblibmc2.a ${OBJECTFILES} 
+	$(RANLIB) dist/Debug/GNU-Linux-x86/liblibmc2.a
+
+${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Lattice.o: nbproject/Makefile-${CND_CONF}.mk /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Lattice.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src
+	${RM} $@.d
+	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Lattice.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Lattice.cpp
+
+${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Statistical.o: nbproject/Makefile-${CND_CONF}.mk /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Statistical.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src
+	${RM} $@.d
+	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Statistical.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Statistical.cpp
+
+${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Particle.o: nbproject/Makefile-${CND_CONF}.mk /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Particle.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src
+	${RM} $@.d
+	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Particle.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Particle.cpp
+
+${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Contractions.o: nbproject/Makefile-${CND_CONF}.mk /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Contractions.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src
+	${RM} $@.d
+	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Contractions.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Contractions.cpp
+
+${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/valarray_external.o: nbproject/Makefile-${CND_CONF}.mk /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/valarray_external.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src
+	${RM} $@.d
+	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/valarray_external.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/valarray_external.cpp
+
+${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/4DSphereRW.o: nbproject/Makefile-${CND_CONF}.mk /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/4DSphereRW.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src
+	${RM} $@.d
+	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/4DSphereRW.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/4DSphereRW.cpp
+
+${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Random.o: nbproject/Makefile-${CND_CONF}.mk /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Random.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src
+	${RM} $@.d
+	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Random.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Random.cpp
+
+# Subprojects
+.build-subprojects:
+	cd ../libboostbase && ${MAKE}  -f Makefile CONF=Debug
+
+# Clean Targets
+.clean-conf: ${CLEAN_SUBPROJECTS}
+	${RM} -r build/Debug
+	${RM} dist/Debug/GNU-Linux-x86/liblibmc2.a
+
+# Subprojects
+.clean-subprojects:
+	cd ../libboostbase && ${MAKE}  -f Makefile CONF=Debug clean
+
+# Enable dependency checking
+.dep.inc: .depcheck-impl
+
+include .dep.inc
