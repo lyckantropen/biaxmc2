@@ -25,7 +25,7 @@ class PRE79Simulation:public ILoggable {
     PRE79StandardProperties     *prop;
     Metropolis                  *metro;
     const Settings  &   settings;
-    SimulationDB    &   database;
+    SimulationDB        database;
     bool    restored;      ///<zaczynamy z wczytanego stanu sieci
 
     void Init(){
@@ -48,9 +48,9 @@ class PRE79Simulation:public ILoggable {
     }
 
 public:
-    PRE79Simulation(const Settings & set,SimulationDB & db):
+    PRE79Simulation(const Settings & set):
     settings(set),
-    database(db)
+    database(set)
     {
         if(set.initial.isotropic)
             lattice = new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::Isotropic);
@@ -69,8 +69,8 @@ public:
         restored=false;
         Init();
     }
-    PRE79Simulation(const Settings & set,SimulationDB & db,const Lattice & saved):
-    settings(set),database(db)
+    PRE79Simulation(const Settings & set,const Lattice & saved):
+    settings(set),database(set)
     {
         //nie kopiujemy wskaźnika, kopiujemy obiekt
         //żeby nie zmieniać źródłowego obiektu
