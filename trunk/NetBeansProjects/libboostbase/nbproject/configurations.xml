@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="62">
+  <logicalFolder name="root" displayName="root" projectFiles="true">
+    <logicalFolder name="HeaderFiles"
+                   displayName="Header Files"
+                   projectFiles="true">
+      <logicalFolder name="hashlib" displayName="hashlib" projectFiles="true">
+        <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/hashlib/hl_exception.h</itemPath>
+        <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/hashlib/hl_hashwrapper.h</itemPath>
+        <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/hashlib/hl_md5.h</itemPath>
+        <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/hashlib/hl_md5wrapper.h</itemPath>
+        <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/hashlib/hl_types.h</itemPath>
+      </logicalFolder>
+      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/base.h</itemPath>
+      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/boost.h</itemPath>
+      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/exceptions.h</itemPath>
+      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/proxies.h</itemPath>
+      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/serialhash.h</itemPath>
+      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/serializer.h</itemPath>
+      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/serialsaveload.h</itemPath>
+      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/std.h</itemPath>
+      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/stringsaveload.h</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ResourceFiles"
+                   displayName="Resource Files"
+                   projectFiles="true">
+    </logicalFolder>
+    <logicalFolder name="SourceFiles"
+                   displayName="Source Files"
+                   projectFiles="true">
+      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/hl_md5.cpp</itemPath>
+      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/hl_md5wrapper.cpp</itemPath>
+      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/serialhash.cpp</itemPath>
+    </logicalFolder>
+    <logicalFolder name="ExternalFiles"
+                   displayName="Important Files"
+                   projectFiles="false">
+      <itemPath>Makefile</itemPath>
+    </logicalFolder>
+  </logicalFolder>
+  <sourceRootList>
+    <Elem>../../montecarlo2/boostbase/src</Elem>
+    <Elem>../../montecarlo2/boostbase/include</Elem>
+  </sourceRootList>
+  <projectmakefile>Makefile</projectmakefile>
+  <confs>
+    <conf name="Debug" type="3">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
+        <platform>2</platform>
+      </toolsSet>
+      <compileType>
+        <ccTool>
+          <incDir>
+            <pElem>../../montecarlo2/boostbase/include</pElem>
+            <pElem>../../montecarlo2/boostbase/include/hashlib</pElem>
+          </incDir>
+        </ccTool>
+        <archiverTool>
+        </archiverTool>
+      </compileType>
+    </conf>
+    <conf name="Release" type="1">
+      <toolsSet>
+        <developmentServer>localhost</developmentServer>
+        <compilerSet>GNU|GNU</compilerSet>
+        <platform>2</platform>
+      </toolsSet>
+      <compileType>
+        <cTool>
+          <developmentMode>5</developmentMode>
+        </cTool>
+        <ccTool>
+          <developmentMode>5</developmentMode>
+        </ccTool>
+        <fortranCompilerTool>
+          <developmentMode>5</developmentMode>
+        </fortranCompilerTool>
+        <linkerTool>
+          <linkerLibItems>
+          </linkerLibItems>
+        </linkerTool>
+      </compileType>
+    </conf>
+  </confs>
+</configurationDescriptor>
