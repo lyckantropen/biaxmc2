@@ -84,8 +84,9 @@ public:
 
         if(settings.openmp.dynamic)
             omp_set_dynamic(1);
+        else
+            omp_set_dynamic(0);
         omp_set_num_threads(settings.openmp.number_of_threads);
-        Log() << "Number of threads set to " << omp_get_num_threads() << std::endl;
         #pragma omp parallel for
         for(int i=0;i<nscans;i++){
 
@@ -100,7 +101,7 @@ public:
             if(variable=="hamiltonian.temperature")
                 current_settings.hamiltonian.temperature=value;
 
-            Log() << "Thread: "<< omp_get_thread_num() << ", Value: " << value << std::endl;
+            Log() << "Thread: "<< omp_get_thread_num() << "/" << omp_get_num_threads() << ", Value: " << value << std::endl;
             PRE79Simulation thread_sim(current_settings,db);
             thread_sim.SetStream(&Log());
             thread_sim.Run();
