@@ -47,42 +47,28 @@ namespace boostbase {
             int result = 0;
             sqlite3_stmt * stmt;
 
-	    int k=0;
             do {
-		k++;
                 result = sqlite3_prepare_v2(sqlite_db, statement.c_str(), statement.size(), &stmt, 0);
-		if(k%10000==0){
-                    std::cout << "Waiting for database lock 1\n";
-                    std::cout << sqlite3_errmsg(sqlite_db) << std::endl;
-                }
             } while(result==SQLITE_BUSY || result==SQLITE_LOCKED);
 
             if (result != SQLITE_OK) {
                 sqlite_log << sqlite3_errmsg(sqlite_db) << std::endl;
-                std::cout << sqlite_log.str() << std::endl;
+                //std::cout << sqlite_log.str() << std::endl;
                 throw exception::sqlite_command_error();
             }
 
-	    k=0;
             do {
-		k++;
                 result = sqlite3_step(stmt);
-		if(k%1000==0)
-			std::cout << "Waiting for database lock 2\n";
             } while(result==SQLITE_BUSY || result==SQLITE_LOCKED);
 
             if (result == SQLITE_ERROR) {
                 sqlite_log << sqlite3_errmsg(sqlite_db) << std::endl;
-                std::cout << sqlite_log.str() << std::endl;
+                //std::cout << sqlite_log.str() << std::endl;
                 throw exception::sqlite_command_error();
             }
 
-	k=0;
             do {
-		k++;
                 sqlite3_finalize(stmt);
-		if(k%1000==0)
-			std::cout << "Waiting for database lock 3\n";
             } while(result==SQLITE_BUSY || result==SQLITE_LOCKED);
         }
 
@@ -182,13 +168,13 @@ namespace boostbase {
             if (result != SQLITE_OK) {
                 sqlite3_close(sqlite_db);
                 sqlite_log << sqlite3_errmsg(sqlite_db) << std::endl;
-                //std::cout << sqlite_log.str() << std::endl;
+                std::cout << sqlite_log.str() << std::endl;
                 throw exception::sqlite_failed_opening_db();
             }
             try {
                 command("CREATE TABLE IF NOT EXISTS objects (filename TEXT, date DATETIME, md5 TEXT PRIMARY KEY)");
             } catch (exception::sqlite_command_error e) {
-                //std::cout << sqlite_log.str() << std::endl;
+                std::cout << sqlite_log.str() << std::endl;
                 throw exception::sqlite_failed_creating_db();
             }
 
