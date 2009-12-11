@@ -15,7 +15,6 @@
 #include <omp.h>
 
 class PRE79Scanning:public ILoggable {
-    SimulationDB    &    db;                ///<baza danych
     const Settings &        settings;       ///<globalne ustawienia
     //PRE79Simulation         * simulation;   ///<bieżąca symulacja
     
@@ -25,8 +24,7 @@ class PRE79Scanning:public ILoggable {
     const int nscans;
     const std::string variable;
 public:
-    PRE79Scanning(const Settings & set,SimulationDB & dbase):
-    db(dbase),
+    PRE79Scanning(const Settings & set):
     settings(set),
     start(set.scanning.start),
     end(set.scanning.end),
@@ -39,7 +37,7 @@ public:
         Lattice state;
         Settings current_settings = settings ;
 	Log() << "Calculating expected time of execution\n";
-        pt::time_duration timeof1000cycles = PRE79Simulation(settings,db).DurationOf1000Cycles();
+        pt::time_duration timeof1000cycles = PRE79Simulation(settings).DurationOf1000Cycles();
         int nkcycles = ((nscans-1)*settings.simulation.supplementary_thermalization_cycles + nscans*settings.simulation.production_cycles + settings.simulation.thermalization_cycles)/1000;
         Log() << "Expected time of execution: " << pt::to_simple_string(timeof1000cycles*nkcycles) << std::endl;
         
@@ -61,12 +59,12 @@ public:
 
 
             if(i==0 || settings.scanning.reuse_thermalized==false){
-                PRE79Simulation simulation(current_settings,db);
+                PRE79Simulation simulation(current_settings);
                 simulation.SetStream(&Log());
                 state = *simulation.Run();
             }
             else{
-                PRE79Simulation simulation(current_settings,db,state);
+                PRE79Simulation simulation(current_settings,state);
                 simulation.SetStream(&Log());
                 state = *simulation.Run();
             }
@@ -102,7 +100,7 @@ public:
                 current_settings.hamiltonian.temperature=value;
 
             Log() << "Thread: "<< omp_get_thread_num() << "/" << omp_get_num_threads() << ", Value: " << value << std::endl;
-            PRE79Simulation thread_sim(current_settings,db);
+            PRE79Simulation thread_sim(current_settings);
             thread_sim.SetStream(&Log());
             thread_sim.Run();
             
