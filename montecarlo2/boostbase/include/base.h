@@ -51,8 +51,10 @@ namespace boostbase {
             do {
 		k++;
                 result = sqlite3_prepare_v2(sqlite_db, statement.c_str(), statement.size(), &stmt, 0);
-		if(k%1000==0)
-			std::cout << "Waiting for database lock 1\n";
+		if(k%10000==0){
+                    std::cout << "Waiting for database lock 1\n";
+                    std::cout << sqlite3_errmsg(sqlite_db) << std::endl;
+                }
             } while(result==SQLITE_BUSY || result==SQLITE_LOCKED);
 
             if (result != SQLITE_OK) {
