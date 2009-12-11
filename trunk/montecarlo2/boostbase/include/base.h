@@ -178,7 +178,7 @@ namespace boostbase {
                 fs::create_directories(base_dir);
 
 
-            result = sqlite3_open(dbfile.string().c_str(), &sqlite_db);
+            result = sqlite3_open_v2(dbfile.string().c_str(), &sqlite_db,SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,"unix-none");
             if (result != SQLITE_OK) {
                 sqlite3_close(sqlite_db);
                 sqlite_log << sqlite3_errmsg(sqlite_db) << std::endl;
