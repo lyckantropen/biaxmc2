@@ -67,6 +67,7 @@
             <pElem>../../montecarlo2/boostbase/include</pElem>
             <pElem>../../montecarlo2/boostbase/include/hashlib</pElem>
           </incDir>
+          <commandLine>-fopenmp</commandLine>
         </ccTool>
         <archiverTool>
         </archiverTool>

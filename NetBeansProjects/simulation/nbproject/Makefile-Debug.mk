@@ -37,8 +37,8 @@ OBJECTFILES= \
 CFLAGS=
 
 # CC Compiler Flags
-CCFLAGS=
-CXXFLAGS=
+CCFLAGS=-fopenmp
+CXXFLAGS=-fopenmp
 
 # Fortran Compiler Flags
 FFLAGS=
@@ -47,11 +47,15 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=
+LDLIBSOPTIONS=../libboostbase/dist/Debug/GNU-Linux-x86/liblibboostbase.a ../libmc2/dist/Debug/GNU-Linux-x86/liblibmc2.a -lsqlite3 -lboost_date_time-mt -lboost_filesystem-mt -lboost_iostreams-mt -lboost_program_options-mt -lboost_system-mt
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
 	${MAKE}  -f nbproject/Makefile-Debug.mk dist/Debug/GNU-Linux-x86/simulation
+
+dist/Debug/GNU-Linux-x86/simulation: ../libboostbase/dist/Debug/GNU-Linux-x86/liblibboostbase.a
+
+dist/Debug/GNU-Linux-x86/simulation: ../libmc2/dist/Debug/GNU-Linux-x86/liblibmc2.a
 
 dist/Debug/GNU-Linux-x86/simulation: ${OBJECTFILES}
 	${MKDIR} -p dist/Debug/GNU-Linux-x86
@@ -64,6 +68,8 @@ ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/tools/simulation.o: nbproject/Make
 
 # Subprojects
 .build-subprojects:
+	cd ../libboostbase && ${MAKE}  -f Makefile CONF=Debug
+	cd ../libmc2 && ${MAKE}  -f Makefile CONF=Debug
 	cd ../libmc2 && ${MAKE}  -f Makefile CONF=Debug
 	cd ../libboostbase && ${MAKE}  -f Makefile CONF=Debug
 
@@ -74,6 +80,8 @@ ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/tools/simulation.o: nbproject/Make
 
 # Subprojects
 .clean-subprojects:
+	cd ../libboostbase && ${MAKE}  -f Makefile CONF=Debug clean
+	cd ../libmc2 && ${MAKE}  -f Makefile CONF=Debug clean
 	cd ../libmc2 && ${MAKE}  -f Makefile CONF=Debug clean
 	cd ../libboostbase && ${MAKE}  -f Makefile CONF=Debug clean
 
