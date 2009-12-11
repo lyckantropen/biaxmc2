@@ -34,7 +34,6 @@ public:
     nscans((end-start)/delta+2),
     variable(set.scanning.variable)
     {
-        //simulation = new PRE79Simulation(settings,db);
     }               
     void RunNonParallel(){
         Lattice state;
@@ -48,7 +47,6 @@ public:
         Log() << "Scanning " << variable << " from " << start << " to " << end << " with interval " << delta << std::endl; 
         
         // wersja bez paralelizacji, bo mamy ładowanie poprzedniego stanu
-        //TODO: pozbyć się "simulation" i tworzyć symulację w każdej iteracji
         pt::ptime start_t = pt::second_clock::local_time();
         for(int i=0;i<nscans;i++){
             double value = start + double(i)*delta;
@@ -62,7 +60,7 @@ public:
                 current_settings.hamiltonian.temperature=value;
 
 
-            if(i==0){
+            if(i==0 || settings.scanning.reuse_thermalized==false){
                 PRE79Simulation simulation(current_settings,db);
                 simulation.SetStream(&Log());
                 state = *simulation.Run();
@@ -72,16 +70,6 @@ public:
                 simulation.SetStream(&Log());
                 state = *simulation.Run();
             }
-
-            /*
-            simulation->SetStream(&Log());
-            state = *simulation->Run();
-            //Log() << simulation->GetLog();
-            delete simulation;
-            simulation = new PRE79Simulation(current_settings,db,state);
-            
-            double value = start + double(i+1)*delta;
-            */
             //międzyczasy
             pt::time_duration t1scan = pt::second_clock::local_time()-start_t;
             std::cout << "Total " << pt::to_simple_string(t1scan*(nscans-i-1)) << " remaining\n";
@@ -92,10 +80,12 @@ public:
     void RunParallel(){
         Log() << "Parallel OpenMP version\n";
         Log() << "Scanning " << variable << " from " << start << " to " << end << " with interval " << delta << std::endl;
-        Log() << "Trying to set the number of concurrent simulations to " << settings.scanning.number_of_threads << std::endl;
+        Log() << "Trying to set the number of concurrent simulations to " << settings.openmp.number_of_threads << std::endl;
 
-	omp_set_dynamic(1);
-        omp_set_num_threads(settings.scanning.number_of_threads);
+        if(settings.openmp.dynamic)
+            omp_set_dynamic(1);
+        omp_set_num_threads(settings.openmp.number_of_threads);
+        Log() << "Number of threads set to " << omp_get_num_threads() << std::endl;
         #pragma omp parallel for
         for(int i=0;i<nscans;i++){
 

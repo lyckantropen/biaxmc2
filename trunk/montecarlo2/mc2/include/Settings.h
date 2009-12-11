@@ -97,14 +97,21 @@ public:
         double delta;
         bool reuse_thermalized; std::string v_reuse_thermalized;
         bool threaded; std::string v_threaded;
-        int number_of_threads;
+        
         _scanning():
         v_reuse_thermalized("yes"),
         v_enabled("no"),
-        v_threaded("no"),
-        number_of_threads(1)
+        v_threaded("no")
+        
         {}
     } scanning ;
+    struct _openmp {
+        bool dynamic; std::string v_dynamic;
+        int number_of_threads;
+        _openmp():
+        number_of_threads(1),
+        v_dynamic("no") {}
+    } openmp ;
     struct _project {
         std::string name_format;
         std::string name;
@@ -139,7 +146,8 @@ private:
         ("scanning.delta",po::value<double>(&scanning.delta),"Interval")
         ("scanning.reuse_thermalized",po::value<std::string>(&scanning.v_reuse_thermalized),"(yes/no) Reuse last thermalized state to reduce time of simulation")
         ("scanning.threaded",po::value<std::string>(&scanning.v_threaded),"(yes/no) Threaded scanning")
-        ("scanning.number_of_threads",po::value<int>(&scanning.number_of_threads),"Number of threads in threaded scanning")
+        ("openmp.number_of_threads",po::value<int>(&openmp.number_of_threads),"Number of threads in threaded scanning")
+        ("openmp.dynamic",po::value<std::string>(&openmp.v_dynamic),"(yes/no) Should the number of threads be assigned dynamically")
         ("project.name_format",po::value<std::string>(&project.name_format),"Formatted name")
         ;
     }
@@ -154,6 +162,7 @@ private:
         scanning.enabled = TextBool(scanning.v_enabled);
         scanning.reuse_thermalized = TextBool(scanning.v_reuse_thermalized);
         scanning.threaded = TextBool(scanning.v_threaded);
+        openmp.dynamic = TextBool(openmp.v_dynamic);
     }
 public:
     Settings(const fs::path & file){
