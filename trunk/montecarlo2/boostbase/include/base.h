@@ -73,7 +73,7 @@ namespace boostbase {
 
             if (result == SQLITE_ERROR) {
                 sqlite_log << sqlite3_errmsg(sqlite_db) << std::endl;
-                //std::cout << sqlite_log.str() << std::endl;
+                std::cout << sqlite_log.str() << std::endl;
                 throw exception::sqlite_command_error();
             }
 
