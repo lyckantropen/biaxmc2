@@ -27,9 +27,8 @@ int main(int argc, char** argv)
     if(argc>1)
         cfg=argv[1];
     Settings setup(cfg);
-    SimulationDB db(setup);
     if(setup.scanning.enabled){
-        PRE79Scanning scanning(setup,db);
+        PRE79Scanning scanning(setup);
         scanning.SetStream(&std::cout);
         if(setup.scanning.threaded)
             scanning.RunParallel();
@@ -37,7 +36,7 @@ int main(int argc, char** argv)
             scanning.RunNonParallel();
     }
     else {
-        PRE79Simulation simulation(setup,db);
+        PRE79Simulation simulation(setup);
         simulation.SetStream(&std::cout);
         simulation.Run();
     }
