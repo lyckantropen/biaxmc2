@@ -13,7 +13,10 @@ pkg_check_modules(SQLITE sqlite3)
 find_package(ZLIB REQUIRED)
 
 link_libraries(${ZLIB_LIBRARIES})
+#link_libraries("/usr/lib/libdl.so")
 link_libraries(${SQLITE_LIBRARIES})
+#link_libraries("/home/trojanowski/usr/lib/libsqlite3.a")
+#link_libraries("/home/trojanowski/usr/lib/libsqlite3.a")
 
 set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARIY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
