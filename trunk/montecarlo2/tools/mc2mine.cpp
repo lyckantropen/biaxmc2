@@ -85,7 +85,8 @@ int main(int argc, char** argv)
     wheres(std::string("data_type"),data_type);
     std::cout << std::setprecision(8) ;
 
-    boostbase::base db(dbfile,dbdir);
+    //readonly 
+    boostbase::base db(dbfile,dbdir,true);
 
     if(data_type=="final_properties" || data_type=="properties") {
         std::vector<PRE79MeanProperties> whatwegot= db.get<PRE79MeanProperties>(wheres,betweens);
