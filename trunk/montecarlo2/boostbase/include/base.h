@@ -164,12 +164,12 @@ namespace boostbase {
                 fs::create_directories(base_dir);
 
 
-            do {
+            //do {
             if(readonly)
                 result = sqlite3_open_v2(dbfile.string().c_str(), &sqlite_db,SQLITE_OPEN_READONLY,NULL);
             else
                 result = sqlite3_open_v2(dbfile.string().c_str(), &sqlite_db,SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_FULLMUTEX,"unix-none");
-            } while(result==SQLITE_BUSY || result==SQLITE_LOCKED);
+            //} while(result==SQLITE_BUSY || result==SQLITE_LOCKED);
 
             if (result != SQLITE_OK) {
                 sqlite3_close(sqlite_db);
