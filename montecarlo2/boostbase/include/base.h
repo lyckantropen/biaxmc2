@@ -155,7 +155,7 @@ namespace boostbase {
          * @param dbfile plik bazy danych
          * @param dir bazowy katalog bazy danych
          */
-        base(const fs::path & dbfile, const fs::path & dir) :
+        base(const fs::path & dbfile, const fs::path & dir,bool readonly=false) :
         base_dir(dir) {
             int result = 0;
 	    if(!fs::exists(dbfile.parent_path()))
@@ -164,7 +164,13 @@ namespace boostbase {
                 fs::create_directories(base_dir);
 
 
-            result = sqlite3_open_v2(dbfile.string().c_str(), &sqlite_db,SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE,"unix-none");
+            do {
+            if(readonly)
+                result = sqlite3_open_v2(dbfile.string().c_str(), &sqlite_db,SQLITE_OPEN_READONLY,"unix-none");
+            else
+                result = sqlite3_open_v2(dbfile.string().c_str(), &sqlite_db,SQLITE_OPEN_READWRITE | SQLITE_OPEN_CREATE | SQLITE_OPEN_FULLMUTEX,"unix-none");
+            } while(result==SQLITE_BUSY || result==SQLITE_LOCKED);
+
             if (result != SQLITE_OK) {
                 sqlite3_close(sqlite_db);
                 sqlite_log << sqlite3_errmsg(sqlite_db) << std::endl;
