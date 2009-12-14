@@ -20,7 +20,8 @@ class SimulationDB {
     std::string id;         ///<identyfikator projektu
     std::string user;       ///<użytkownik uzyskujący dostęp do bazy
     int ncycles;
-    
+
+public:
     const std::string id_kw;
     const std::string type_label;
     const std::string L_label;

@@ -51,12 +51,20 @@
         <platform>2</platform>
       </toolsSet>
       <compileType>
+        <cTool>
+          <preprocessorList>
+            <Elem>SQLITE_TEMP_STORE=3</Elem>
+          </preprocessorList>
+        </cTool>
         <ccTool>
           <incDir>
             <pElem>../../montecarlo2/boostbase/include</pElem>
             <pElem>../../montecarlo2/boostbase/include/hashlib</pElem>
           </incDir>
           <commandLine>-fopenmp</commandLine>
+          <preprocessorList>
+            <Elem>SQLITE_TEMP_STORE=3</Elem>
+          </preprocessorList>
         </ccTool>
         <archiverTool>
         </archiverTool>
