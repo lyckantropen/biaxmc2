@@ -14,6 +14,31 @@
 #include "ILoggable.h"
 #include <omp.h>
 
+inline Lattice FindFinalState(const Settings & settings, bool & success) {
+    boostbase::base db(settings.sqlite.file,settings.sqlite.dir,true);
+    SimulationDB sdb(settings);
+    std::vector<Lattice>    whatwegot = db.get<Lattice>(boostbase::where
+            (sdb.type_label,sdb.final_lattice_kw)
+            (sdb.H_label,settings.lattice.H)
+            (sdb.W_label,settings.lattice.W)
+            (sdb.L_label,settings.lattice.L)
+            (sdb.temperature_label,settings.hamiltonian.temperature)
+            (sdb.lambda_label,settings.hamiltonian.lambda)
+            (sdb.tau_label,settings.hamiltonian.tau)
+            (sdb.id_kw,settings.project.name)
+
+            );
+    //std::cout << db.log().str() << std::endl;
+    if(whatwegot.size()==0) {
+        success=false;
+        return Lattice();
+    }
+    else {
+        success=true;
+        return whatwegot[0];
+    }
+}
+
 class PRE79Scanning:public ILoggable {
     const Settings &        settings;       ///<globalne ustawienia
     //PRE79Simulation         * simulation;   ///<bieżąca symulacja
@@ -57,6 +82,23 @@ public:
             if(variable=="hamiltonian.temperature")
                 current_settings.hamiltonian.temperature=value;
 
+            //--- znajdowanie zapisanego stanu - jeżeli znajdziemy, możemy pominąć ten krok
+            if(settings.scanning.continue_if_results_exist){
+                Log() << "Searching database for previous state\n";
+                bool found=false;
+                Lattice found_state = FindFinalState(current_settings,found);
+                if(found){
+                    state = found_state;
+                    Log() << "Previous state recovered, skipping\n";
+                    // pomijamy ten krok symulacji, stan o dokładnie takich samych parametrach został już policzony
+                    continue;
+                }
+                else{
+                    Log() << "No previous state recovered, going on\n";
+                }
+            }
+            //---
+
 
             if(i==0 || settings.scanning.reuse_thermalized==false){
                 PRE79Simulation simulation(current_settings);
@@ -89,6 +131,7 @@ public:
         for(int i=0;i<nscans;i++){
 
             double value = start + double(i)*delta;
+            Log() << "Thread: "<< omp_get_thread_num() << "/" << omp_get_num_threads() << ", Value: " << value << std::endl;
 
             Settings current_settings(settings);
 
@@ -99,7 +142,22 @@ public:
             if(variable=="hamiltonian.temperature")
                 current_settings.hamiltonian.temperature=value;
 
-            Log() << "Thread: "<< omp_get_thread_num() << "/" << omp_get_num_threads() << ", Value: " << value << std::endl;
+            //--- znajdowanie zapisanego stanu - jeżeli znajdziemy, możemy pominąć ten krok
+            if(settings.scanning.continue_if_results_exist){
+                Log() << "Thread: "<< omp_get_thread_num() << "/" << omp_get_num_threads() << ": Searching database for previous state\n";
+                bool found=false;
+                Lattice found_state = FindFinalState(current_settings,found);
+                if(found){
+                    Log() << "Thread: "<< omp_get_thread_num() << "/" << omp_get_num_threads() << ": Previous state recovered, skipping\n";
+                    // pomijamy ten krok symulacji, stan o dokładnie takich samych parametrach został już policzony
+                    continue;
+                }
+                else{
+                    Log() << "Thread: "<< omp_get_thread_num() << "/" << omp_get_num_threads() << ": No previous state recovered, going on\n";
+                }
+            }
+            //---
+
             PRE79Simulation thread_sim(current_settings);
             thread_sim.SetStream(&Log());
             thread_sim.Run();

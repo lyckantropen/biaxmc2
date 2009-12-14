@@ -36,6 +36,9 @@
             <pElem>../../montecarlo2/boostbase/include/hashlib</pElem>
           </incDir>
           <commandLine>-fopenmp</commandLine>
+          <preprocessorList>
+            <Elem>SQLITE_TEMP_STORE=3</Elem>
+          </preprocessorList>
         </ccTool>
         <linkerTool>
           <linkerLibItems>

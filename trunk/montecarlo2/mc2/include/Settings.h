@@ -97,11 +97,13 @@ public:
         double delta;
         bool reuse_thermalized; std::string v_reuse_thermalized;
         bool threaded; std::string v_threaded;
+        bool continue_if_results_exist; std::string v_continue_if_results_exist;
         
         _scanning():
         v_reuse_thermalized("yes"),
         v_enabled("no"),
-        v_threaded("no")
+        v_threaded("no"),
+        v_continue_if_results_exist("yes")
         
         {}
     } scanning ;
@@ -146,6 +148,7 @@ private:
         ("scanning.delta",po::value<double>(&scanning.delta),"Interval")
         ("scanning.reuse_thermalized",po::value<std::string>(&scanning.v_reuse_thermalized),"(yes/no) Reuse last thermalized state to reduce time of simulation")
         ("scanning.threaded",po::value<std::string>(&scanning.v_threaded),"(yes/no) Threaded scanning")
+        ("scanning.continue_if_results_exist",po::value<std::string>(&scanning.v_continue_if_results_exist),"(yes/no) Skip already performed simulations and pick up last saved state")
         ("openmp.number_of_threads",po::value<int>(&openmp.number_of_threads),"Number of threads in threaded scanning")
         ("openmp.dynamic",po::value<std::string>(&openmp.v_dynamic),"(yes/no) Should the number of threads be assigned dynamically")
         ("project.name_format",po::value<std::string>(&project.name_format),"Formatted name")
@@ -162,6 +165,7 @@ private:
         scanning.enabled = TextBool(scanning.v_enabled);
         scanning.reuse_thermalized = TextBool(scanning.v_reuse_thermalized);
         scanning.threaded = TextBool(scanning.v_threaded);
+        scanning.continue_if_results_exist = TextBool(scanning.v_continue_if_results_exist);
         openmp.dynamic = TextBool(openmp.v_dynamic);
     }
 public:
