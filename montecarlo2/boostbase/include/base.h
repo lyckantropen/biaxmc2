@@ -128,7 +128,13 @@ namespace boostbase {
         template<class item_t>
         std::vector<item_t> eval_get(const std::string & query){
             std::vector<std::vector<std::string> > selected;
-            selected = eval_select(query, 2);
+            try {
+                selected = eval_select(query, 2);
+            }
+            catch(exception::sqlite_command_error & e) {
+                sqlite_log << "get(): select couldn't be evaluated\n";
+                return std::vector<item_t>();
+            }
             std::vector<item_t> results;
 
             foreach(std::vector<std::string> & field, selected) {
