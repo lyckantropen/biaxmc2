@@ -31,6 +31,7 @@ OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/boostbase/src/sqlite3.o \
 	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/tools/mc2mine.o
 
 # C Compiler Flags
@@ -47,7 +48,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=../libboostbase/dist/Debug/GNU-Linux-x86/liblibboostbase.a ../libmc2/dist/Debug/GNU-Linux-x86/liblibmc2.a -lboost_date_time-mt -lboost_filesystem-mt -lboost_iostreams-mt -lboost_program_options-mt -lboost_system-mt -lsqlite3
+LDLIBSOPTIONS=../libboostbase/dist/Debug/GNU-Linux-x86/liblibboostbase.a ../libmc2/dist/Debug/GNU-Linux-x86/liblibmc2.a -lboost_date_time-mt -lboost_filesystem-mt -lboost_iostreams-mt -lboost_program_options-mt -lboost_system-mt -ldl
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
@@ -61,10 +62,15 @@ dist/Debug/GNU-Linux-x86/dbmine: ${OBJECTFILES}
 	${MKDIR} -p dist/Debug/GNU-Linux-x86
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dbmine ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
+${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/boostbase/src/sqlite3.o: nbproject/Makefile-${CND_CONF}.mk ../../montecarlo2/boostbase/src/sqlite3.c 
+	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/boostbase/src
+	${RM} $@.d
+	$(COMPILE.c) -g -DSQLITE_TEMP_STORE=3 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/boostbase/src/sqlite3.o ../../montecarlo2/boostbase/src/sqlite3.c
+
 ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/tools/mc2mine.o: nbproject/Makefile-${CND_CONF}.mk ../../montecarlo2/tools/mc2mine.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/tools
 	${RM} $@.d
-	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/tools/mc2mine.o ../../montecarlo2/tools/mc2mine.cpp
+	$(COMPILE.cc) -g -DSQLITE_TEMP_STORE=3 -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/tools/mc2mine.o ../../montecarlo2/tools/mc2mine.cpp
 
 # Subprojects
 .build-subprojects:

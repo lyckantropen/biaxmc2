@@ -64,7 +64,7 @@ dist/Debug/GNU-Linux-x86/simulation: ${OBJECTFILES}
 ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/tools/simulation.o: nbproject/Makefile-${CND_CONF}.mk ../../montecarlo2/tools/simulation.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/tools
 	${RM} $@.d
-	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/tools/simulation.o ../../montecarlo2/tools/simulation.cpp
+	$(COMPILE.cc) -g -DSQLITE_TEMP_STORE=3 -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/tools/simulation.o ../../montecarlo2/tools/simulation.cpp
 
 # Subprojects
 .build-subprojects:

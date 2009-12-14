@@ -31,6 +31,7 @@ OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
+	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/boostbase/src/sqlite3.o \
 	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/tools/mc2mine.o
 
 # C Compiler Flags
@@ -56,6 +57,11 @@ LDLIBSOPTIONS=
 dist/Release/GNU-Linux-x86/dbmine: ${OBJECTFILES}
 	${MKDIR} -p dist/Release/GNU-Linux-x86
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dbmine ${OBJECTFILES} ${LDLIBSOPTIONS} 
+
+${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/boostbase/src/sqlite3.o: nbproject/Makefile-${CND_CONF}.mk ../../montecarlo2/boostbase/src/sqlite3.c 
+	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/boostbase/src
+	${RM} $@.d
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/boostbase/src/sqlite3.o ../../montecarlo2/boostbase/src/sqlite3.c
 
 ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/tools/mc2mine.o: nbproject/Makefile-${CND_CONF}.mk ../../montecarlo2/tools/mc2mine.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/tools
