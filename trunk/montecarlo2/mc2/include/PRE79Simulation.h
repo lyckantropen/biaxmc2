@@ -46,6 +46,7 @@ class PRE79Simulation:public ILoggable {
                 thermalization = new LatticeSimulation(H,lattice,metro,0);
                 Log() << "Thermalized state found, picking up\n";
             }
+            //---
             else {
                 Log() << "No thermalized state found, creating Thermalization\n";
                 thermalization = new LatticeSimulation(H,lattice,metro,settings.simulation.thermalization_cycles);
@@ -55,8 +56,27 @@ class PRE79Simulation:public ILoggable {
             Log() << "Creating Supplementary Thermalization\n";
             thermalization = new LatticeSimulation(H,lattice,metro,settings.simulation.supplementary_thermalization_cycles);
         }
+        //--- szukamy stanu, od którego możemy kontynuować symulację
+        //TODO: stan się ładuje, ale jeszcze trzeba policzyć albo wczytać brakujące Properties...
+        int found_cycle = 0;
+        if(settings.simulation.pick_up_aborted){
+            Log() << "Searching database for aborted simulation\n";
+            
+            bool found = false;
+            Lattice found_state = FindLastState(settings,found,found_cycle);
+            if(found){
+                delete lattice;
+                lattice = new Lattice(found_state);
+                Log() << "Recovering from aborted simulation at " << found_cycle << " cycles\n";
+            } else {
+                Log() << "No aborted simulation found\n";
+            }
+        }
+        //---
+        int cycle_advantage = settings.simulation.production_cycles - found_cycle;
+
         Log() << "Creating Production\n";
-        simulation = new LatticeSimulation(H,lattice,metro,settings.simulation.production_cycles);
+        simulation = new LatticeSimulation(H,lattice,metro,cycle_advantage,found_cycle);
         Log() << "Creating Properties\n";
         prop = new PRE79StandardProperties(lattice,settings.simulation.production_cycles/settings.simulation.measure_frequency);
     }

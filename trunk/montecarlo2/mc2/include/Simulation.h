@@ -17,9 +17,9 @@ class Simulation {
     int ncycles;
 protected:
     virtual void DoIterate() {}
-    Simulation(const int & nc){
+    Simulation(const int & nc,const int & sc=0){
         ncycles=nc;
-        acc_idx=-1;
+        acc_idx=sc-1;
     }
 public:
     bool Iterate(){
@@ -46,8 +46,8 @@ class LatticeSimulation:public Simulation {
         lat->Sweep(metropolis);
     }
 public:
-    LatticeSimulation(Hamiltonian * h=NULL,Lattice * l=NULL,Metropolis * metro=NULL,int nc=0):
-    Simulation(nc),
+    LatticeSimulation(Hamiltonian * h=NULL,Lattice * l=NULL,Metropolis * metro=NULL,int nc=0,int startc=0):
+    Simulation(nc,startc),
     metropolis(metro),
     H(h),
     lat(l)

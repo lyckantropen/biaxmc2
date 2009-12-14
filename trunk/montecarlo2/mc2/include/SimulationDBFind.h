@@ -88,6 +88,31 @@ inline PRE79MeanProperties FindFinalProperties(const Settings & settings, bool &
     }
 }
 
+inline Lattice FindLastState(const Settings & settings, bool & success, int & cycle) {
+    SimulationDB sdb(settings);
+    boostbase::base & db = sdb.GetDB();
+    std::vector<Lattice>    whatwegot = db.get<Lattice>(boostbase::where
+            (sdb.type_label,sdb.current_lattice_kw)
+            (sdb.H_label,settings.lattice.H)
+            (sdb.W_label,settings.lattice.W)
+            (sdb.L_label,settings.lattice.L)
+            (sdb.temperature_label,settings.hamiltonian.temperature)
+            (sdb.lambda_label,settings.hamiltonian.lambda)
+            (sdb.tau_label,settings.hamiltonian.tau)
+            (sdb.id_kw,settings.project.name)
+
+            );
+    //std::cout << db.log().str() << std::endl;
+    if(whatwegot.size()==0) {
+        success=false;
+        return Lattice();
+    }
+    else {
+        success=true;
+        cycle=whatwegot.size()*settings.simulation.measure_frequency;
+        return whatwegot.back();
+    }
+}
 
 
 #endif	/* _SIMULATIONDBFIND_H */

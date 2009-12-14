@@ -49,6 +49,7 @@ public:
     } hamiltonian ;
     struct _simulation {
         bool find_thermalized;  std::string v_find_thermalized;
+        bool pick_up_aborted;   std::string v_pick_up_aborted;
         int production_cycles;
         int measure_frequency;
         int thermalization_cycles;
@@ -60,7 +61,8 @@ public:
         thermalization_cycles(1000),
         supplementary_thermalization_cycles(0),
         radius_adjustment_frequency(100),
-        find_thermalized("yes")
+        find_thermalized("yes"),
+        pick_up_aborted("no")
         {}
     } simulation;
     struct _sqlite {
@@ -136,6 +138,7 @@ private:
         ("simulation.supplementary_thermalization_cycles",po::value<int>(&simulation.supplementary_thermalization_cycles),"Number of thermalization cycles when reusing thermalized state")
         ("simulation.radius_adjustment_frequency",po::value<int>(&simulation.radius_adjustment_frequency),"Number of cycles to skip between radius adjustments. Must be non-zero.")
         ("simulation.find_thermalized",po::value<std::string>(&simulation.v_find_thermalized),"(yes/no) Find an already thermalized state in the database")
+        ("simulation.pick_up_aborted",po::value<std::string>(&simulation.v_pick_up_aborted),"(yest/no) Continue from last saved state from an aborted simulation. Relevant only when saving configurations. [DON'T USE YET]")
         ("sqlite.file",po::value<std::string>(&sqlite.file),"Database file")
         ("sqlite.dir",po::value<std::string>(&sqlite.dir),"Database directory")
         ("output.save_configuration_evolution",po::value<std::string>(&output.v_save_configuration_evolution),"(yes/no) Save entire configuration evolution in production cycle (large db entry)")
@@ -172,6 +175,7 @@ private:
         scanning.continue_if_results_exist = TextBool(scanning.v_continue_if_results_exist);
         openmp.dynamic = TextBool(openmp.v_dynamic);
         simulation.find_thermalized = TextBool(simulation.v_find_thermalized);
+        simulation.pick_up_aborted = TextBool(simulation.v_pick_up_aborted);
     }
 public:
     Settings(const fs::path & file){
