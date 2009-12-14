@@ -48,6 +48,7 @@ public:
         lambda(0.0),tau(0.0),temperature(1.0) {}
     } hamiltonian ;
     struct _simulation {
+        bool find_thermalized;  std::string v_find_thermalized;
         int production_cycles;
         int measure_frequency;
         int thermalization_cycles;
@@ -58,7 +59,9 @@ public:
         measure_frequency(10),
         thermalization_cycles(1000),
         supplementary_thermalization_cycles(0),
-        radius_adjustment_frequency(100) {}
+        radius_adjustment_frequency(100),
+        find_thermalized("yes")
+        {}
     } simulation;
     struct _sqlite {
         std::string file;
@@ -132,6 +135,7 @@ private:
         ("simulation.thermalization_cycles",po::value<int>(&simulation.thermalization_cycles),"Number of thermalization cycles")
         ("simulation.supplementary_thermalization_cycles",po::value<int>(&simulation.supplementary_thermalization_cycles),"Number of thermalization cycles when reusing thermalized state")
         ("simulation.radius_adjustment_frequency",po::value<int>(&simulation.radius_adjustment_frequency),"Number of cycles to skip between radius adjustments. Must be non-zero.")
+        ("simulation.find_thermalized",po::value<std::string>(&simulation.v_find_thermalized),"(yes/no) Find an already thermalized state in the database")
         ("sqlite.file",po::value<std::string>(&sqlite.file),"Database file")
         ("sqlite.dir",po::value<std::string>(&sqlite.dir),"Database directory")
         ("output.save_configuration_evolution",po::value<std::string>(&output.v_save_configuration_evolution),"(yes/no) Save entire configuration evolution in production cycle (large db entry)")
@@ -167,6 +171,7 @@ private:
         scanning.threaded = TextBool(scanning.v_threaded);
         scanning.continue_if_results_exist = TextBool(scanning.v_continue_if_results_exist);
         openmp.dynamic = TextBool(openmp.v_dynamic);
+        simulation.find_thermalized = TextBool(simulation.v_find_thermalized);
     }
 public:
     Settings(const fs::path & file){
