@@ -11,7 +11,6 @@
 #include "base.h"
 #include "boost.h"
 #include "Settings.h"
-//#include "PRE79Simulation.h"
 #include "PRE79StandardProperties.h"
 #include "PRE79SpatialCorrelations.h"
 
@@ -141,7 +140,9 @@ public:
           (type_label,final_properties_kw)
         );
     }
-    
+    boostbase::base & GetDB(){
+        return db;
+    }
     
 };
 

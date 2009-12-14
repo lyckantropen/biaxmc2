@@ -20,6 +20,7 @@
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/Settings.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/Simulation.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/SimulationDB.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/SimulationDBFind.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/SpatialCorrelationEvolution.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/Statistical.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/quantity_iterator.h</itemPath>
