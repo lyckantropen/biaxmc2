@@ -8,7 +8,11 @@
 #include "random01.h"
 
 double random01(){
-    return rangen::Instance()->Gen01();
+    double retval = 0.0;
+    // the rng is a singleton, so we need to make sure two threads don't access it simultaneously
+    #pragma omp critical
+    retval = rangen::Instance()->Gen01();
+    return retval;
 }
 int plusminusone(){
     if(random01()>0.5)
