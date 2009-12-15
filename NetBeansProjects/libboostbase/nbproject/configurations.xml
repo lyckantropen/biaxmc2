@@ -31,6 +31,7 @@
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/hl_md5.cpp</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/hl_md5wrapper.cpp</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/serialhash.cpp</itemPath>
+      <itemPath>../../montecarlo2/boostbase/src/sqlite3.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"

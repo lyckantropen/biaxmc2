@@ -104,8 +104,7 @@ inline Lattice FindLastState(const Settings & settings, bool & success, int & cy
             );
     //std::cout << db.log().str() << std::endl;
     if(whatwegot.size()==0) {
-        success=false;
-        return Lattice();
+        return FindFinalState(settings,success);
     }
     else {
         success=true;
