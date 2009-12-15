@@ -36,15 +36,24 @@ class PRE79Simulation:public ILoggable {
         metro = new Metropolis(H,0.065);
         if(!restored){
             //--- szukamy ewentualnego zapisanego stermalizowanego stanu
-            Log() << "Searching database for thermalized state\n";
-            bool found=false;
-            Lattice found_state = FindState(settings,0,found);
-            if(found){
-                delete lattice;
-                lattice = new Lattice(found_state);
-                //pusta termalizacja
-                thermalization = new LatticeSimulation(H,lattice,metro,0);
-                Log() << "Thermalized state found, picking up\n";
+            if(settings.simulation.find_thermalized) {
+                Log() << "Searching database for thermalized state\n";
+                bool found=false;
+                //Lattice found_state = FindState(settings,0,found);
+                //ostatni zapisany stan lepiej nadaje się jako stermalizowany
+                int cycle=0; // nieużywane
+                Lattice found_state = FindLastState(settings,found,cycle);
+                if(found){
+                    delete lattice;
+                    lattice = new Lattice(found_state);
+                    //pusta termalizacja
+                    thermalization = new LatticeSimulation(H,lattice,metro,0);
+                    Log() << "Thermalized state found, picking up\n";
+                }
+                else {
+                    Log() << "No thermalized state found, creating Thermalization\n";
+                    thermalization = new LatticeSimulation(H,lattice,metro,settings.simulation.thermalization_cycles);
+                }
             }
             //---
             else {

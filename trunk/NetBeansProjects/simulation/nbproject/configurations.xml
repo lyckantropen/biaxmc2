@@ -66,12 +66,12 @@
                             OP="dist/Debug/GNU-Linux-x86/liblibmc2.a">
               </makeArtifact>
             </linkerLibProjectItem>
-            <linkerLibLibItem>sqlite3</linkerLibLibItem>
             <linkerLibLibItem>boost_date_time-mt</linkerLibLibItem>
             <linkerLibLibItem>boost_filesystem-mt</linkerLibLibItem>
             <linkerLibLibItem>boost_iostreams-mt</linkerLibLibItem>
             <linkerLibLibItem>boost_program_options-mt</linkerLibLibItem>
             <linkerLibLibItem>boost_system-mt</linkerLibLibItem>
+            <linkerLibLibItem>dl</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
         <requiredProjects>
