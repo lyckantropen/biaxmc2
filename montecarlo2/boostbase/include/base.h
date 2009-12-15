@@ -28,6 +28,9 @@ namespace boostbase {
      *
      * Aby skorzystać z klasy, trzeba zaimplementować zewnętrznie
      * operator|(serializer &, obiekt &)
+     *
+     * Uwaga: lepiej nie współdzielić jednego obiektu między wątkami, SQLite sam zadba o
+     * dostęp do bazy, dlatego lepiej utworzyć po jednym obiekcie na wątek
      */
 
     class base {
