@@ -152,21 +152,37 @@ public:
         Log() << "Expected time of simulation: " << pt::to_simple_string(expected) << std::endl;
         Log() << "Thermalization\n";
         while(thermalization->Iterate());
+
+        //--- zapisywanie stanów pośrednich
+        int intermediate_frequency = simulation->GetNCycles()/settings.output.intermediate_states;
         //---
+
         Log() << "Production with freq " << settings.simulation.measure_frequency << std::endl ;
         int k=0;
 
         pt::ptime start_t = pt::second_clock::local_time();
         int remaining_interval = expected.total_seconds()*100.0/std::sqrt(thermalization->GetNCycles()/1000+simulation->GetNCycles()/1000);
+        Log() << "Remaining time will be reported every " << remaining_interval << " cycles\n";
         while(simulation->Iterate()){
+            //--- pomiary
             if(k%settings.simulation.measure_frequency==0){
                 prop->Update(k,H);
                 if(settings.output.save_configuration_evolution){
                     database.StoreLattice(settings,*lattice,k);
                 }
             }
+            //---
+
+            //--- zapis stanów pośrednich
+            if(k%intermediate_frequency==0){
+                if(settings.output.save_intermediate_states)
+                    database.StoreLattice(settings,*lattice,k);
+            }
+
+            //--- poprawa promienia błądzenia przypadkowego
             if(k%settings.simulation.radius_adjustment_frequency==0)
                 metro->AdjustRadius(lattice);
+            //---
             
             if((k+1)%remaining_interval==0){
                 pt::time_duration run1k = pt::second_clock::local_time() - start_t;
