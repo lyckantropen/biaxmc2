@@ -15,8 +15,11 @@ protected:
     Singleton(){}
 public:
     static t * Instance() {
-        if(instance==NULL){
-            instance=new t;
+        //TODO: the creation is somewhat not thread-safe
+        {
+            if(instance==NULL){
+                instance=new t;
+            }
         }
         return instance;
     }
