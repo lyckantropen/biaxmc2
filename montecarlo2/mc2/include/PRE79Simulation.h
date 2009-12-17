@@ -161,7 +161,7 @@ public:
         int k=0;
 
         pt::ptime start_t = pt::second_clock::local_time();
-        int remaining_interval = expected.total_seconds()*100.0/std::sqrt(thermalization->GetNCycles()/1000+simulation->GetNCycles()/1000);
+        int remaining_interval = simulation->GetNCycles()/20;
         Log() << "Remaining time will be reported every " << remaining_interval << " cycles\n";
         while(simulation->Iterate()){
             //--- pomiary
