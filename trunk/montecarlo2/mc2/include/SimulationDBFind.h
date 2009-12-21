@@ -127,8 +127,8 @@ inline Lattice FindLastStateTemperatureTolerant(const Settings & settings, bool 
 //            (sdb.id_kw,settings.project.name)
             ,
             boostbase::between(sdb.temperature_label,
-                settings.hamiltonian.temperature-settings.scanning.delta*tolerance,
-                settings.hamiltonian.temperature+settings.scanning.delta*tolerance)
+                settings.hamiltonian.temperature-std::abs(settings.scanning.delta)*tolerance,
+                settings.hamiltonian.temperature+std::abs(settings.scanning.delta)*tolerance)
             );
     //std::cout << db.log().str() << std::endl;
     if(whatwegot.size()==0) {
