@@ -27,6 +27,7 @@ class Lattice {
     std::vector<Particle>   Particles;
     void Construct(){
         //std::cout << "Constructing\n";
+        if(Particles.size()!=0) Particles.clear();
         Particles = std::vector<Particle>(N);
         
         for(int i=0;i<N;i++){
