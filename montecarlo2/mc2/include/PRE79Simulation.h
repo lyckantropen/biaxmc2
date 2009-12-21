@@ -35,19 +35,40 @@ class PRE79Simulation:public ILoggable {
         Log() << "Creating Metropolis\n";
         metro = new Metropolis(H,0.065);
         if(!restored){
+
             //--- szukamy ewentualnego zapisanego stermalizowanego stanu
             if(settings.simulation.find_thermalized) {
                 Log() << "Searching database for thermalized state\n";
                 bool found=false;
-                //Lattice found_state = FindState(settings,0,found);
+
                 //ostatni zapisany stan lepiej nadaje się jako stermalizowany
                 int cycle=0; // nieużywane
-                Lattice found_state = FindLastState(settings,found,cycle);
+
+                //--- dopuszczamy załadowanie stanu z zadaną tolerancją temperatury, ale wtedy musimy dotermalizować
+                Lattice found_state;
+                if(settings.simulation.find_thermalized_temperature_tolerance!=0.0) {
+                    Log() << "Temperature tolerance enabled\n";
+                    found_state = FindLastStateTemperatureTolerant(settings,found,cycle,settings.simulation.find_thermalized_temperature_tolerance);
+                }
+                else {
+                    found_state = FindLastState(settings,found,cycle);
+                }
+                //---
+
                 if(found){
                     delete lattice;
                     lattice = new Lattice(found_state);
-                    //pusta termalizacja
-                    thermalization = new LatticeSimulation(H,lattice,metro,0);
+                    
+                    //--- jeżeli wczytujemy z tolerancją temperatury, musimy dotermalizować
+                    if(settings.simulation.find_thermalized_temperature_tolerance!=0.0) {
+                        Log() << "Creating Supplementary Thermalization\n";
+                        thermalization = new LatticeSimulation(H,lattice,metro,settings.simulation.supplementary_thermalization_cycles);
+                    }
+                    else
+                        //pusta termalizacja
+                        thermalization = new LatticeSimulation(H,lattice,metro,0);
+                    //---
+
                     Log() << "Thermalized state found, picking up\n";
                 }
                 else {
