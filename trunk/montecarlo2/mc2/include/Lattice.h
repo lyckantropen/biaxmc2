@@ -66,7 +66,7 @@ class Lattice {
     }
 public:
     typedef enum { Isotropic, IsotropicRighthanded, Biaxial, BiaxialRighthanded } state_t;
-    Lattice(){}
+    Lattice():L(0),W(0),H(0),N(0) {}
     Lattice(const int & l, const int & w, const int & h,const state_t & state=Isotropic):
     L(l),W(w),H(h),N(l*w*h)
     {
@@ -92,7 +92,7 @@ public:
         L=s.L;
         W=s.W;
         H=s.H;
-        N=s.N;
+        N=L*W*H;
         Construct();
         for(int i=0;i<N;i++)
             Particles[i].RestoreState(s.Particles[i]);
@@ -102,7 +102,7 @@ public:
         L=s.L;
         W=s.W;
         H=s.H;
-        N=s.N;
+        N=L*W*H;
         Construct();
         for(int i=0;i<N;i++)
             Particles[i].RestoreState(s.Particles[i]);
