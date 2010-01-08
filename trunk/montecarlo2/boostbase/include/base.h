@@ -46,7 +46,7 @@ namespace boostbase {
          * @param statement komenda SQL
          */
         void command(const std::string & statement) {
-            sqlite_log << "command(): " << statement << std::endl;
+            log() << "command(): " << statement << std::endl;
             int result = 0;
             sqlite3_stmt * stmt;
 
@@ -55,7 +55,7 @@ namespace boostbase {
             } while(result==SQLITE_BUSY || result==SQLITE_LOCKED);
 
             if (result != SQLITE_OK) {
-                sqlite_log << sqlite3_errmsg(sqlite_db) << std::endl;
+                log() << sqlite3_errmsg(sqlite_db) << std::endl;
                 //std::cout << sqlite_log.str() << std::endl;
                 throw exception::sqlite_command_error();
             }
@@ -65,7 +65,7 @@ namespace boostbase {
             } while(result==SQLITE_BUSY || result==SQLITE_LOCKED);
 
             if (result == SQLITE_ERROR) {
-                sqlite_log << sqlite3_errmsg(sqlite_db) << std::endl;
+                log() << sqlite3_errmsg(sqlite_db) << std::endl;
                 //std::cout << sqlite_log.str() << std::endl;
                 throw exception::sqlite_command_error();
             }
@@ -92,7 +92,7 @@ namespace boostbase {
             } while(result==SQLITE_BUSY || result==SQLITE_LOCKED);
 
             if (result != SQLITE_OK) {
-                sqlite_log << sqlite3_errmsg(sqlite_db) << std::endl;
+                log() << sqlite3_errmsg(sqlite_db) << std::endl;
                 //std::cout << sqlite_log.str() << std::endl;
                 throw exception::sqlite_command_error();
             }
@@ -107,12 +107,12 @@ namespace boostbase {
                 if (result == SQLITE_ROW) {
                     for (int i = 0; i < columns; i++) {
                         cur_row.push_back((const char*) sqlite3_column_text(stmt, i));
-                        sqlite_log << cur_row.back() << ", ";
+                        log() << cur_row.back() << ", ";
                     }
-                    sqlite_log << std::endl;
+                    log() << std::endl;
                 }
                 if (cur_row.size() != columns) {
-                    sqlite_log << "eval_select(): should have selected " << columns << " columns, got " << cur_row.size() << std::endl;
+                    log() << "eval_select(): should have selected " << columns << " columns, got " << cur_row.size() << std::endl;
                 } else
                     items.push_back(cur_row);
             }
@@ -135,7 +135,7 @@ namespace boostbase {
                 selected = eval_select(query, 2);
             }
             catch(exception::sqlite_command_error & e) {
-                sqlite_log << "get(): select couldn't be evaluated\n";
+                log() << "get(): select couldn't be evaluated\n";
                 return std::vector<item_t>();
             }
             std::vector<item_t> results;
@@ -149,12 +149,12 @@ namespace boostbase {
                         //results.push_back(cur_item);
                         results.push_back(serialload<item_t > (fs::path(base_dir/field[0]), field[1]));
                     } catch (exception::file_not_found e) {
-                        sqlite_log << "get(): object file not found: " << field[0] << std::endl;
+                        log() << "get(): object file not found: " << field[0] << std::endl;
                     } catch (exception::wrong_md5 e) {
-                        sqlite_log << "get(): md5 mismatch: " << field[1] << std::endl;
+                        log() << "get(): md5 mismatch: " << field[1] << std::endl;
                     }
             }
-            sqlite_log << "get(): restored " << results.size() << " objects\n";
+            log() << "get(): restored " << results.size() << " objects\n";
             return results;
         };
 
@@ -182,7 +182,7 @@ namespace boostbase {
 
             if (result != SQLITE_OK) {
                 sqlite3_close(sqlite_db);
-                sqlite_log << sqlite3_errmsg(sqlite_db) << std::endl;
+                log() << sqlite3_errmsg(sqlite_db) << std::endl;
                 std::cout << sqlite_log.str() << std::endl;
                 throw exception::sqlite_failed_opening_db();
             }
