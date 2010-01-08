@@ -346,7 +346,7 @@ namespace boostbase {
         }
 
         ///dostęp do loga SQLite
-        const std::stringstream & log() const {
+        std::stringstream & log() {
             return sqlite_log;
         }
     };
