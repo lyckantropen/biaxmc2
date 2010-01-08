@@ -215,11 +215,16 @@ public:
         }
 
         
-        if(settings.output.save_properties_evolution)
+        if(settings.output.save_properties_evolution) {
+            Log() << "Saving Properties Evolution\n";
             database.StorePropertiesEvolution(settings,*prop);
-        if(settings.output.save_final_configuration)
+        }
+        if(settings.output.save_final_configuration){
+            Log() << "Saving Final Lattice\n";
             database.StoreFinalLattice(settings,*lattice);
+        }
         if(settings.output.save_final_properties){
+            Log() << "Saving Final Properties\n";
             PRE79MeanProperties pp(*prop,*H);
             database.StoreFinalProperties(settings,pp);
         }
