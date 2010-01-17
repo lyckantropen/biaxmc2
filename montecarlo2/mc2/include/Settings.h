@@ -43,18 +43,18 @@ public:
         _lattice():L(0),W(0),H(0){}
     } lattice;
     struct _hamiltonian {
-        double lambda, tau, temperature;
+        double lambda, tau, temperature, h;
         _hamiltonian():
-        lambda(0.0),tau(0.0),temperature(1.0) {}
+        lambda(0.0),tau(0.0),temperature(1.0),h(0.0) {}
     } hamiltonian ;
     struct _simulation {
         bool find_thermalized;  std::string v_find_thermalized;
         bool pick_up_aborted;   std::string v_pick_up_aborted;
         double find_thermalized_temperature_tolerance;
-        int production_cycles;
+        long production_cycles;
         int measure_frequency;
-        int thermalization_cycles;
-        int supplementary_thermalization_cycles;
+        long thermalization_cycles;
+        long supplementary_thermalization_cycles;
         int radius_adjustment_frequency;
         _simulation():
         production_cycles(1000),
@@ -138,10 +138,11 @@ private:
         ("hamiltonian.lambda",po::value<double>(&hamiltonian.lambda),"Lambda coupling constant")
         ("hamiltonian.tau",po::value<double>(&hamiltonian.tau),"Tau coupling constant")
         ("hamiltonian.temperature",po::value<double>(&hamiltonian.temperature),"Temperature")
-        ("simulation.production_cycles",po::value<int>(&simulation.production_cycles),"Total number of production cycles")
+        ("hamiltonian.h",po::value<double>(&hamiltonian.h),"Field coupling to second order tensor (along x)")
+        ("simulation.production_cycles",po::value<long>(&simulation.production_cycles),"Total number of production cycles")
         ("simulation.measure_frequency",po::value<int>(&simulation.measure_frequency),"Number of cycles to skip between measurements. Must be non-zero.")
-        ("simulation.thermalization_cycles",po::value<int>(&simulation.thermalization_cycles),"Number of thermalization cycles")
-        ("simulation.supplementary_thermalization_cycles",po::value<int>(&simulation.supplementary_thermalization_cycles),"Number of thermalization cycles when reusing thermalized state")
+        ("simulation.thermalization_cycles",po::value<long>(&simulation.thermalization_cycles),"Number of thermalization cycles")
+        ("simulation.supplementary_thermalization_cycles",po::value<long>(&simulation.supplementary_thermalization_cycles),"Number of thermalization cycles when reusing thermalized state")
         ("simulation.radius_adjustment_frequency",po::value<int>(&simulation.radius_adjustment_frequency),"Number of cycles to skip between radius adjustments. Must be non-zero.")
         ("simulation.find_thermalized",po::value<std::string>(&simulation.v_find_thermalized),"(yes/no) Find an already thermalized state in the database")
         ("simulation.find_thermalized_temperature_tolerance",po::value<double>(&simulation.find_thermalized_temperature_tolerance),"Temperature tolerance for thermalized state in units of scanning.delta")
