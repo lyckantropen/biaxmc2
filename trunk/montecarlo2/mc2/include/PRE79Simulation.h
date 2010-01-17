@@ -179,7 +179,7 @@ public:
         //---
 
         Log() << "Production with freq " << settings.simulation.measure_frequency << std::endl ;
-        int k=0;
+        long k=0;
 
         pt::ptime start_t = pt::second_clock::local_time();
         int remaining_interval = simulation->GetNCycles()/20;
@@ -187,6 +187,7 @@ public:
         while(simulation->Iterate()){
             //--- pomiary
             if(k%settings.simulation.measure_frequency==0){
+                Log() << " cycle " <<k << std::endl;
                 prop->Update(k,H);
                 if(settings.output.save_configuration_evolution){
                     database.StoreLattice(settings,*lattice,k);
@@ -196,8 +197,12 @@ public:
 
             //--- zapis stanów pośrednich
             if(k%intermediate_frequency==0){
-                if(settings.output.save_intermediate_states)
+                if(settings.output.save_intermediate_states){
                     database.StoreLattice(settings,*lattice,k);
+                    PRE79MeanProperties pp(*prop,*H);
+                    database.StoreProperties(settings,pp,k);
+                }
+
             }
 
             //--- poprawa promienia błądzenia przypadkowego
