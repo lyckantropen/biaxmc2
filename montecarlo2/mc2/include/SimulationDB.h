@@ -37,6 +37,7 @@ public:
     const std::string temperature_label;
     const std::string lambda_label;
     const std::string tau_label;
+    const std::string h_label;
 public:
     SimulationDB(const Settings & set):
     db(fs::path(set.sqlite.file),fs::path(set.sqlite.dir)),
@@ -55,7 +56,8 @@ public:
             ncycles_label("total_production_cycles"),
             temperature_label("temperature"),
             lambda_label("lambda"),
-            tau_label("tau")
+            tau_label("tau"),
+            h_label("h")
     {
         id = set.project.name;
         user = std::getenv("USER");
@@ -73,6 +75,7 @@ public:
           (temperature_label,settings.hamiltonian.temperature)
           (lambda_label,settings.hamiltonian.lambda)
           (tau_label,settings.hamiltonian.tau)
+          (h_label,settings.hamiltonian.h)
           (type_label,current_lattice_kw)
         );
     }
@@ -88,6 +91,7 @@ public:
           (temperature_label,settings.hamiltonian.temperature)
           (lambda_label,settings.hamiltonian.lambda)
           (tau_label,settings.hamiltonian.tau)
+          (h_label,settings.hamiltonian.h)
           (type_label,final_lattice_kw)
         );
     }
@@ -103,6 +107,7 @@ public:
           (temperature_label,settings.hamiltonian.temperature)
           (lambda_label,settings.hamiltonian.lambda)
           (tau_label,settings.hamiltonian.tau)
+          (h_label,settings.hamiltonian.h)
           (type_label,properties_evolution_kw)
         );
     }
@@ -122,6 +127,7 @@ public:
           (temperature_label,settings.hamiltonian.temperature)
           (lambda_label,settings.hamiltonian.lambda)
           (tau_label,settings.hamiltonian.tau)
+          (h_label,settings.hamiltonian.h)
           (type_label,current_properties_kw)
         );
     }
@@ -137,6 +143,7 @@ public:
           (temperature_label,settings.hamiltonian.temperature)
           (lambda_label,settings.hamiltonian.lambda)
           (tau_label,settings.hamiltonian.tau)
+          (h_label,settings.hamiltonian.h)
           (type_label,final_properties_kw)
         );
     }
