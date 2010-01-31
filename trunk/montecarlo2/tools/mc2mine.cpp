@@ -118,6 +118,8 @@ int main(int argc, char** argv)
                     std::cout << prop.Tau() << "\t";
                 if(column=="lambda")
                     std::cout << prop.Lambda() << "\t";
+                if(column=="h")
+                    std::cout << prop.Field() << "\t";
                 if(column=="uniaxial_correaltion")
                     std::cout << prop.UniaxialMeanCorrelation() << "\t";
                 if(column=="biaxial_correaltion")
