@@ -61,6 +61,9 @@ public:
     const double & GetTau() const {
         return tau;
     }
+    const double & GetH() const {
+        return h;
+    }
 };
 
 
