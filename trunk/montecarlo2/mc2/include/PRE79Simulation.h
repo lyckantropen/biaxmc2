@@ -54,18 +54,27 @@ class PRE79Simulation:public ILoggable {
                     found_state = FindLastState(settings,found,cycle);
                 }
                 //---
+                //--- dopuszczamy ewentualny stan z polem o bliskiej wartości, ale musimy dotermalizować
+                if(settings.simulation.find_thermalized_h_tolerance!=0.0) {
+                    Log() << "Field tolerance enabled\n";
+                    found_state = FindLastStateFieldTolerant(settings,found,cycle,settings.simulation.find_thermalized_h_tolerance);
+                }
+                else {
+                    found_state = FindLastState(settings,found,cycle);
+                }
+                //---
 
                 if(found){
                     delete lattice;
                     lattice = new Lattice(found_state);
                     
-                    //--- jeżeli wczytujemy z tolerancją temperatury, musimy dotermalizować
-                    if(settings.simulation.find_thermalized_temperature_tolerance!=0.0) {
+                    //--- jeżeli wczytujemy z tolerancją temperatury lub pola, musimy dotermalizować
+                    if(settings.simulation.find_thermalized_temperature_tolerance!=0.0 || settings.simulation.find_thermalized_h_tolerance!=0.0) {
                         Log() << "Creating Supplementary Thermalization\n";
                         thermalization = new LatticeSimulation(H,lattice,metro,settings.simulation.supplementary_thermalization_cycles);
                     }
                     else
-                        //pusta termalizacja
+                        //pusta termalizacja, jeżeli wczytany został dobry stermalizowany stan
                         thermalization = new LatticeSimulation(H,lattice,metro,0);
                     //---
 

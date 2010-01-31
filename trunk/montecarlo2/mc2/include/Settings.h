@@ -51,6 +51,7 @@ public:
         bool find_thermalized;  std::string v_find_thermalized;
         bool pick_up_aborted;   std::string v_pick_up_aborted;
         double find_thermalized_temperature_tolerance;
+        double find_thermalized_h_tolerance;
         long production_cycles;
         int measure_frequency;
         long thermalization_cycles;
@@ -64,6 +65,7 @@ public:
         radius_adjustment_frequency(100),
         find_thermalized("yes"),
         find_thermalized_temperature_tolerance(0.0),
+        find_thermalized_h_tolerance(0.0),
         pick_up_aborted("no")
         {}
     } simulation;
@@ -146,6 +148,7 @@ private:
         ("simulation.radius_adjustment_frequency",po::value<int>(&simulation.radius_adjustment_frequency),"Number of cycles to skip between radius adjustments. Must be non-zero.")
         ("simulation.find_thermalized",po::value<std::string>(&simulation.v_find_thermalized),"(yes/no) Find an already thermalized state in the database")
         ("simulation.find_thermalized_temperature_tolerance",po::value<double>(&simulation.find_thermalized_temperature_tolerance),"Temperature tolerance for thermalized state in units of scanning.delta")
+        ("simulation.find_thermalized_h_tolerance",po::value<double>(&simulation.find_thermalized_h_tolerance),"Field tolerance for thermalized state in units of h")
         ("simulation.pick_up_aborted",po::value<std::string>(&simulation.v_pick_up_aborted),"(yest/no) Continue from last saved state from an aborted simulation. Relevant only when saving configurations. [DON'T USE YET]")
         ("sqlite.file",po::value<std::string>(&sqlite.file),"Database file")
         ("sqlite.dir",po::value<std::string>(&sqlite.dir),"Database directory")

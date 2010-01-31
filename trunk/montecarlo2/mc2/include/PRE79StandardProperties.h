@@ -220,7 +220,6 @@ void operator|(serializer_t & s, PRE79StandardProperties & prop){
     s|prop.d322cor;
     s|prop.paritycor;
     s|prop.energy;
-//    std::cout << "Energy evolution: " << prop.energy << std::endl ;
 }
 
 /**
@@ -245,6 +244,7 @@ class PRE79MeanProperties {
     double temperature;
     double tau;
     double lambda;
+    double h;
 public:
     ///konstruktor serializacyjny
     PRE79MeanProperties(){}
@@ -266,6 +266,7 @@ public:
         temperature = H.GetTemperature();
         tau = H.GetTau();
         lambda = H.GetLambda();
+        h = H.GetH();
     }
     const Value & TemporalMeanEnergyPerMolecule() const {
         return energy;
@@ -310,6 +311,9 @@ public:
     const double & Lambda() const {
         return lambda;
     }
+    const double & Field() const {
+        return h;
+    }
 };
 
 template <class serializer_t>
@@ -327,11 +331,13 @@ void operator|(serializer_t & s, PRE79MeanProperties & p){
     s|p.temperature;
     s|p.tau;
     s|p.lambda;
+    s|p.h;
 }
 inline std::ostream & operator<<(std::ostream & o,const PRE79MeanProperties & p){
     o << "Temperature=" << p.Temperature() << std::endl;
     o << "Lambda=" << p.Lambda() << std::endl;
     o << "Tau=" << p.Tau() << std::endl;
+    o << "Field=" << p.Field() << std::endl;
     o << "MeanEPM=" << p.TemporalMeanEnergyPerMolecule().Print() << std::endl;
     o << "SpecHeat=" << p.SpecificHeat().Print() << std::endl;
     o << "UniaxialOrder=" << p.UniaxialOrderByCorrelation().Print() << std::endl;
