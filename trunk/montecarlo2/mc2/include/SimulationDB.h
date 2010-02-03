@@ -57,7 +57,8 @@ public:
             temperature_label("temperature"),
             lambda_label("lambda"),
             tau_label("tau"),
-            h_label("h")
+            // uwaga - SQLite nie rozróżnia wielkich i małych liter... stąd konflikt "H" i "h"
+            h_label("field")
     {
         id = set.project.name;
         user = std::getenv("USER");
