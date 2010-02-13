@@ -12,7 +12,7 @@
 #include "PRE79StandardProperties.h"
 
 /*
- * 
+ * todo: Mathematica output
  */
 int main(int argc, char** argv)
 {
@@ -106,30 +106,63 @@ int main(int argc, char** argv)
                     std::cout << prop.SpecificHeat().TableForm() << "\t";
                 if(column=="energy")
                     std::cout << prop.TemporalMeanEnergyPerMolecule().TableForm() << "\t";
-                if(column=="uniaxial_order")
-                    std::cout << prop.UniaxialOrderByCorrelation().TableForm() << "\t";
-                if(column=="biaxial_order")
-                    std::cout << prop.BiaxialOrderByCorrelation().TableForm() << "\t";
-                if(column=="tetrahedral_order")
-                    std::cout << prop.TetrahedralOrderByCorrelation().TableForm() << "\t";
-                if(column=="parity_order")
-                    std::cout << prop.ParityOrderByCorrelation().TableForm() << "\t";
+
+                if(column=="d200z_from_correltaion")
+                    std::cout << prop.Delta200ZByCorrelation().TableForm() << "\t";
+                if(column=="d222z_from_correltaion")
+                    std::cout << prop.Delta222ZByCorrelation().TableForm() << "\t";
+                if(column=="d200x_from_correlation")
+                    std::cout << prop.Delta200XByCorrelation().TableForm() << "\t";
+                if(column=="d222x_from_correlation")
+                    std::cout << prop.Delta222XByCorrelation().TableForm() << "\t";
+                if(column=="d200y_from_correlation")
+                    std::cout << prop.Delta200YByCorrelation().TableForm() << "\t";
+                if(column=="d222y_from_correlation")
+                    std::cout << prop.Delta222YByCorrelation().TableForm() << "\t";
+
+                if(column=="d322_from_correlation")
+                    std::cout << prop.Delta322ByCorrelation().TableForm() << "\t";
+                if(column=="parity_from_correlation")
+                    std::cout << prop.ParityByCorrelation().TableForm() << "\t";
                 if(column=="tau")
                     std::cout << prop.Tau() << "\t";
                 if(column=="lambda")
                     std::cout << prop.Lambda() << "\t";
+                //to pole nie może nazywać się h ani H, ponieważ zachodzi kolizja z wysokością siatki H
                 if(column=="field")
                     std::cout << prop.Field() << "\t";
-                if(column=="uniaxial_correaltion")
-                    std::cout << prop.UniaxialMeanCorrelation() << "\t";
-                if(column=="biaxial_correaltion")
-                    std::cout << prop.BiaxialMeanCorrelation() << "\t";
+
+                if(column=="mean_d220corz")
+                    std::cout << prop.Delta200ZMeanCorrelation() << "\t";
+                if(column=="mean_d222corz")
+                    std::cout << prop.Delta222ZMeanCorrelation() << "\t";
+                if(column=="mean_d220corz")
+                    std::cout << prop.Delta220ZMeanCorrelation() << "\t";
+                if(column=="mean_d220corx")
+                    std::cout << prop.Delta200XMeanCorrelation() << "\t";
+                if(column=="mean_d222corx")
+                    std::cout << prop.Delta222XMeanCorrelation() << "\t";
+                if(column=="mean_d220corx")
+                    std::cout << prop.Delta220XMeanCorrelation() << "\t";
+                if(column=="mean_d220cory")
+                    std::cout << prop.Delta200YMeanCorrelation() << "\t";
+                if(column=="mean_d222cory")
+                    std::cout << prop.Delta222YMeanCorrelation() << "\t";
+                if(column=="mean_d220cory")
+                    std::cout << prop.Delta220YMeanCorrelation() << "\t";
+
+                if(column=="mean_qx")
+                    std::cout << prop.MeanQxTensor() << "\t" ;
+                if(column=="mean_qy")
+                    std::cout << prop.MeanQyTensor() << "\t" ;
+                if(column=="mean_qz")
+                    std::cout << prop.MeanQzTensor() << "\t" ;
+
                 if(column=="tetrahedral_correaltion")
-                    std::cout << prop.TetrahedralMeanCorrelation() << "\t";
+                    std::cout << prop.Delta322MeanCorrelation() << "\t";
                 if(column=="parity_correaltion")
                     std::cout << prop.ParityMeanCorrelation() << "\t";
-                if(column=="delta220_correaltion")
-                    std::cout << prop.Delta220MeanCorrelation() << "\t";
+                
             }
             std::cout << std::endl;
         }
@@ -191,19 +224,32 @@ int main(int argc, char** argv)
                 foreach(const std::string & column,columns){
                     if(column=="time")
                         std::cout << t << "\t";
-                    // BUG: energia jest źle odczytywana/zapisywana
                     if(column=="energy")
                         std::cout << prop.EnergyEvolution()[t] << "\t";
-                        //std::cout << prop.TemporalMeanEnergyPerMolecule() << "\t";
-                    if(column=="uniaxial_correlation")
-                        std::cout << prop.UniaxialCorrelationEvolution()[t] << "\t";
-                    if(column=="biaxial_correlation")
-                        std::cout << prop.BiaxialCorrelationEvolution()[t] << "\t";
-                    if(column=="tetrahedral_correlation")
-                        std::cout << prop.TetrahedralCorrelationEvolution()[t] << "\t";
-                    if(column=="delta220_correlation")
-                        std::cout << prop.Delta220CorrelationEvolution()[t] << "\t";
-                    if(column=="parity_correlation")
+
+                    if(column=="d200corz")
+                        std::cout << prop.Delta200ZCorrelationEvolution()[t] << "\t";
+                    if(column=="d222corz")
+                        std::cout << prop.Delta222ZCorrelationEvolution()[t] << "\t";
+                    if(column=="d220corz")
+                        std::cout << prop.Delta220ZCorrelationEvolution()[t] << "\t";
+                    if(column=="d200corx")
+                        std::cout << prop.Delta200XCorrelationEvolution()[t] << "\t";
+                    if(column=="d222corx")
+                        std::cout << prop.Delta222XCorrelationEvolution()[t] << "\t";
+                    if(column=="d220corx")
+                        std::cout << prop.Delta220XCorrelationEvolution()[t] << "\t";
+                    if(column=="d200cory")
+                        std::cout << prop.Delta200YCorrelationEvolution()[t] << "\t";
+                    if(column=="d222cory")
+                        std::cout << prop.Delta222YCorrelationEvolution()[t] << "\t";
+                    if(column=="d220cory")
+                        std::cout << prop.Delta220YCorrelationEvolution()[t] << "\t";
+
+                    if(column=="d322cor")
+                        std::cout << prop.Delta322CorrelationEvolution()[t] << "\t";
+                
+                    if(column=="paritycor")
                         std::cout << prop.ParityCorrelationEvolution()[t] << "\t";
                 }
                 std::cout << std::endl;
