@@ -57,7 +57,7 @@ class PRE79StandardProperties {
     void CalculateMeanEnergy(){
         double E=0.0;
         for(int site=0;site<lat->GetN();site++){
-            E+=lat->Particles[site].GetEnergy();
+            E+=lat->GetParticles()[site].GetEnergy();
         }
         E/=double(lat->GetN());
         energy[acc_idx]=E;
@@ -82,9 +82,9 @@ class PRE79StandardProperties {
             mqy+=lat->GetParticles()[i].GetQY();
             mqz+=lat->GetParticles()[i].GetQZ();
         }
-        MeanQxTensor[acc_idx]=mqx/lat->GetN();
-        MeanQyTensor[acc_idx]=mqy/lat->GetN();
-        MeanQzTensor[acc_idx]=mqz/lat->GetN();
+        MeanQxTensor[acc_idx]=mqx/double(lat->GetN());
+        MeanQyTensor[acc_idx]=mqy/double(lat->GetN());
+        MeanQzTensor[acc_idx]=mqz/double(lat->GetN());
     }
 
 public:
@@ -103,6 +103,9 @@ public:
     d222cory(l,_ncycles),
     d220cory(l,_ncycles),
     d322cor(l,_ncycles),
+    MeanQxTensor(_ncycles),
+    MeanQyTensor(_ncycles),
+    MeanQzTensor(_ncycles),
     paritycor(l,_ncycles)
     {
         acc_idx=-1;
@@ -176,10 +179,11 @@ public:
         d322cor.Update();
         paritycor.Update();
 
-        if((acc_idx+1)>=ncycles)
-            CalculateSpecificHeat(H->GetTemperature());
         CalculateMeanEnergy();
         CalculateMeanTensors();
+
+        if((acc_idx+1)>=ncycles)
+            CalculateSpecificHeat(H->GetTemperature());
     }
     Value TemporalMeanEnergyPerMolecule() const {
         return BootstrapMean(energy,0,acc_idx+1);
@@ -288,13 +292,13 @@ public:
         return paritycor.CurrentCorrelation();
     }
 
-    const vect & GetMeanQxTensor() const {
+    const vect GetMeanQxTensor() const {
         return MeanVector(MeanQxTensor);
     }
-    const vect & GetMeanQyTensor() const {
+    const vect GetMeanQyTensor() const {
         return MeanVector(MeanQxTensor);
     }
-    const vect & GetMeanQzTensor() const {
+    const vect GetMeanQzTensor() const {
         return MeanVector(MeanQxTensor);
     }
     

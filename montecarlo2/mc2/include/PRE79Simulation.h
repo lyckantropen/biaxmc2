@@ -31,7 +31,7 @@ class PRE79Simulation:public ILoggable {
 
     void Init(){
         Log() << "Creating Hamiltonian\n";
-        H = new PRE79StandardHamiltonian(settings.hamiltonian.temperature, settings.hamiltonian.lambda, settings.hamiltonian.tau);
+        H = new PRE79StandardHamiltonian(settings.hamiltonian.temperature, settings.hamiltonian.lambda, settings.hamiltonian.tau,settings.hamiltonian.h);
         Log() << "Creating Metropolis\n";
         metro = new Metropolis(H,0.065);
         if(!restored){
@@ -196,7 +196,6 @@ public:
         while(simulation->Iterate()){
             //--- pomiary
             if(k%settings.simulation.measure_frequency==0){
-                Log() << " cycle " <<k << std::endl;
                 prop->Update(k,H);
                 if(settings.output.save_configuration_evolution){
                     database.StoreLattice(settings,*lattice,k);
