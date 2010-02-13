@@ -246,10 +246,6 @@ public:
         Log() << "Done\n";
         Log() << "Mean EPM: " << prop->TemporalMeanEnergyPerMolecule().Print() << std::endl;
         Log() << "Specific Heat: " << prop->SpecificHeat().Print() << std::endl;
-        Log() << "Uniaxial From Correlation: " << prop->UniaxialOrderByCorrelation().Print() << std::endl;
-        Log() << "Biaxial From Correlation: " << prop->BiaxialOrderByCorrelation().Print() << std::endl;
-        Log() << "Tetra From Correlation: " << prop->TetrahedralOrderByCorrelation().Print() << std::endl;
-        Log() << "Parity From Correlation: " << prop->ParityOrderByCorrelation().Print() << std::endl;
         return lattice;
 
     }
