@@ -31,14 +31,23 @@ public:
         v2=epsilon*(2*lambda*lambda-sqrt6*lambda);
         v3=epsilon*(3.0/2-lambda*lambda);
         vt=epsilon*tau;
-        hxx = (lambda-1/sqrt6);
-        hyy = -(lambda+1/sqrt6);
-        hzz = std::sqrt(2/3);
+
+        //wartości Kacpra. Nie wiem skąd je wziął.
+        //hxx = (lambda-1/sqrt6);
+        //hyy = -(lambda+1/sqrt6);
+        //hzz = std::sqrt(2/3);
+        hxx = lambda;
+        hyy = -lambda;
+        hzz = std::sqrt(2./3.);
 
     }
     virtual double ExternalInteractionEnergy(const Particle & p){
-        // pole skierowane wzdłuż osi x
-        return - (h/std::abs(h)) *h*h*(hxx*p.GetQX()[0]+hyy*p.GetQY()[0]+hzz*p.GetQZ()[0]);
+        // pole skierowane wzdłuż osi z
+        // uwaga - h jest równoważne h kwadrat w literaturze, a h/abs(h) jest równoważne delta epsilon i jest równe sgn(h)
+        // tensor Q zawiera jeszcze część sferycznie symetryczną, którą pomijamy, choć można ją dodać (wynosi ona -1/sqrt(6))
+        if(h==0.0) return 0.0;
+        return - epsilon*(h/std::abs(h))*h*(hxx*p.GetQX()[5] + hyy*p.GetQY()[5] + hzz*p.GetQZ()[5] - 1/sqrt6);
+
         //return 0.0;
     }
     virtual double TwoParticleEnergy(const Particle & a, const Particle & b){

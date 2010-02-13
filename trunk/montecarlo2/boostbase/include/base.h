@@ -336,13 +336,17 @@ namespace boostbase {
             }
             s1 << "filename, date, md5 ) ";
             f << "md5=" << md5 << ".z";
-            s2 << '\'' << f.str() << "\' , \'" << pt::to_simple_string(local_time) << "\', \'" << md5 << "\' )";
+
+            std::string fn;
+            fn=md5+".z";
+
+            s2 << '\'' << /*f.str()*/ fn << "\' , \'" << pt::to_simple_string(local_time) << "\', \'" << md5 << "\' )";
 
             // wykonanie polecenia SQL
             #pragma omp critical
             command((s1.str() + s2.str()));
             // zapisanie obiektu do pliku
-            serialsave<item_t > (item, fs::path(base_dir/f.str()));
+            serialsave<item_t > (item, fs::path(base_dir/ /*f.str()*/fn));
         }
 
         ///dostęp do loga SQLite
