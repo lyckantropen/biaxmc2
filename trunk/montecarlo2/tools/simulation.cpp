@@ -15,7 +15,6 @@
 #include "Metropolis.h"
 #include "PRE79StandardHamiltonian.h"
 #include "PRE79StandardProperties.h"
-#include "PRE79Simulation.h"
 #include "Settings.h"
 #include "SimulationDB.h"
 #include "PRE79Scanning.h"
