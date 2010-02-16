@@ -61,6 +61,7 @@ namespace boostbase {
             }
 
             do {
+                //#//pragma omp critical
                 result = sqlite3_step(stmt);
             } while(result==SQLITE_BUSY || result==SQLITE_LOCKED);
 
@@ -101,6 +102,7 @@ namespace boostbase {
                 std::vector<std::string> cur_row;
 
                 do {
+                    //#//pragma omp critical
                     result = sqlite3_step(stmt);
                 } while(result==SQLITE_BUSY || result==SQLITE_LOCKED);
 
@@ -223,7 +225,7 @@ namespace boostbase {
                     s << " AND ";
             }
             std::vector<item_t> results;
-            #pragma omp critical
+            //#//pragma omp critical
             results = eval_get<item_t>(s.str());
             return results;
         }
@@ -250,7 +252,7 @@ namespace boostbase {
                     s << " AND ";
             }
             std::vector<item_t> results;
-            #pragma omp critical
+            //#//pragma omp critical
             results = eval_get<item_t>(s.str());
             return results;
         }
@@ -282,7 +284,7 @@ namespace boostbase {
                     s << " AND ";
             }
             std::vector<item_t> results;
-            #pragma omp critical
+            //#//pragma omp critical
             results = eval_get<item_t>(s.str());
             return results;
         }
@@ -343,7 +345,7 @@ namespace boostbase {
             s2 << '\'' << /*f.str()*/ fn << "\' , \'" << pt::to_simple_string(local_time) << "\', \'" << md5 << "\' )";
 
             // wykonanie polecenia SQL
-            #pragma omp critical
+            // #// pragma omp critical
             command((s1.str() + s2.str()));
             // zapisanie obiektu do pliku
             serialsave<item_t > (item, fs::path(base_dir/ /*f.str()*/fn));
