@@ -32,13 +32,13 @@ public:
         v3=epsilon*(3.0/2-lambda*lambda);
         vt=epsilon*tau;
 
-        //wartości Kacpra. Nie wiem skąd je wziął.
-        //hxx = (lambda-1/sqrt6);
-        //hyy = -(lambda+1/sqrt6);
-        //hzz = std::sqrt(2/3);
-        hxx = lambda;
-        hyy = -lambda;
-        hzz = std::sqrt(2./3.);
+        //wartości Kacpra. Te są dobre, trzeba rozpisać jedynkę
+        hxx = (lambda-1/sqrt6);
+        hyy = -(lambda+1/sqrt6);
+        hzz = std::sqrt(2/3);
+        //hxx = lambda;
+        //hyy = -lambda;
+        //hzz = std::sqrt(2./3.);
 
     }
     virtual double ExternalInteractionEnergy(const Particle & p){
