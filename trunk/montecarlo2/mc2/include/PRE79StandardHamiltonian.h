@@ -44,9 +44,8 @@ public:
     virtual double ExternalInteractionEnergy(const Particle & p){
         // pole skierowane wzdłuż osi z
         // uwaga - h jest równoważne h kwadrat w literaturze, a h/abs(h) jest równoważne delta epsilon i jest równe sgn(h)
-        // tensor Q zawiera jeszcze część sferycznie symetryczną, którą pomijamy, choć można ją dodać (wynosi ona -1/sqrt(6))
         if(h==0.0) return 0.0;
-        return - epsilon*(h/std::abs(h))*h*(hxx*p.GetQX()[5] + hyy*p.GetQY()[5] + hzz*p.GetQZ()[5] - 1/sqrt6);
+        return - epsilon*(h/std::abs(h))*h*(hxx*p.GetQX()[5] + hyy*p.GetQY()[5] + hzz*p.GetQZ()[5]);
 
         //return 0.0;
     }
