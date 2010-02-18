@@ -37,11 +37,20 @@ public:
     void RunNonParallel(){
         Lattice state;
         Settings current_settings = settings ;
+
+        //--- obliczanie czasu działania
 	Log() << "Calculating expected time of execution\n";
         pt::time_duration timeof1000cycles = PRE79Simulation(settings).DurationOf1000Cycles();
-        int nkcycles = ((nscans-1)*settings.simulation.supplementary_thermalization_cycles + nscans*settings.simulation.production_cycles + settings.simulation.thermalization_cycles)/1000;
+        int nkcycles=0;
+        if(settings.scanning.threaded_production)
+            nkcycles = ((nscans-1)*settings.simulation.supplementary_thermalization_cycles + nscans*settings.simulation.production_cycles/settings.openmp.number_of_threads + settings.simulation.thermalization_cycles)/1000;
+        else
+            nkcycles = ((nscans-1)*settings.simulation.supplementary_thermalization_cycles + nscans*settings.simulation.production_cycles + settings.simulation.thermalization_cycles)/1000;
+
         Log() << "Expected time of execution: " << pt::to_simple_string(timeof1000cycles*nkcycles) << std::endl;
-        
+        //---
+
+
         Log() << "Non-parallel version\n";
         Log() << "Scanning " << variable << " from " << start << " to " << end << " with interval " << delta << std::endl; 
         
@@ -80,13 +89,19 @@ public:
                 PRE79Simulation simulation(current_settings);
                 Log() << simulation.GetLog();
                 simulation.SetStream(&Log());
-                state = *simulation.Run();
+                if(settings.scanning.threaded_production)
+                    state = simulation.RunParallel();
+                else
+                    state = simulation.Run();
             }
             else{
                 PRE79Simulation simulation(current_settings,state);
                 Log() << simulation.GetLog();
                 simulation.SetStream(&Log());
-                state = *simulation.Run();
+                if(settings.scanning.threaded_production)
+                    state = simulation.RunParallel();
+                else
+                    state = simulation.Run();
             }
             //międzyczasy
             pt::time_duration t1scan = pt::second_clock::local_time()-start_t;
