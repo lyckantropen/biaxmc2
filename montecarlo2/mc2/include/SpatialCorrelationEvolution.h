@@ -109,6 +109,13 @@ public:
         }
         return BootstrapMean(cor);
     }
+    
+    ///dołożenie danych z innej ewolucji tej samej funkcji korelacji, nie należy wykonywać przed zakończeniem obliczania bieżącej funkcji
+    void Append(const SpatialCorrelationEvolution & c){
+        ncycles+=c.ncycles;
+        acc_idx+=c.ncycles;
+        correlation.insert(correlation.end(),c.correlation.begin(),c.correlation.end());
+    }
     ///średnia z funkcji korelacji po czasie
     vect    Mean() const {
         return MeanVector(correlation);

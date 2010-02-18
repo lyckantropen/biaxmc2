@@ -17,6 +17,83 @@
 #include "SimulationDBFind.h"
 #include <omp.h>
 
+///Podstawowa symulacja (produkcja) do produkcji równoległej
+class PRE79Production:public ILoggable {
+    Lattice                     *lattice;
+    PRE79StandardHamiltonian    *H;
+    LatticeSimulation           *simulation;
+    PRE79StandardProperties     *prop;
+    Metropolis                  *metro;
+    const Settings  &   settings;
+//    SimulationDB        database;
+    long nprod;
+    long ncycles;
+public:
+    PRE79Production(const Settings & set,long _nprod, const Lattice & start):
+    nprod(_nprod),
+    settings(set)
+    {
+        ncycles = nprod/settings.simulation.measure_frequency;
+
+        lattice = new Lattice(start);
+        H = new PRE79StandardHamiltonian(settings.hamiltonian.temperature, settings.hamiltonian.lambda, settings.hamiltonian.tau,settings.hamiltonian.h);
+        metro = new Metropolis(H,0.065);
+        prop = new PRE79StandardProperties(lattice,ncycles);
+        simulation = new LatticeSimulation(H,lattice,metro,nprod,0);
+        SetStream(&std::cout);
+
+    }
+
+    void Run() {
+        //std::cout << "Thread " << omp_get_thread_num() << " of " << omp_get_num_threads() << std::endl;
+        Log() << "Production with freq " << settings.simulation.measure_frequency << std::endl ;
+
+
+
+        pt::ptime start_t = pt::second_clock::local_time();
+        int remaining_interval = simulation->GetNCycles()/5;
+        Log() << "Remaining time will be reported every " << remaining_interval << " cycles\n";
+
+        long k=0;
+        while(simulation->Iterate()){
+            //--- pomiary
+            if(k%settings.simulation.measure_frequency==0){
+                prop->Update(k,H);
+            }
+            //---
+            //--- poprawa promienia błądzenia przypadkowego
+            if(k%settings.simulation.radius_adjustment_frequency==0)
+                metro->AdjustRadius(lattice);
+            //---
+            
+            if((k+1)%remaining_interval==0){
+                pt::time_duration run1k = pt::second_clock::local_time() - start_t;
+                int total1kruns = (simulation->GetNCycles()-k-1)/remaining_interval;
+                std::cout << "Thread: " << omp_get_thread_num() << "/" << omp_get_num_threads() <<  ": "<< pt::to_simple_string(run1k*total1kruns) << " remaining\n";
+                start_t = pt::second_clock::local_time();
+            }
+            k++;
+        }
+    }
+
+    Lattice & GetLattice(){
+        return *lattice;
+    }
+    const PRE79StandardProperties & GetProperties(){
+        return *prop;
+    }
+    virtual std::ostream & Log(){
+        ILoggable::Log() << "Thread: " << omp_get_thread_num() << "/" << omp_get_num_threads() << ": ";
+    }
+    ~PRE79Production(){
+        delete lattice;
+        delete H;
+        delete metro;
+        delete prop;
+        delete simulation;
+    }
+};
+
 ///Pojedyncza symulacja (bez skanowania)
 class PRE79Simulation:public ILoggable {
     Lattice                     *lattice;
@@ -171,8 +248,71 @@ public:
         return DurationOf1000Cycles()*total1kruns;
     }
 
+    ///jednowątkowa termalizacja i wielowątkowa produkcja
+    Lattice RunParallel(){
+        //--- termalizacja
+        Log() << "Thermalization cycles: " << thermalization->GetNCycles() << std::endl;
+        Log() << "Adjusting radius\n";
+        metro->AdjustRadius(lattice);
+        Log() << "Calculating expected duration of simulation\n";
+        pt::time_duration   expected = DurationOf1000Cycles()*(thermalization->GetNCycles()+settings.simulation.production_cycles/settings.openmp.number_of_threads)/1000;
+        Log() << "Expected time of simulation: " << pt::to_simple_string(expected) << std::endl;
+
+        Log() << "Thermalization\n";
+        while(thermalization->Iterate());
+        //---
+        
+        //--- tworzymy fragmentaryczne symulacje
+        
+        //tutaj nie może być wątpliwości ile jest wątków
+        omp_set_dynamic(0);
+        omp_set_num_threads(settings.openmp.number_of_threads);
+        
+        //PRE79Production prototype(settings,settings.simulation.production_cycles/settings.openmp.number_of_threads,*lattice);
+        std::vector<PRE79Production*>    productions;//(settings.openmp.number_of_threads,prototype);
+        for(int i=0;i<settings.openmp.number_of_threads;i++)
+            productions.push_back(new PRE79Production(settings,settings.simulation.production_cycles/settings.openmp.number_of_threads,*lattice));
+
+        Log() << "Starting " << settings.openmp.number_of_threads << " productions\n";
+        #pragma omp parallel for
+        for(int i=0;i<productions.size();i++){
+            productions[i]->Run();
+        }
+        PRE79StandardProperties generalprop = productions[0]->GetProperties();
+        for(int i=1;i<productions.size();i++){
+            generalprop.Append(productions[i]->GetProperties());
+        }
+        generalprop.CalculateSpecificHeat(H->GetTemperature());
+
+        if(settings.output.save_properties_evolution) {
+            Log() << "Saving Properties Evolution\n";
+            database.StorePropertiesEvolution(settings,generalprop);
+        }
+        if(settings.output.save_final_configuration){
+            Log() << "Saving Final Lattice\n";
+            database.StoreFinalLattice(settings,productions[0]->GetLattice());
+        }
+        if(settings.output.save_final_properties){
+            Log() << "Saving Final Properties\n";
+            PRE79MeanProperties pp(generalprop,*H);
+            database.StoreFinalProperties(settings,pp);
+        }
+
+        Log() << "Done\n";
+        Log() << "Mean EPM: " << generalprop.TemporalMeanEnergyPerMolecule().Print() << std::endl;
+        Log() << "Specific Heat: " << generalprop.SpecificHeat().Print() << std::endl;
+
+        Lattice ret = productions[0]->GetLattice();
+        foreach(PRE79Production * prod,productions){
+            delete prod;
+        }
+
+        return ret;
+    }
+
+
     ///Symulacja. Zwraca końcowy stan sieci.
-    const Lattice * Run(){
+    const Lattice & Run(){
         Log() << "Thermalization cycles: " << thermalization->GetNCycles() << std::endl;
         Log() << "Production cycles: " << simulation->GetNCycles() << std::endl;
         Log() << "Adjusting radius\n";
@@ -245,7 +385,7 @@ public:
         Log() << "Done\n";
         Log() << "Mean EPM: " << prop->TemporalMeanEnergyPerMolecule().Print() << std::endl;
         Log() << "Specific Heat: " << prop->SpecificHeat().Print() << std::endl;
-        return lattice;
+        return *lattice;
 
     }
     virtual std::ostream & Log(){

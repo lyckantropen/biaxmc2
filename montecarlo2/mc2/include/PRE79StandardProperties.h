@@ -62,6 +62,7 @@ class PRE79StandardProperties {
         E/=double(lat->GetN());
         energy[acc_idx]=E;
     }
+public:
     ///obliczanie ciepła właściwego metodą bootstrapu
     void CalculateSpecificHeat(const double & T){
         vect fluct(acc_idx+1);
@@ -72,6 +73,7 @@ class PRE79StandardProperties {
         }
         specific_heat=BootstrapMean(fluct);
     }
+private:
     ///obliczanie średnich tensorów xx,yy i zz
     void CalculateMeanTensors(){
         vect mqx(0.0,6);
@@ -114,6 +116,7 @@ public:
         //specific_heat.resize(ncycles);
     }
 
+
     PRE79StandardProperties(const PRE79StandardProperties & p){
         //tak to musi być zrobione, por. Standard C++ Library Reference pp. 327
         energy.resize(p.energy.size());
@@ -132,6 +135,9 @@ public:
         d200cory=p.d200cory;
         d220cory=p.d220cory;
         d222cory=p.d222cory;
+        MeanQxTensor=p.MeanQxTensor;
+        MeanQyTensor=p.MeanQyTensor;
+        MeanQzTensor=p.MeanQzTensor;
         d322cor=p.d322cor;
         paritycor=p.paritycor;
         acc_idx=p.acc_idx;
@@ -153,6 +159,9 @@ public:
         d200cory=p.d200cory;
         d220cory=p.d220cory;
         d222cory=p.d222cory;
+        MeanQxTensor=p.MeanQxTensor;
+        MeanQyTensor=p.MeanQyTensor;
+        MeanQzTensor=p.MeanQzTensor;
         d322cor=p.d322cor;
         paritycor=p.paritycor;
         acc_idx=p.acc_idx;
@@ -185,6 +194,40 @@ public:
         if((acc_idx+1)>=ncycles)
             CalculateSpecificHeat(H->GetTemperature());
     }
+
+    ///dołożenie danych z innych właściwości, koniecznie po zakończeniu obliczeń
+    void Append(const PRE79StandardProperties & p){
+        ncycles+=p.ncycles;
+        acc_idx+=p.ncycles;
+        index+=p.ncycles;
+        d200corz.Append(p.d200corz);
+        d220corz.Append(p.d220corz);
+        d222corz.Append(p.d222corz);
+        d200corx.Append(p.d200corx);
+        d220corx.Append(p.d220corx);
+        d222corx.Append(p.d222corx);
+        d200cory.Append(p.d200cory);
+        d220cory.Append(p.d220cory);
+        d222cory.Append(p.d222cory);
+        d322cor.Append(p.d322cor);
+        paritycor.Append(p.paritycor);
+
+        MeanQxTensor.insert(MeanQxTensor.end(),p.MeanQxTensor.begin(),p.MeanQxTensor.end());
+        MeanQyTensor.insert(MeanQyTensor.end(),p.MeanQyTensor.begin(),p.MeanQyTensor.end());
+        MeanQzTensor.insert(MeanQzTensor.end(),p.MeanQzTensor.begin(),p.MeanQzTensor.end());
+
+        int oldsize=energy.size();
+        vect tmpenergy(0.0,ncycles);
+        for(int i=0;i<oldsize;i++)
+            tmpenergy[i]=energy[i];
+
+        for(int i=oldsize;i<ncycles;i++){
+            tmpenergy[i]=p.energy[i-oldsize];
+        }
+        energy.resize(ncycles,0.0);
+        energy=tmpenergy;
+    }
+
     Value TemporalMeanEnergyPerMolecule() const {
         return BootstrapMean(energy,0,acc_idx+1);
     }
