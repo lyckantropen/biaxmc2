@@ -107,9 +107,9 @@ int main(int argc, char** argv)
                 if(column=="energy")
                     std::cout << prop.TemporalMeanEnergyPerMolecule().TableForm() << "\t";
 
-                if(column=="d200z_from_correltaion")
+                if(column=="d200z_from_correlation")
                     std::cout << prop.Delta200ZByCorrelation().TableForm() << "\t";
-                if(column=="d222z_from_correltaion")
+                if(column=="d222z_from_correlation")
                     std::cout << prop.Delta222ZByCorrelation().TableForm() << "\t";
                 if(column=="d200x_from_correlation")
                     std::cout << prop.Delta200XByCorrelation().TableForm() << "\t";
