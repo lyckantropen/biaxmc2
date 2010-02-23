@@ -169,7 +169,7 @@ class PRE79Simulation:public ILoggable {
             }
         }
         else{
-            Log() << "Creating Supplementary Thermalization\n";
+            Log() << "Previous final state passed on as initial, creating Supplementary Thermalization\n";
             thermalization = new LatticeSimulation(H,lattice,metro,settings.simulation.supplementary_thermalization_cycles);
         }
         //--- szukamy stanu, od którego możemy kontynuować symulację
