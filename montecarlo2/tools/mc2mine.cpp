@@ -9,7 +9,6 @@
 #include "boost.h"
 #include "std.h"
 #include "SimulationDB.h"
-#include "PRE79StandardProperties.h"
 
 /*
  * todo: Mathematica output
@@ -99,6 +98,7 @@ int main(int argc, char** argv)
         std::cout << std::endl;
 
         foreach(const PRE79MeanProperties & prop,whatwegot){
+            //std::cout << prop << std::endl;
             foreach(const std::string & column,columns){
                 if(column=="temperature")
                     std::cout << prop.Temperature() << "\t";
