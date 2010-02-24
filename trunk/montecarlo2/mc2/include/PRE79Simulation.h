@@ -12,7 +12,6 @@
 #include "Settings.h"
 #include "serializer.h"
 #include "SimulationDB.h"
-#include "PRE79StandardProperties.h"
 #include "ILoggable.h"
 #include "SimulationDBFind.h"
 #include <omp.h>
@@ -331,7 +330,7 @@ public:
         long k=0;
 
         pt::ptime start_t = pt::second_clock::local_time();
-        int remaining_interval = simulation->GetNCycles()/20;
+        int remaining_interval = simulation->GetNCycles()/20+1;
         Log() << "Remaining time will be reported every " << remaining_interval << " cycles\n";
         while(simulation->Iterate()){
             //--- pomiary

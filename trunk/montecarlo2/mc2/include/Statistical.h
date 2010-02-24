@@ -88,7 +88,7 @@ extern std::ostream & operator<<(std::ostream & s, Value & v);
 
 
 template<class value_type>
-Value Mean(const std::valarray<value_type> & v,const int & start=0, const int & limit=0){
+Value Mean(const std::valarray<value_type> & v,const int start=0, const int limit=0){
     int lim;
     if(limit==0)
         lim=v.size();
@@ -101,21 +101,25 @@ Value Mean(const std::valarray<value_type> & v,const int & start=0, const int & 
 }
 
 template<class value_type>
-std::valarray<value_type> MeanVector(const std::vector<std::valarray<value_type> > & v,const int & start=0, const int & limit=0){
+std::valarray<value_type> MeanVector(const std::vector<std::valarray<value_type> > & v,const int start=0, const int limit=0){
     int minn,maxn;
     if(limit==0)
         maxn=v.size();
     else
         maxn=limit;
     std::valarray<value_type> result(v[0].size());
-    for(int i=start;i<maxn;i++)
+    for(int i=start;i<maxn;i++){
+//        std::cout << "v["<<i<<"]=" << v[i] << std::endl;
         result+=v[i];
+    }
     result/=double(maxn);
+//    std::cout << "MeanVector: " << result << std::endl;
+
     return result;
 }
 //Efron, Tibshirani, "An Introduction to Bootstrap", 1993 Chapman & Hall, Inc., pp. 45-47
 template<class value_type>
-Value BootstrapMean(const std::valarray<value_type> & v, const int & start=0, const int & limit=0, const int & resamples=50){
+Value BootstrapMean(const std::valarray<value_type> & v, const int start=0, const int limit=0, const int resamples=50){
     int lim;
     if(limit==0)
         lim=v.size();
@@ -142,10 +146,10 @@ Value BootstrapMean(const std::valarray<value_type> & v, const int & start=0, co
 };
 
 
-template  Value Mean<Value>(const std::valarray<Value> & v,const int &, const int &);
-template  Value Mean<double>(const std::valarray<double> & v, const int &, const int &);
-template  std::valarray<double> MeanVector<double>(const std::vector<vect> & v, const int & start, const int & limit);
-template  Value BootstrapMean<double>(const std::valarray<double> & v, const int & start, const int & limit, const int & resamples);
+template  Value Mean<Value>(const std::valarray<Value> & v,const int, const int);
+template  Value Mean<double>(const std::valarray<double> & v, const int, const int);
+template  std::valarray<double> MeanVector<double>(const std::vector<vect> & v, const int start, const int limit);
+template  Value BootstrapMean<double>(const std::valarray<double> & v, const int start, const int limit, const int resamples);
 //template<>  std::valarray<double> MeanVector<>(const std::vector<std::valarray<Value> > & v, const int & limit);
 
 #endif	/* _STATISTICAL_H */

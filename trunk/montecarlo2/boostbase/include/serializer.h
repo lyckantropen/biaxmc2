@@ -96,6 +96,7 @@ namespace boostbase {
         void operator|(std::valarray<t> & v) {
             unsigned int size = v.size();
             operator|(size);
+            //std::cout << "out: " << size << std::endl;
             for(int i=0;i<size;i++) {
                 operator|(v[i]);
             }
@@ -214,6 +215,7 @@ namespace boostbase {
             unsigned int size;
             operator|(size);
             v.resize(size);
+            //std::cout << "in: "<< size << std::endl;
             for (int i = 0; i < size; i++) {
                 t item;
                 operator|(item);
