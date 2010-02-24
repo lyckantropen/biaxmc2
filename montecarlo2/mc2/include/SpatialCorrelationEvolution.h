@@ -117,8 +117,8 @@ public:
         correlation.insert(correlation.end(),c.correlation.begin(),c.correlation.end());
     }
     ///średnia z funkcji korelacji po czasie
-    vect    Mean() const {
-        return MeanVector(correlation);
+    vect    Mean(int acc_idx=0) const {
+        return MeanVector(correlation,0,acc_idx);
     }
     //Accessors
     const int & GetNCycles() const {

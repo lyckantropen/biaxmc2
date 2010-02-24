@@ -113,6 +113,11 @@ public:
         acc_idx=-1;
         index=0;
         energy.resize(ncycles,0.0);
+        for(int i=0;i<ncycles;i++){
+            MeanQxTensor[i].resize(6,0.0);
+            MeanQyTensor[i].resize(6,0.0);
+            MeanQzTensor[i].resize(6,0.0);
+        }
         //specific_heat.resize(ncycles);
     }
 
@@ -262,40 +267,51 @@ public:
 
     //średnie funkcje korelacji dla poszczególnych osi
     vect Delta200ZMeanCorrelation() const {
-        return d200corz.Mean();
+//        std::cout << "D200Z\n";
+        return d200corz.Mean(acc_idx+1);
     }
     vect Delta222ZMeanCorrelation() const {
-        return d222corz.Mean();
+//        std::cout << "D222Z\n";
+        return d222corz.Mean(acc_idx+1);
     }
     vect Delta220ZMeanCorrelation() const {
-        return d220corz.Mean();
+//        std::cout << "D220Z\n";
+        return d220corz.Mean(acc_idx+1);
     }
     vect Delta200YMeanCorrelation() const {
-        return d200cory.Mean();
+//        std::cout << "D200Y\n";
+        return d200cory.Mean(acc_idx+1);
     }
     vect Delta222YMeanCorrelation() const {
-        return d222cory.Mean();
+//        std::cout << "D222Y\n";
+        return d222cory.Mean(acc_idx+1);
     }
     vect Delta220YMeanCorrelation() const {
-        return d220cory.Mean();
+//        std::cout << "D220Y\n";
+        return d220cory.Mean(acc_idx+1);
     }
     vect Delta200XMeanCorrelation() const {
-        return d200corx.Mean();
+//        std::cout << "D200X\n";
+        return d200corx.Mean(acc_idx+1);
     }
     vect Delta222XMeanCorrelation() const {
-        return d222corx.Mean();
+//        std::cout << "D222X\n";
+        return d222corx.Mean(acc_idx+1);
     }
     vect Delta220XMeanCorrelation() const {
-        return d220corx.Mean();
+//        std::cout << "D220X\n";
+        return d220corx.Mean(acc_idx+1);
     }
 
 
 
     vect Delta322MeanCorrelation() const {
-        return d322cor.Mean();
+//        std::cout << "D322\n";
+        return d322cor.Mean(acc_idx+1);
     }
     vect ParityMeanCorrelation() const {
-        return paritycor.Mean();
+//        std::cout << "Parity\n";
+        return paritycor.Mean(acc_idx+1);
     }
 
 
@@ -336,13 +352,16 @@ public:
     }
 
     const vect GetMeanQxTensor() const {
-        return MeanVector(MeanQxTensor);
+//        std::cout << "Qx\n";
+        return MeanVector(MeanQxTensor,0,acc_idx+1);
     }
     const vect GetMeanQyTensor() const {
-        return MeanVector(MeanQxTensor);
+//        std::cout << "Qy\n";
+        return MeanVector(MeanQxTensor,0,acc_idx+1);
     }
     const vect GetMeanQzTensor() const {
-        return MeanVector(MeanQxTensor);
+//        std::cout << "Qz\n";
+        return MeanVector(MeanQxTensor,0,acc_idx+1);
     }
     
     const vect & EnergyEvolution() const {
@@ -399,6 +418,9 @@ public:
     }
     const int & GetNCycles() const {
         return ncycles;
+    }
+    int GetMaxCorrLen() const {
+        return lat->GetL()/2+1;
     }
 
 };
@@ -469,6 +491,23 @@ public:
     PRE79MeanProperties(){}
     ///konstruktor tradycyjny
     PRE79MeanProperties(PRE79StandardProperties & prop, PRE79StandardHamiltonian & H){
+        mean_d200corz.resize(prop.GetMaxCorrLen(),0.0);
+        mean_d222corz.resize(prop.GetMaxCorrLen(),0.0);
+        mean_d220corz.resize(prop.GetMaxCorrLen(),0.0);
+        mean_d200corx.resize(prop.GetMaxCorrLen(),0.0);
+        mean_d222corx.resize(prop.GetMaxCorrLen(),0.0);
+        mean_d220corx.resize(prop.GetMaxCorrLen(),0.0);
+        mean_d200cory.resize(prop.GetMaxCorrLen(),0.0);
+        mean_d222cory.resize(prop.GetMaxCorrLen(),0.0);
+        mean_d220cory.resize(prop.GetMaxCorrLen(),0.0);
+        mean_qx.resize(6,0.0);
+        mean_qz.resize(6,0.0);
+        mean_qy.resize(6,0.0);
+
+        mean_d322cor.resize(prop.GetMaxCorrLen(),0.0);
+        mean_paritycor.resize(prop.GetMaxCorrLen(),0.0);
+
+
         energy = prop.TemporalMeanEnergyPerMolecule();
         specific_heat = prop.SpecificHeat();
 
@@ -608,6 +647,12 @@ void operator|(serializer_t & s, PRE79MeanProperties & p){
     s|p.d200x_from_correlation;
     s|p.d200y_from_correlation;
     s|p.d200y_from_correlation;
+    s|p.d222z_from_correlation;
+    s|p.d222z_from_correlation;
+    s|p.d222x_from_correlation;
+    s|p.d222x_from_correlation;
+    s|p.d222y_from_correlation;
+    s|p.d222y_from_correlation;
     s|p.d322_from_correlation;
     s|p.parity_from_correlation;
     s|p.mean_d200corz;

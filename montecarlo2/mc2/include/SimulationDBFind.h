@@ -9,8 +9,6 @@
 #define	_SIMULATIONDBFIND_H
 
 #include "SimulationDB.h"
-#include "Lattice.h"
-#include "PRE79StandardProperties.h"
 
 inline Lattice FindFinalState(const Settings & settings, bool & success) {
     SimulationDB sdb(settings);
