@@ -13,79 +13,9 @@
 /*
  * todo: Mathematica output
  */
-int main(int argc, char** argv)
-{
-    std::string                 data_type="final_properties";
-    std::string dbfile="";
-    std::string dbdir="";
-    boostbase::tween_t_proxy    betweens;
-    boostbase::pair_t_proxy     wheres;
-    std::vector<std::string>    columns;
-    bool sqlite_debug=false;
+typedef enum { table, mathematica, maple } output_t ;
 
-    for(int i=1;i<argc;i++){
-        if(std::string(argv[i])=="--db"){
-            dbfile=argv[i+1];
-            dbdir=argv[i+2];
-        }
-        if(std::string(argv[i])=="--data-type")
-            data_type=argv[i+1];
-        if(std::string(argv[i])=="--columns"){
-            std::string columns_string = argv[i+1];
-            boost::split(columns,columns_string,boost::is_any_of(","));
-        }
-        if(std::string(argv[i])=="--between")
-            betweens(std::string(argv[i+1]),std::atof(argv[i+2]),std::atof(argv[i+3]));
-        if(std::string(argv[i])=="--where")
-            wheres(std::string(argv[i+1]),std::string(argv[i+2]));
-        if(std::string(argv[i])=="--sqlite-debug")
-            sqlite_debug=true;
-        if(std::string(argv[i])=="--day"){
-            pt::ptime day_start = pt::time_from_string(std::string(argv[i+1])+std::string(" 00:00:00.000000"));
-            pt::ptime day_end = day_start + pt::hours(24);
-            betweens(std::string("date"),pt::to_simple_string(day_start),pt::to_simple_string(day_end));
-        }
-        if(std::string(argv[i])=="--today"){
-            pt::ptime day_start = pt::second_clock::local_time();
-            day_start-=day_start.time_of_day();
-            pt::ptime day_end = day_start + pt::hours(24);
-            betweens(std::string("date"),pt::to_simple_string(day_start),pt::to_simple_string(day_end));
-        }
-        if(std::string(argv[i])=="--days"){
-            pt::ptime day_start = pt::time_from_string(std::string(argv[i+1])+std::string(" 00:00:00.000000"));
-            pt::ptime day_end = pt::time_from_string(std::string(argv[i+2])+std::string(" 00:00:00.000000"));
-            betweens(std::string("date"),pt::to_simple_string(day_start),pt::to_simple_string(day_end));
-        }
-        if(std::string(argv[i])=="--yesterday"){
-            pt::ptime day_end = pt::second_clock::local_time();
-            day_end-=day_end.time_of_day();
-            pt::ptime day_start = day_end - pt::hours(24);
-            betweens(std::string("date"),pt::to_simple_string(day_start),pt::to_simple_string(day_end));
-        }
-        if(std::string(argv[i])=="--hours"){
-            pt::ptime hour_start;
-            pt::ptime hour_end;
-
-            pt::ptime day_start = pt::second_clock::local_time();
-            day_start-=day_start.time_of_day();
-
-            hour_start = day_start + pt::duration_from_string(std::string(argv[i+1]));
-            hour_end = day_start + pt::duration_from_string(std::string(argv[i+2]));
-
-            betweens(std::string("date"),pt::to_simple_string(hour_start),pt::to_simple_string(hour_end));
-        }
-
-    }
-    if(dbfile=="" || dbdir==""){
-        std::cout << "please specify database file and directory with --db\n";
-        std::exit(1);
-    }
-
-    wheres(std::string("data_type"),data_type);
-    std::cout << std::setprecision(8) ;
-
-    //readonly 
-    boostbase::base db(dbfile,dbdir,true);
+void    table_output(const std::string & data_type,const std::vector<std::string> & columns,boostbase::base & db,const boostbase::tween_t_proxy & betweens,const boostbase::pair_t_proxy & wheres){
 
     if(data_type=="final_properties" || data_type=="properties") {
         std::vector<PRE79MeanProperties> whatwegot= db.get<PRE79MeanProperties>(wheres,betweens);
@@ -162,7 +92,7 @@ int main(int argc, char** argv)
                     std::cout << prop.Delta322MeanCorrelation() << "\t";
                 if(column=="parity_correaltion")
                     std::cout << prop.ParityMeanCorrelation() << "\t";
-                
+
             }
             std::cout << std::endl;
         }
@@ -211,7 +141,7 @@ int main(int argc, char** argv)
     if(data_type=="properties_evolution"){
         //TODO: tutaj jest segfault
         std::vector<PRE79StandardProperties> whatwegot= db.get<PRE79StandardProperties>(wheres,betweens);
-        
+
         for(int p=0;p<whatwegot.size();p++){
             const PRE79StandardProperties & prop = whatwegot[p];
             std::cout << "## some of the values (e.g. vectors) may span over many columns\n";
@@ -248,7 +178,7 @@ int main(int argc, char** argv)
 
                     if(column=="d322cor")
                         std::cout << prop.Delta322CorrelationEvolution()[t] << "\t";
-                
+
                     if(column=="paritycor")
                         std::cout << prop.ParityCorrelationEvolution()[t] << "\t";
                 }
@@ -257,6 +187,165 @@ int main(int argc, char** argv)
             std::cout << std::endl;
         }
     }
+
+}
+
+/**
+ * tutaj ignorujemy columns, tylko wypisujemy wszystko
+ */
+void mathematica_output(const std::string & data_type,const std::vector<std::string> & /*columns*/,boostbase::base & db,const boostbase::tween_t_proxy & betweens,const boostbase::pair_t_proxy & wheres){
+    if(data_type=="properties" || data_type=="final_properties"){
+        std::vector<PRE79MeanProperties> whatwegot= db.get<PRE79MeanProperties>(wheres,betweens);
+        foreach(const PRE79MeanProperties & prop,whatwegot){
+            //współrzędne - wszystko jest w zależności od T,h,lambda i tau
+            std::stringstream coord;
+            coord << "[" << prop.Temperature() << "," << prop.Field() << "," << prop.Lambda() << "," << prop.Tau() << "]" ;
+
+            std::cout << "specific_heat" << coord.str() << "=" << prop.SpecificHeat().MathematicaForm() << ";\n";
+            std::cout << "energy" << coord.str() << "=" << prop.TemporalMeanEnergyPerMolecule().MathematicaForm() << ";\n";
+            std::cout << "d200z_from_correlation" << coord.str() << "=" << prop.Delta200ZByCorrelation().MathematicaForm() << ";\n";
+            std::cout << "d222z_from_correlation" << coord.str() << "=" << prop.Delta222ZByCorrelation().MathematicaForm() << ";\n";
+            std::cout << "d200x_from_correlation" << coord.str() << "=" << prop.Delta200XByCorrelation().MathematicaForm() << ";\n";
+            std::cout << "d222x_from_correlation" << coord.str() << "=" << prop.Delta222XByCorrelation().MathematicaForm() << ";\n";
+            std::cout << "d200y_from_correlation" << coord.str() << "=" << prop.Delta200YByCorrelation().MathematicaForm() << ";\n";
+            std::cout << "d222y_from_correlation" << coord.str() << "=" << prop.Delta222YByCorrelation().MathematicaForm() << ";\n";
+
+            std::cout << "d322_from_correlation" << coord.str() << "=" << prop.Delta322ByCorrelation().MathematicaForm() << ";\n";
+            std::cout << "parity_from_correlation" << coord.str() << "=" << prop.ParityByCorrelation().MathematicaForm() << ";\n";
+
+            std::cout << "mean_d200corz" << coord.str() << "=" << MathematicaForm(prop.Delta200ZMeanCorrelation()) << ";\n";
+            std::cout << "mean_d220corz" << coord.str() << "=" << MathematicaForm(prop.Delta220ZMeanCorrelation()) << ";\n";
+            std::cout << "mean_d222corz" << coord.str() << "=" << MathematicaForm(prop.Delta222ZMeanCorrelation()) << ";\n";
+
+            std::cout << "mean_d200corx" << coord.str() << "=" << MathematicaForm(prop.Delta200XMeanCorrelation()) << ";\n";
+            std::cout << "mean_d220corx" << coord.str() << "=" << MathematicaForm(prop.Delta220XMeanCorrelation()) << ";\n";
+            std::cout << "mean_d222corx" << coord.str() << "=" << MathematicaForm(prop.Delta222XMeanCorrelation()) << ";\n";
+
+            std::cout << "mean_d200cory" << coord.str() << "=" << MathematicaForm(prop.Delta200YMeanCorrelation()) << ";\n";
+            std::cout << "mean_d220cory" << coord.str() << "=" << MathematicaForm(prop.Delta220YMeanCorrelation()) << ";\n";
+            std::cout << "mean_d222cory" << coord.str() << "=" << MathematicaForm(prop.Delta222YMeanCorrelation()) << ";\n";
+
+            std::cout << "mean_qx" << coord.str() << "=" << MathematicaForm(prop.MeanQxTensor()) << ";\n";
+            std::cout << "mean_qy" << coord.str() << "=" << MathematicaForm(prop.MeanQyTensor()) << ";\n";
+            std::cout << "mean_qz" << coord.str() << "=" << MathematicaForm(prop.MeanQzTensor()) << ";\n";
+
+
+        }
+    }
+    if(data_type=="lattice" || data_type=="final_lattice") {
+        std::vector<Lattice> whatwegot= db.get<Lattice>(wheres,betweens);
+
+        foreach(const Lattice & lat,whatwegot){
+            for(int l=0;l<lat.GetL();l++)
+             for(int w=0;w<lat.GetW();w++)
+              for(int h=0;h<lat.GetH();h++){
+                  int p=h*(lat.GetL()*lat.GetW())+l*lat.GetW() + w;
+                  std::stringstream coord;
+                  coord << "["<<l<<","<<w<<","<<h<<"]";
+                  const Particle & cp = lat.GetParticles()[p];
+
+                  std::cout << "parity" << coord.str() << "=" << cp.GetParity() << ";\n";
+                  std::cout << "energy" << coord.str() << "=" << cp.GetEnergy() << ";\n";
+                  std::cout << "orientation" << coord.str() << "=" << MathematicaForm(cp.GetX()) << ";\n";
+                  std::cout << "T" << coord.str() << "=" << MathematicaForm(cp.GetT()) << ";\n";
+                  std::cout << "Ex" << coord.str() << "=" << MathematicaForm(cp.GetEX()) << ";\n";
+                  std::cout << "Ey" << coord.str() << "=" << MathematicaForm(cp.GetEY()) << ";\n";
+                  std::cout << "Ez" << coord.str() << "=" << MathematicaForm(cp.GetEZ()) << ";\n";
+                  std::cout << "Qx" << coord.str() << "=" << MathematicaForm(cp.GetQX()) << ";\n";
+                  std::cout << "Qy" << coord.str() << "=" << MathematicaForm(cp.GetQY()) << ";\n";
+                  std::cout << "Qz" << coord.str() << "=" << MathematicaForm(cp.GetQZ()) << ";\n";
+              }
+        }
+    }
+}
+
+
+int main(int argc, char** argv)
+{
+    std::string                 data_type="final_properties";
+    std::string dbfile="";
+    std::string dbdir="";
+    boostbase::tween_t_proxy    betweens;
+    boostbase::pair_t_proxy     wheres;
+    std::vector<std::string>    columns;
+    bool sqlite_debug=false;
+    output_t output_type = table;
+
+    for(int i=1;i<argc;i++){
+        if(std::string(argv[i])=="--db"){
+            dbfile=argv[i+1];
+            dbdir=argv[i+2];
+        }
+        if(std::string(argv[i])=="--data-type")
+            data_type=argv[i+1];
+        if(std::string(argv[i])=="--columns"){
+            std::string columns_string = argv[i+1];
+            boost::split(columns,columns_string,boost::is_any_of(","));
+        }
+        if(std::string(argv[i])=="--between")
+            betweens(std::string(argv[i+1]),std::atof(argv[i+2]),std::atof(argv[i+3]));
+        if(std::string(argv[i])=="--where")
+            wheres(std::string(argv[i+1]),std::string(argv[i+2]));
+        if(std::string(argv[i])=="--sqlite-debug")
+            sqlite_debug=true;
+        if(std::string(argv[i])=="--day"){
+            pt::ptime day_start = pt::time_from_string(std::string(argv[i+1])+std::string(" 00:00:00.000000"));
+            pt::ptime day_end = day_start + pt::hours(24);
+            betweens(std::string("date"),pt::to_simple_string(day_start),pt::to_simple_string(day_end));
+        }
+        if(std::string(argv[i])=="--today"){
+            pt::ptime day_start = pt::second_clock::local_time();
+            day_start-=day_start.time_of_day();
+            pt::ptime day_end = day_start + pt::hours(24);
+            betweens(std::string("date"),pt::to_simple_string(day_start),pt::to_simple_string(day_end));
+        }
+        if(std::string(argv[i])=="--days"){
+            pt::ptime day_start = pt::time_from_string(std::string(argv[i+1])+std::string(" 00:00:00.000000"));
+            pt::ptime day_end = pt::time_from_string(std::string(argv[i+2])+std::string(" 00:00:00.000000"));
+            betweens(std::string("date"),pt::to_simple_string(day_start),pt::to_simple_string(day_end));
+        }
+        if(std::string(argv[i])=="--yesterday"){
+            pt::ptime day_end = pt::second_clock::local_time();
+            day_end-=day_end.time_of_day();
+            pt::ptime day_start = day_end - pt::hours(24);
+            betweens(std::string("date"),pt::to_simple_string(day_start),pt::to_simple_string(day_end));
+        }
+        if(std::string(argv[i])=="--hours"){
+            pt::ptime hour_start;
+            pt::ptime hour_end;
+
+            pt::ptime day_start = pt::second_clock::local_time();
+            day_start-=day_start.time_of_day();
+
+            hour_start = day_start + pt::duration_from_string(std::string(argv[i+1]));
+            hour_end = day_start + pt::duration_from_string(std::string(argv[i+2]));
+
+            betweens(std::string("date"),pt::to_simple_string(hour_start),pt::to_simple_string(hour_end));
+        }
+        if(std::string(argv[i])=="--mathematica")
+            output_type=mathematica;
+
+    }
+    if(dbfile=="" || dbdir==""){
+        std::cout << "please specify database file and directory with --db\n";
+        std::exit(1);
+    }
+
+    wheres(std::string("data_type"),data_type);
+    std::cout << std::setprecision(8) ;
+
+    //readonly 
+    boostbase::base db(dbfile,dbdir,true);
+
+    switch(output_type){
+        case table:
+            table_output(data_type,columns,db,betweens,wheres);
+            break;
+        case mathematica:
+            mathematica_output(data_type,columns,db,betweens,wheres);
+            break;
+    }
+
     if(sqlite_debug)
         std::cout << std::endl << db.log().str() << std::endl;
 
