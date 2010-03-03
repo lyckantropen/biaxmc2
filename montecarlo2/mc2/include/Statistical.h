@@ -72,6 +72,11 @@ public:
         s << val << "\t" << err ;
         return s.str();
     }
+    const std::string MathematicaForm() const {
+        std::stringstream s;
+        s << "{" << val << ","<<err<<"}";
+        return s.str();
+    }
 };
 
 //extern void operator|(boostbase::serializer &,Value&);
