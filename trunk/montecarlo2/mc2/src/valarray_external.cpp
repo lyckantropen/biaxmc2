@@ -7,6 +7,19 @@ std::ostream & operator<<(std::ostream & o, const vect & v){
     }
     return o;
 }
+
+std::string MathematicaForm(const vect & v){
+    std::stringstream s;
+    s << "{";
+    for(int i=0;i<v.size();i++){
+        s << v[i] ;
+        if(i<v.size()-1)
+            s << ",";
+    }
+    s<< "}";
+    return s.str();
+}
+
 double  DotProduct(const vect & a, const vect & b){
     return (a*b).sum();
 }
