@@ -13,7 +13,6 @@
 #include "Particle.h"
 #include "Lattice.h"
 #include "Metropolis.h"
-#include "PRE79StandardHamiltonian.h"
 #include "SimulationDB.h"
 #include "PRE79Scanning.h"
 //#include <omp.h>
