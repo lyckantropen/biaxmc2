@@ -10,6 +10,7 @@ std::ostream & operator<<(std::ostream & o, const vect & v){
 
 std::string MathematicaForm(const vect & v){
     std::stringstream s;
+    s << std::setprecision(15) << std::fixed;
     s << "{";
     for(int i=0;i<v.size();i++){
         s << v[i] ;

@@ -201,33 +201,33 @@ void mathematica_output(const std::string & data_type,const std::vector<std::str
             std::stringstream coord;
             coord << "[" << prop.Temperature() << "," << prop.Field() << "," << prop.Lambda() << "," << prop.Tau() << "]" ;
 
-            std::cout << "specific_heat" << coord.str() << "=" << prop.SpecificHeat().MathematicaForm() << ";\n";
-            std::cout << "energy" << coord.str() << "=" << prop.TemporalMeanEnergyPerMolecule().MathematicaForm() << ";\n";
-            std::cout << "d200z_from_correlation" << coord.str() << "=" << prop.Delta200ZByCorrelation().MathematicaForm() << ";\n";
-            std::cout << "d222z_from_correlation" << coord.str() << "=" << prop.Delta222ZByCorrelation().MathematicaForm() << ";\n";
-            std::cout << "d200x_from_correlation" << coord.str() << "=" << prop.Delta200XByCorrelation().MathematicaForm() << ";\n";
-            std::cout << "d222x_from_correlation" << coord.str() << "=" << prop.Delta222XByCorrelation().MathematicaForm() << ";\n";
-            std::cout << "d200y_from_correlation" << coord.str() << "=" << prop.Delta200YByCorrelation().MathematicaForm() << ";\n";
-            std::cout << "d222y_from_correlation" << coord.str() << "=" << prop.Delta222YByCorrelation().MathematicaForm() << ";\n";
+            std::cout << "SpecificHeat" << coord.str() << "=" << prop.SpecificHeat().MathematicaForm() << ";\n";
+            std::cout << "TemporalMeanEnergyPerMolecule" << coord.str() << "=" << prop.TemporalMeanEnergyPerMolecule().MathematicaForm() << ";\n";
+            std::cout << "Delta200ZByCorrelation" << coord.str() << "=" << prop.Delta200ZByCorrelation().MathematicaForm() << ";\n";
+            std::cout << "Delta222ZByCorrelation" << coord.str() << "=" << prop.Delta222ZByCorrelation().MathematicaForm() << ";\n";
+            std::cout << "Delta200XByCorrelation" << coord.str() << "=" << prop.Delta200XByCorrelation().MathematicaForm() << ";\n";
+            std::cout << "Delta222XByCorrelation" << coord.str() << "=" << prop.Delta222XByCorrelation().MathematicaForm() << ";\n";
+            std::cout << "Delta200YByCorrelation" << coord.str() << "=" << prop.Delta200YByCorrelation().MathematicaForm() << ";\n";
+            std::cout << "Delta222YByCorrelation" << coord.str() << "=" << prop.Delta222YByCorrelation().MathematicaForm() << ";\n";
 
-            std::cout << "d322_from_correlation" << coord.str() << "=" << prop.Delta322ByCorrelation().MathematicaForm() << ";\n";
-            std::cout << "parity_from_correlation" << coord.str() << "=" << prop.ParityByCorrelation().MathematicaForm() << ";\n";
+            std::cout << "Delta322ByCorrelation" << coord.str() << "=" << prop.Delta322ByCorrelation().MathematicaForm() << ";\n";
+            std::cout << "ParityByCorrelation" << coord.str() << "=" << prop.ParityByCorrelation().MathematicaForm() << ";\n";
 
-            std::cout << "mean_d200corz" << coord.str() << "=" << MathematicaForm(prop.Delta200ZMeanCorrelation()) << ";\n";
-            std::cout << "mean_d220corz" << coord.str() << "=" << MathematicaForm(prop.Delta220ZMeanCorrelation()) << ";\n";
-            std::cout << "mean_d222corz" << coord.str() << "=" << MathematicaForm(prop.Delta222ZMeanCorrelation()) << ";\n";
+            std::cout << "Delta200ZMeanCorrelation" << coord.str() << "=" << MathematicaForm(prop.Delta200ZMeanCorrelation()) << ";\n";
+            std::cout << "Delta220ZMeanCorrelation" << coord.str() << "=" << MathematicaForm(prop.Delta220ZMeanCorrelation()) << ";\n";
+            std::cout << "Delta222ZMeanCorrelation" << coord.str() << "=" << MathematicaForm(prop.Delta222ZMeanCorrelation()) << ";\n";
 
-            std::cout << "mean_d200corx" << coord.str() << "=" << MathematicaForm(prop.Delta200XMeanCorrelation()) << ";\n";
-            std::cout << "mean_d220corx" << coord.str() << "=" << MathematicaForm(prop.Delta220XMeanCorrelation()) << ";\n";
-            std::cout << "mean_d222corx" << coord.str() << "=" << MathematicaForm(prop.Delta222XMeanCorrelation()) << ";\n";
+            std::cout << "Delta200XMeanCorrelation" << coord.str() << "=" << MathematicaForm(prop.Delta200XMeanCorrelation()) << ";\n";
+            std::cout << "Delta220XMeanCorrelation" << coord.str() << "=" << MathematicaForm(prop.Delta220XMeanCorrelation()) << ";\n";
+            std::cout << "Delta222XMeanCorrelation" << coord.str() << "=" << MathematicaForm(prop.Delta222XMeanCorrelation()) << ";\n";
 
-            std::cout << "mean_d200cory" << coord.str() << "=" << MathematicaForm(prop.Delta200YMeanCorrelation()) << ";\n";
-            std::cout << "mean_d220cory" << coord.str() << "=" << MathematicaForm(prop.Delta220YMeanCorrelation()) << ";\n";
-            std::cout << "mean_d222cory" << coord.str() << "=" << MathematicaForm(prop.Delta222YMeanCorrelation()) << ";\n";
+            std::cout << "Delta200YMeanCorrelation" << coord.str() << "=" << MathematicaForm(prop.Delta200YMeanCorrelation()) << ";\n";
+            std::cout << "Delta220YMeanCorrelation" << coord.str() << "=" << MathematicaForm(prop.Delta220YMeanCorrelation()) << ";\n";
+            std::cout << "Delta222YMeanCorrelation" << coord.str() << "=" << MathematicaForm(prop.Delta222YMeanCorrelation()) << ";\n";
 
-            std::cout << "mean_qx" << coord.str() << "=" << MathematicaForm(prop.MeanQxTensor()) << ";\n";
-            std::cout << "mean_qy" << coord.str() << "=" << MathematicaForm(prop.MeanQyTensor()) << ";\n";
-            std::cout << "mean_qz" << coord.str() << "=" << MathematicaForm(prop.MeanQzTensor()) << ";\n";
+            std::cout << "MeanQxTensor" << coord.str() << "=" << MathematicaForm(prop.MeanQxTensor()) << ";\n";
+            std::cout << "MeanQyTensor" << coord.str() << "=" << MathematicaForm(prop.MeanQyTensor()) << ";\n";
+            std::cout << "MeanQzTensor" << coord.str() << "=" << MathematicaForm(prop.MeanQzTensor()) << ";\n";
 
 
         }
@@ -244,9 +244,9 @@ void mathematica_output(const std::string & data_type,const std::vector<std::str
                   coord << "["<<l<<","<<w<<","<<h<<"]";
                   const Particle & cp = lat.GetParticles()[p];
 
-                  std::cout << "parity" << coord.str() << "=" << cp.GetParity() << ";\n";
-                  std::cout << "energy" << coord.str() << "=" << cp.GetEnergy() << ";\n";
-                  std::cout << "orientation" << coord.str() << "=" << MathematicaForm(cp.GetX()) << ";\n";
+                  std::cout << "Parity" << coord.str() << "=" << cp.GetParity() << ";\n";
+                  std::cout << "Energy" << coord.str() << "=" << cp.GetEnergy() << ";\n";
+                  std::cout << "X" << coord.str() << "=" << MathematicaForm(cp.GetX()) << ";\n";
                   std::cout << "T" << coord.str() << "=" << MathematicaForm(cp.GetT()) << ";\n";
                   std::cout << "Ex" << coord.str() << "=" << MathematicaForm(cp.GetEX()) << ";\n";
                   std::cout << "Ey" << coord.str() << "=" << MathematicaForm(cp.GetEY()) << ";\n";
@@ -332,7 +332,7 @@ int main(int argc, char** argv)
     }
 
     wheres(std::string("data_type"),data_type);
-    std::cout << std::setprecision(8) ;
+    std::cout << std::setprecision(12) << std::fixed ;
 
     //readonly 
     boostbase::base db(dbfile,dbdir,true);
