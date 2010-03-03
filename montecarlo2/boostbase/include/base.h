@@ -114,7 +114,7 @@ namespace boostbase {
                     log() << std::endl;
                 }
                 if (cur_row.size() != columns) {
-                    log() << "eval_select(): should have selected " << columns << " columns, got " << cur_row.size() << std::endl;
+			//std::cerr << "eval_select(): should have selected " << columns << " columns, got " << cur_row.size() << std::endl;
                 } else
                     items.push_back(cur_row);
             }

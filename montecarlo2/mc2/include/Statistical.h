@@ -74,6 +74,7 @@ public:
     }
     const std::string MathematicaForm() const {
         std::stringstream s;
+	s << std::setprecision(15) << std::fixed;
         s << "{" << val << ","<<err<<"}";
         return s.str();
     }
