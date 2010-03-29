@@ -234,14 +234,22 @@ void mathematica_output(const std::string & data_type,const std::vector<std::str
     }
     if(data_type=="lattice" || data_type=="final_lattice") {
         std::vector<Lattice> whatwegot= db.get<Lattice>(wheres,betweens);
+        boostbase::pair_t_proxy nwheres = wheres;
+        nwheres.pop();
+        nwheres(std::string("data_type"),std::string("final_properties"));
+        std::vector<PRE79MeanProperties> props= db.get<PRE79MeanProperties>(nwheres,betweens);
 
-        foreach(const Lattice & lat,whatwegot) {
+        //foreach(const Lattice & lat,whatwegot) {
+        for(int i=0;i<whatwegot.size();i++) {
+            const Lattice & lat = whatwegot[i];
+            const PRE79MeanProperties & prop = props[i];
             for(int l=0;l<lat.GetL();l++)
              for(int w=0;w<lat.GetW();w++)
               for(int h=0;h<lat.GetH();h++){
                   int p=h*(lat.GetL()*lat.GetW())+l*lat.GetW() + w;
                   std::stringstream coord;
-                  coord << "["<<l<<","<<w<<","<<h<<"]";
+                  coord << "[" << prop.Temperature() << "," << prop.Field() << "," << prop.Lambda() << "," << prop.Tau() ;
+                  coord << "," << l << "," << w << "," << h <<"]";
                   const Particle & cp = lat.GetParticles()[p];
 
                   std::cout << "Parity" << coord.str() << "=" << cp.GetParity() << ";\n";
