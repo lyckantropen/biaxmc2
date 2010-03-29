@@ -357,11 +357,11 @@ public:
     }
     const vect GetMeanQyTensor() const {
 //        std::cout << "Qy\n";
-        return MeanVector(MeanQxTensor,0,acc_idx+1);
+        return MeanVector(MeanQyTensor,0,acc_idx+1);
     }
     const vect GetMeanQzTensor() const {
 //        std::cout << "Qz\n";
-        return MeanVector(MeanQxTensor,0,acc_idx+1);
+        return MeanVector(MeanQzTensor,0,acc_idx+1);
     }
     
     const vect & EnergyEvolution() const {
