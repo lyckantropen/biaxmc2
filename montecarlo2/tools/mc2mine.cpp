@@ -235,7 +235,7 @@ void mathematica_output(const std::string & data_type,const std::vector<std::str
     if(data_type=="lattice" || data_type=="final_lattice") {
         std::vector<Lattice> whatwegot= db.get<Lattice>(wheres,betweens);
 
-        foreach(const Lattice & lat,whatwegot){
+        foreach(const Lattice & lat,whatwegot) {
             for(int l=0;l<lat.GetL();l++)
              for(int w=0;w<lat.GetW();w++)
               for(int h=0;h<lat.GetH();h++){
