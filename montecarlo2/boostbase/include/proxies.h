@@ -34,6 +34,9 @@ namespace boostbase {
         operator const std::vector<pair_t> & () const {
             return values;
         }
+        void pop() {
+            values.pop_back();
+        }
     };
 
     ///tworzenie listy warunków: where("wielkość1","wartość1")("wielkość2","wartość2")("wielkość3","wartość3")..
@@ -79,6 +82,9 @@ namespace boostbase {
         }
         operator const std::vector<tween_t> & () const {
             return values;
+        }
+        void pop() {
+            values.pop_back();
         }
     };
 
