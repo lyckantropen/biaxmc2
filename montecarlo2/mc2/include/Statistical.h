@@ -125,7 +125,10 @@ std::valarray<value_type> MeanVector(const std::vector<std::valarray<value_type>
 }
 //Efron, Tibshirani, "An Introduction to Bootstrap", 1993 Chapman & Hall, Inc., pp. 45-47
 template<class value_type>
-Value BootstrapMean(const std::valarray<value_type> & v, const int start=0, const int limit=0, const int resamples=50){
+Value BootstrapMean(const std::valarray<value_type> & v, const int start=0, const int limit=0, const int res=0){
+    int resamples = res;
+    if(res==0)
+        resamples=v.size();
     int lim;
     if(limit==0)
         lim=v.size();
