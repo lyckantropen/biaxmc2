@@ -67,11 +67,31 @@ public:
     void CalculateSpecificHeat(const double & T){
         vect fluct(acc_idx+1);
         for(int i=0;i<(acc_idx+1);i++){
-            double E = BootstrapMean(energy,0,acc_idx+1);
-            double E2 = BootstrapMean(vect(energy*energy),0,acc_idx+1);
+            double E = BootstrapMean(energy,0,acc_idx+1,1);
+            double E2 = BootstrapMean(vect(energy*energy),0,acc_idx+1,1);
             fluct[i] = (E2-E*E)*lat->GetN()/T/T;
         }
-        specific_heat=BootstrapMean(fluct);
+        //specific_heat=BootstrapMean(fluct);
+        specific_heat=Mean(fluct);
+        /*
+        std::cout << "TEST SPH from Boostrap/Boostrap: " << specific_heat << std::endl;
+        std::cout << "TEST SPH from Boostrap/Mean: " << Mean(fluct) << std::endl;
+
+        vect fluct2(acc_idx+1);
+        for(int i=0;i<(acc_idx+1);i++){
+            vect e(acc_idx+1);
+            vect e2(acc_idx+1);
+            for(int j=0;j<(acc_idx+1);j++){
+                int t = (acc_idx)*random01();
+                e[j]=energy[t];
+                e2[j]=energy[t]*energy[t];
+            }
+            fluct2[i]=(double(Mean(e2))-double(Mean(e))*double(Mean(e)))*lat->GetN()/T/T;
+        }
+        std::cout << "TEST SPH from old BS: " << BootstrapMean(fluct2) << std::endl;
+        */
+
+        //std::cout << "TEST SPH from Fluctuation by bootstrap: " << (std::pow(BootstrapMean(energy).Error(),2.0)*lat->GetN()/T/T) << std::endl;
     }
 private:
     ///obliczanie średnich tensorów xx,yy i zz
