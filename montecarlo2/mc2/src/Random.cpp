@@ -39,7 +39,7 @@ vect    RandomPointOn4DSphereMarsaglia(const double & r){
         y4=(1.0-2.0*random01());
         r2=y3*y3+y4*y4;
     } while(r2>1);
-    double sr=std::sqrt((1-r1)/r2);
+    double sr=std::sqrt((1-r1*r1)/r2/r2);
 
     result[0]=r*y1;
     result[1]=r*y2;
