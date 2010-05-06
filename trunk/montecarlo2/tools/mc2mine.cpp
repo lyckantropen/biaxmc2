@@ -13,8 +13,16 @@
 /*
  * todo: Mathematica output
  */
-typedef enum { table, mathematica, maple } output_t ;
+typedef enum { table, mathematica, maple, count } output_t ;
 
+void    do_count(const std::string & data_type,const std::vector<std::string> & columns,boostbase::base & db,const boostbase::tween_t_proxy & betweens,const boostbase::pair_t_proxy & wheres){
+	if(data_type=="final_properties" || data_type=="properties")
+		std::cout << db.get<PRE79MeanProperties>(wheres,betweens).size() << std::endl;
+	if(data_type=="lattice" || data_type=="final_lattice")
+		std::cout << db.get<Lattice>(wheres,betweens).size() << std::endl;
+	if(data_type=="properties_evolution")
+		std::cout << db.get<PRE79StandardProperties>(wheres,betweens).size() << std::endl;
+}
 void    table_output(const std::string & data_type,const std::vector<std::string> & columns,boostbase::base & db,const boostbase::tween_t_proxy & betweens,const boostbase::pair_t_proxy & wheres){
 
     if(data_type=="final_properties" || data_type=="properties") {
@@ -332,6 +340,8 @@ int main(int argc, char** argv)
         }
         if(std::string(argv[i])=="--mathematica")
             output_type=mathematica;
+	if(std::string(argv[i])=="--count")
+	    output_type=count;
 
     }
     if(dbfile=="" || dbdir==""){
@@ -352,6 +362,9 @@ int main(int argc, char** argv)
         case mathematica:
             mathematica_output(data_type,columns,db,betweens,wheres);
             break;
+	case count:
+	    do_count(data_type,columns,db,betweens,wheres);
+	    break;
     }
 
     if(sqlite_debug)
