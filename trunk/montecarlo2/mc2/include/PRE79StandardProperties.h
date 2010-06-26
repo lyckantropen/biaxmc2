@@ -30,7 +30,8 @@ class PRE79StandardProperties {
     int ncycles;            ///<liczba cykli do średniej
     
     vect    energy;         ///<energia w funkcji czasu
-    Value    specific_heat;  ///<ciepło właściwe w funkcji czasu (w praktyce obliczanie całej historii jest bardzo kosztowne, obliczamy dopiero na końcu)
+    Value   specific_heat;  ///<ciepło właściwe w funkcji czasu (w praktyce obliczanie całej historii jest bardzo kosztowne, obliczamy dopiero na końcu)
+    Value   fluctuation;
 
     //ewolucja średnich tensorów xx,yy,zz
     std::vector<vect>  MeanQxTensor;
@@ -65,6 +66,7 @@ class PRE79StandardProperties {
 public:
     ///obliczanie ciepła właściwego metodą bootstrapu
     void CalculateSpecificHeat(const double & T){
+        /*
         vect fluct(acc_idx+1);
         for(int i=0;i<(acc_idx+1);i++){
             double E = BootstrapMean(energy,0,acc_idx+1,1);
@@ -73,11 +75,14 @@ public:
         }
         //specific_heat=BootstrapMean(fluct);
         specific_heat=Mean(fluct);
-        /*
-        std::cout << "TEST SPH from Boostrap/Boostrap: " << specific_heat << std::endl;
-        std::cout << "TEST SPH from Boostrap/Mean: " << Mean(fluct) << std::endl;
+         */
+
+        
+        //std::cout << "TEST SPH from Boostrap/Boostrap: " << specific_heat << std::endl;
+        //std::cout << "TEST SPH from Boostrap/Mean: " << Mean(fluct) << std::endl;
 
         vect fluct2(acc_idx+1);
+        vect fluct3(acc_idx+1);
         for(int i=0;i<(acc_idx+1);i++){
             vect e(acc_idx+1);
             vect e2(acc_idx+1);
@@ -87,9 +92,11 @@ public:
                 e2[j]=energy[t]*energy[t];
             }
             fluct2[i]=(double(Mean(e2))-double(Mean(e))*double(Mean(e)))*lat->GetN()/T/T;
+            fluct3[i]=(double(Mean(e2))-double(Mean(e))*double(Mean(e)))*lat->GetN();
         }
-        std::cout << "TEST SPH from old BS: " << BootstrapMean(fluct2) << std::endl;
-        */
+        //std::cout << "TEST SPH from old BS: " << BootstrapMean(fluct2) << std::endl;
+        specific_heat=BootstrapMean(fluct2);
+        fluctuation=BootstrapMean(fluct3);
 
         //std::cout << "TEST SPH from Fluctuation by bootstrap: " << (std::pow(BootstrapMean(energy).Error(),2.0)*lat->GetN()/T/T) << std::endl;
     }
@@ -151,6 +158,7 @@ public:
         index=p.index;
         ncycles=p.ncycles;
         specific_heat=p.specific_heat;
+        fluctuation=p.fluctuation;
         d200corz=p.d200corz;
         d220corz=p.d220corz;
         d222corz=p.d222corz;
@@ -175,6 +183,7 @@ public:
         index=p.index;
         ncycles=p.ncycles;
         specific_heat=p.specific_heat;
+        fluctuation=p.fluctuation;
         d200corz=p.d200corz;
         d220corz=p.d220corz;
         d222corz=p.d222corz;
@@ -430,6 +439,9 @@ public:
         //CalculateSpecificHeat(H->GetTemperature());
         return specific_heat;
     }
+    const Value & Fluctuation() const {
+        return fluctuation;
+    }
     const int & GetIndex() const {
         return index;
     }
@@ -451,6 +463,7 @@ void operator|(serializer_t & s, PRE79StandardProperties & prop){
     s|prop.acc_idx;
     s|prop.ncycles;
     s|prop.specific_heat;
+    s|prop.fluctuation;
     s|prop.d200corz;
     s|prop.d220corz;
     s|prop.d222corz;
@@ -476,6 +489,7 @@ class PRE79MeanProperties {
     friend void operator|(serializer_t & s, PRE79MeanProperties & prop);
     Value energy;
     Value specific_heat;
+    Value fluctuation;
     Value d200z_from_correlation;
     Value d222z_from_correlation;
     Value d200x_from_correlation;
@@ -530,6 +544,7 @@ public:
 
         energy = prop.TemporalMeanEnergyPerMolecule();
         specific_heat = prop.SpecificHeat();
+        fluctuation = prop.Fluctuation();
 
         d200z_from_correlation = prop.Delta200ZByCorrelation();
         d222z_from_correlation = prop.Delta222ZByCorrelation();
@@ -569,6 +584,9 @@ public:
     }
     const Value & SpecificHeat() const {
         return specific_heat;
+    }
+    const Value & Fluctuation() const {
+        return fluctuation;
     }
 
     const Value & Delta200ZByCorrelation() const {
@@ -661,6 +679,7 @@ template <class serializer_t>
 void operator|(serializer_t & s, PRE79MeanProperties & p){
     s|p.energy;
     s|p.specific_heat;
+    s|p.fluctuation;
     s|p.d200z_from_correlation;
     s|p.d200z_from_correlation;
     s|p.d200x_from_correlation;
@@ -701,6 +720,7 @@ inline std::ostream & operator<<(std::ostream & o,const PRE79MeanProperties & p)
     o << "Field=" << p.Field() << std::endl;
     o << "MeanEPM=" << p.TemporalMeanEnergyPerMolecule().Print() << std::endl;
     o << "SpecHeat=" << p.SpecificHeat().Print() << std::endl;
+    o << "Fluctuation=" << p.Fluctuation().Print() << std::endl;
 
     o << "Delta200ZByCorrelation=" << p.Delta200ZByCorrelation().Print() << std::endl;
     o << "Delta200XByCorrelation=" << p.Delta200XByCorrelation().Print() << std::endl;

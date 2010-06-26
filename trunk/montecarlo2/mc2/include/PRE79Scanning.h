@@ -33,7 +33,11 @@ public:
     nscans((end-start)/delta+2),
     variable(set.scanning.variable)
     {
-    }               
+    }
+    /**
+     * Uruchamianie symulacji dla różnych wartości parametrów. Tutaj może wejść
+     * paralelizacja na poziomie produkcji!
+     */
     void RunNonParallel(){
         Lattice state;
         Settings current_settings = settings ;
@@ -110,6 +114,9 @@ public:
         }
         Log() << "Scanning finished\n";
     }
+    /**
+     * Naiwna paralelizacja, równoważna uruchomieniu wielu symulacji naraz.
+     */
     void RunParallel(){
         Log() << "Parallel OpenMP version\n";
         Log() << "Scanning " << variable << " from " << start << " to " << end << " with interval " << delta << std::endl;
