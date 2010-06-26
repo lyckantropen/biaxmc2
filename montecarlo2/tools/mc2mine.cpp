@@ -210,6 +210,7 @@ void mathematica_output(const std::string & data_type,const std::vector<std::str
             coord << "[" << prop.Temperature() << "," << prop.Field() << "," << prop.Lambda() << "," << prop.Tau() << "]" ;
 
             std::cout << "SpecificHeat" << coord.str() << "=" << prop.SpecificHeat().MathematicaForm() << ";\n";
+            std::cout << "Fluctuation" << coord.str() << "=" << prop.Fluctuation().MathematicaForm() << ";\n";
             std::cout << "TemporalMeanEnergyPerMolecule" << coord.str() << "=" << prop.TemporalMeanEnergyPerMolecule().MathematicaForm() << ";\n";
             std::cout << "Delta200ZByCorrelation" << coord.str() << "=" << prop.Delta200ZByCorrelation().MathematicaForm() << ";\n";
             std::cout << "Delta222ZByCorrelation" << coord.str() << "=" << prop.Delta222ZByCorrelation().MathematicaForm() << ";\n";
