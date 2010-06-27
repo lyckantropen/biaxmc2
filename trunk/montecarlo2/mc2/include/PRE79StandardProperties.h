@@ -435,11 +435,12 @@ public:
 
     //Accessors
     ///ciepło właściwe
-/*    const Value & SpecificHeat() const {
+    const Value & SpecificHeat() const {
         //CalculateSpecificHeat(H->GetTemperature());
-        return specific_heat;
+        //return specific_heat;
+        return fluctuation;
     }
- */
+ 
     const Value & Fluctuation() const {
         return fluctuation;
     }
@@ -583,9 +584,10 @@ public:
     const Value & TemporalMeanEnergyPerMolecule() const {
         return energy;
     }
-    //const Value & SpecificHeat() const {
-    //    return specific_heat;
-    //}
+    const Value & SpecificHeat() const {
+        //return specific_heat;
+        return fluctuation;
+    }
     const Value & Fluctuation() const {
         return fluctuation;
     }
