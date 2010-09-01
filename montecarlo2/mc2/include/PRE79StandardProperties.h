@@ -31,6 +31,10 @@ class PRE79StandardProperties {
     int ncycles;            ///<liczba cykli do średniej
     
     vect    energy;         ///<energia w funkcji czasu
+//    vect    D200;
+//    vect    D220;
+//    vect    D202;
+//    vect    D222;
     //Value   specific_heat;  ///<ciepło właściwe w funkcji czasu (w praktyce obliczanie całej historii jest bardzo kosztowne, obliczamy dopiero na końcu)
     Value   fluctuation;
 
@@ -115,6 +119,115 @@ private:
         MeanQxTensor[acc_idx]=mqx/double(lat->GetN());
         MeanQyTensor[acc_idx]=mqy/double(lat->GetN());
         MeanQzTensor[acc_idx]=mqz/double(lat->GetN());
+/*
+        vect t20(0.0,6);
+        vect t22(0.0,6);
+        t20 = std::sqrt(1.5)*(mqz - Identity(3)/3.)/double(lat->GetN());
+        t22 = (mqx-mqy)/std::sqrt(2.)/double(lat->GetN());
+
+        double t20evectm[3][3];
+        double t20evalm[3];
+        double t22evectm[3][3];
+        double t22evalm[3];
+
+        double t20mat[3][3];
+        double t22mat[3][3];
+
+        t20mat[0][0]=t20[0];    t20mat[0][1]=t20mat[1][0]=t20[1];   t20mat[0][2]=t20mat[2][0]=t20[2];
+                                t20mat[1][1]=t20[3];                t20mat[1][2]=t20mat[2][1]=t20[4];
+                                                                    t20mat[2][2]=t20[5];
+
+        t22mat[0][0]=t22[0];    t22mat[0][1]=t22mat[1][0]=t22[1];   t22mat[0][2]=t22mat[2][0]=t22[2];
+                                t22mat[1][1]=t22[3];                t22mat[1][2]=t22mat[2][1]=t22[4];
+                                                                    t22mat[2][2]=t22[5];
+
+        //diagonalizacja
+        dsyevj3(t20mat,t20evectm,t20evalm);
+        dsyevj3(t22mat,t22evectm,t22evalm);
+
+        //segregacja wartości własnych
+        int t20dir=0,t20sec=1,t20min=2;
+        if(std::abs(t20evalm[0])>=std::abs(t20evalm[1])>=std::abs(t20evalm[2])) {t20dir=0; t20sec=1; t20min=2;}
+        if(std::abs(t20evalm[0])>=std::abs(t20evalm[2])>=std::abs(t20evalm[1])) {t20dir=0; t20sec=2; t20min=1;}
+        if(std::abs(t20evalm[1])>=std::abs(t20evalm[2])>=std::abs(t20evalm[0])) {t20dir=1; t20sec=2; t20min=0;}
+        if(std::abs(t20evalm[1])>=std::abs(t20evalm[0])>=std::abs(t20evalm[2])) {t20dir=1; t20sec=0; t20min=2;}
+        if(std::abs(t20evalm[2])>=std::abs(t20evalm[0])>=std::abs(t20evalm[1])) {t20dir=2; t20sec=0; t20min=1;}
+        if(std::abs(t20evalm[2])>=std::abs(t20evalm[1])>=std::abs(t20evalm[0])) {t20dir=2; t20sec=1; t20min=0;}
+
+        int t22dir=0,t22sec=1,t22min=2;
+        if(std::abs(t22evalm[0])>=std::abs(t22evalm[1])>=std::abs(t22evalm[2])) {t22dir=0; t22sec=1; t22min=2;}
+        if(std::abs(t22evalm[0])>=std::abs(t22evalm[2])>=std::abs(t22evalm[1])) {t22dir=0; t22sec=2; t22min=1;}
+        if(std::abs(t22evalm[1])>=std::abs(t22evalm[2])>=std::abs(t22evalm[0])) {t22dir=1; t22sec=2; t22min=0;}
+        if(std::abs(t22evalm[1])>=std::abs(t22evalm[0])>=std::abs(t22evalm[2])) {t22dir=1; t22sec=0; t22min=2;}
+        if(std::abs(t22evalm[2])>=std::abs(t22evalm[0])>=std::abs(t22evalm[1])) {t22dir=2; t22sec=0; t22min=1;}
+        if(std::abs(t22evalm[2])>=std::abs(t22evalm[1])>=std::abs(t22evalm[0])) {t22dir=2; t22sec=1; t22min=0;}
+
+        double t20a[3];
+        double t20b[3];
+        double t20c[3];
+        double t22a[3];
+        double t22b[3];
+        double t22c[3];
+
+        t20a[0] = t20evectm[t20sec][0]; t20a[1] = t20evectm[t20sec][1]; t20a[2] = t20evectm[t20sec][2];
+        t20b[0] = t20evectm[t20min][0]; t20b[1] = t20evectm[t20min][1]; t20b[2] = t20evectm[t20min][2];
+        t20c[0] = t20evectm[t20dir][0]; t20c[1] = t20evectm[t20dir][1]; t20c[2] = t20evectm[t20dir][2];
+        t22a[0] = t22evectm[t22sec][0]; t22a[1] = t22evectm[t22sec][1]; t22a[2] = t22evectm[t22sec][2];
+        t22b[0] = t22evectm[t22min][0]; t22b[1] = t22evectm[t22min][1]; t22b[2] = t22evectm[t22min][2];
+        t22c[0] = t22evectm[t22dir][0]; t22c[1] = t22evectm[t22dir][1]; t22c[2] = t22evectm[t22dir][2];
+
+
+        //iloczyny tensorowe
+        vect t20aa(0.0,6);
+        vect t20bb(0.0,6);
+        vect t20cc(0.0,6);
+        vect t22aa(0.0,6);
+        vect t22bb(0.0,6);
+        vect t22cc(0.0,6);
+
+        t20aa[0]=t20a[0]*t20a[0];   t20aa[1]=t20a[1]*t20a[0];   t20aa[2]=t20a[2]*t20a[0];
+                                    t20aa[3]=t20a[1]*t20a[1];   t20aa[4]=t20a[2]*t20a[1];
+                                                                t20aa[5]=t20a[2]*t20a[2];
+
+        t20bb[0]=t20b[0]*t20b[0];   t20bb[1]=t20b[1]*t20b[0];   t20bb[2]=t20b[2]*t20b[0];
+                                    t20bb[3]=t20b[1]*t20b[1];   t20bb[4]=t20b[2]*t20b[1];
+                                                                t20bb[5]=t20b[2]*t20b[2];
+
+        t20cc[0]=t20c[0]*t20c[0];   t20cc[1]=t20c[1]*t20c[0];   t20cc[2]=t20c[2]*t20c[0];
+                                    t20cc[3]=t20c[1]*t20c[1];   t20cc[4]=t20c[2]*t20c[1];
+                                                                t20cc[5]=t20c[2]*t20c[2];
+
+
+        t22aa[0]=t22a[0]*t22a[0];   t22aa[1]=t22a[1]*t22a[0];   t22aa[2]=t22a[2]*t22a[0];
+                                    t22aa[3]=t22a[1]*t22a[1];   t22aa[4]=t22a[2]*t22a[1];
+                                                                t22aa[5]=t22a[2]*t22a[2];
+
+        t22bb[0]=t22b[0]*t22b[0];   t22bb[1]=t22b[1]*t22b[0];   t22bb[2]=t22b[2]*t22b[0];
+                                    t22bb[3]=t22b[1]*t22b[1];   t22bb[4]=t22b[2]*t22b[1];
+                                                                t22bb[5]=t22b[2]*t22b[2];
+
+        t22cc[0]=t22c[0]*t22c[0];   t22cc[1]=t22c[1]*t22c[0];   t22cc[2]=t22c[2]*t22c[0];
+                                    t22cc[3]=t22c[1]*t22c[1];   t22cc[4]=t22c[2]*t22c[1];
+                                                                t22cc[5]=t22c[2]*t22c[2];
+
+        //tensory molekularne
+        vect t20mol(0.0,6);
+        vect t22mol(0.0,6);
+        t20mol = std::sqrt(1.5)*(t20cc - Identity(3)/3.);
+        t22mol = (t22aa-t22bb)/std::sqrt(2.);
+
+        double d200 = MatrixDotProduct(t20mol,t20);
+        double d220 = MatrixDotProduct(t22mol,t20);
+        double d202 = MatrixDotProduct(t20mol,t22);
+        double d222 = MatrixDotProduct(t22mol,t22);
+
+        D200[acc_idx] = d200;
+        D220[acc_idx] = d220;
+        D202[acc_idx] = d202;
+        D222[acc_idx] = d222;
+*/
+        //std::cout << "D200: " << d200 << " D222: " << d222 << std::endl;
+        //std::cout << "G200: " << d200corz.Limit() << " G222: " << d222corz.Limit() << std::endl;
     }
 
 public:
@@ -136,6 +249,10 @@ public:
     MeanQxTensor(_ncycles),
     MeanQyTensor(_ncycles),
     MeanQzTensor(_ncycles),
+//    D200(0.0,_ncycles),
+//    D220(0.0,_ncycles),
+//    D202(0.0,_ncycles),
+//    D222(0.0,_ncycles),
     paritycor(l,_ncycles)
     {
         acc_idx=-1;
@@ -152,6 +269,10 @@ public:
 
     PRE79StandardProperties(const PRE79StandardProperties & p){
         //tak to musi być zrobione, por. Standard C++ Library Reference pp. 327
+//        D200.resize(p.D200.size());
+//        D220.resize(p.D220.size());
+//        D202.resize(p.D202.size());
+//        D222.resize(p.D222.size());
         energy.resize(p.energy.size());
         energy = p.energy;
         lat=p.lat;
@@ -177,6 +298,12 @@ public:
         acc_idx=p.acc_idx;
     }
     const PRE79StandardProperties operator=(const PRE79StandardProperties & p){
+        /*
+        D200.resize(p.D200.size());
+        D220.resize(p.D220.size());
+        D202.resize(p.D202.size());
+        D222.resize(p.D222.size());
+        */
         energy.resize(p.energy.size());
         energy = p.energy;
         lat=p.lat;
@@ -253,19 +380,60 @@ public:
 
         int oldsize=energy.size();
         vect tmpenergy(0.0,ncycles);
-        for(int i=0;i<oldsize;i++)
+        /*
+        vect tmpD200(0.0,ncycles);
+        vect tmpD220(0.0,ncycles);
+        vect tmpD202(0.0,ncycles);
+        vect tmpD222(0.0,ncycles);
+         */
+        for(int i=0;i<oldsize;i++){
             tmpenergy[i]=energy[i];
+            /*
+            tmpD200[i]=D200[i];
+            tmpD220[i]=D220[i];
+            tmpD202[i]=D202[i];
+            tmpD222[i]=D222[i];
+             */
+        }
 
         for(int i=oldsize;i<ncycles;i++){
             tmpenergy[i]=p.energy[i-oldsize];
+            /*
+            tmpD200[i]=p.D200[i-oldsize];
+            tmpD220[i]=p.D220[i-oldsize];
+            tmpD202[i]=p.D202[i-oldsize];
+            tmpD222[i]=p.D222[i-oldsize];
+             */
         }
         energy.resize(ncycles,0.0);
+        //D200.resize(ncycles,0.0);
+        //D220.resize(ncycles,0.0);
+        //D202.resize(ncycles,0.0);
+        //D222.resize(ncycles,0.0);
         energy=tmpenergy;
+        //D200=tmpD200;
+        //D220=tmpD220;
+        //D202=tmpD202;
+        //D222=tmpD222;
     }
 
     Value TemporalMeanEnergyPerMolecule() const {
         return BootstrapMean(energy,0,acc_idx+1);
     }
+    /*
+    Value MeanDelta200() const {
+        return BootstrapMean(D200,0,acc_idx+1);
+    }
+    Value MeanDelta220() const {
+        return BootstrapMean(D220,0,acc_idx+1);
+    }
+    Value MeanDelta202() const {
+        return BootstrapMean(D202,0,acc_idx+1);
+    }
+    Value MeanDelta222() const {
+        return BootstrapMean(D222,0,acc_idx+1);
+    }
+     */
 
     //korelacje dla różnych osi
     Value Delta200ZByCorrelation() const {
@@ -476,6 +644,10 @@ void operator|(serializer_t & s, PRE79StandardProperties & prop){
     s|prop.d200cory;
     s|prop.d220cory;
     s|prop.d222cory;
+//    s|prop.D200;
+//    s|prop.D220;
+//    s|prop.D202;
+//    s|prop.D222;
     s|prop.d322cor;
     s|prop.paritycor;
     s|prop.MeanQxTensor;
@@ -501,6 +673,10 @@ class PRE79MeanProperties {
     Value d222y_from_correlation;
     Value d322_from_correlation;
     Value parity_from_correlation;
+    double mean_d200;
+    double mean_d220;
+    double mean_d202;
+    double mean_d222;
 
     vect mean_d200corz;
     vect mean_d220corz;
@@ -523,6 +699,9 @@ class PRE79MeanProperties {
     double tau;
     double lambda;
     double h;
+
+
+
 public:
     ///konstruktor serializacyjny
     PRE79MeanProperties(){}
@@ -569,6 +748,11 @@ public:
         mean_d200cory = prop.Delta200YMeanCorrelation();
         mean_d220cory = prop.Delta220YMeanCorrelation();
         mean_d222cory = prop.Delta222YMeanCorrelation();
+        //mean_d200 = prop.MeanDelta200();
+        //mean_d220 = prop.MeanDelta220();
+        //mean_d202 = prop.MeanDelta202();
+        //mean_d222 = prop.MeanDelta222();
+
 
         mean_d322cor = prop.Delta322MeanCorrelation();
         mean_paritycor = prop.ParityMeanCorrelation();
@@ -582,8 +766,131 @@ public:
         lambda = H.GetLambda();
         h = H.GetH();
     }
+    //do wykonania po wczytaniu
+    void CalculateMeanTensors() {
+
+        vect mqx(0.0,6);
+        vect mqy(0.0,6);
+        vect mqz(0.0,6);
+        mqx = MeanQxTensor();
+        mqy = MeanQyTensor();
+        mqz = MeanQzTensor();
+        vect t20(0.0,6);
+        vect t22(0.0,6);
+        t20 = std::sqrt(1.5)*(mqz - Identity(3)/3.);
+        t22 = (mqx-mqy)/std::sqrt(2.);
+
+        double t20evectm[3][3];
+        double t20evalm[3];
+        double t22evectm[3][3];
+        double t22evalm[3];
+
+        double t20mat[3][3];
+        double t22mat[3][3];
+
+        t20mat[0][0]=t20[0];    t20mat[0][1]=t20mat[1][0]=t20[1];   t20mat[0][2]=t20mat[2][0]=t20[2];
+                                t20mat[1][1]=t20[3];                t20mat[1][2]=t20mat[2][1]=t20[4];
+                                                                    t20mat[2][2]=t20[5];
+
+        t22mat[0][0]=t22[0];    t22mat[0][1]=t22mat[1][0]=t22[1];   t22mat[0][2]=t22mat[2][0]=t22[2];
+                                t22mat[1][1]=t22[3];                t22mat[1][2]=t22mat[2][1]=t22[4];
+                                                                    t22mat[2][2]=t22[5];
+
+        //diagonalizacja
+        dsyevj3(t20mat,t20evectm,t20evalm);
+        dsyevj3(t22mat,t22evectm,t22evalm);
+
+        //segregacja wartości własnych
+        int t20dir=0,t20sec=1,t20min=2;
+        if(std::abs(t20evalm[0])>=std::abs(t20evalm[1])>=std::abs(t20evalm[2])) {t20dir=0; t20sec=1; t20min=2;}
+        if(std::abs(t20evalm[0])>=std::abs(t20evalm[2])>=std::abs(t20evalm[1])) {t20dir=0; t20sec=2; t20min=1;}
+        if(std::abs(t20evalm[1])>=std::abs(t20evalm[2])>=std::abs(t20evalm[0])) {t20dir=1; t20sec=2; t20min=0;}
+        if(std::abs(t20evalm[1])>=std::abs(t20evalm[0])>=std::abs(t20evalm[2])) {t20dir=1; t20sec=0; t20min=2;}
+        if(std::abs(t20evalm[2])>=std::abs(t20evalm[0])>=std::abs(t20evalm[1])) {t20dir=2; t20sec=0; t20min=1;}
+        if(std::abs(t20evalm[2])>=std::abs(t20evalm[1])>=std::abs(t20evalm[0])) {t20dir=2; t20sec=1; t20min=0;}
+
+        int t22dir=0,t22sec=1,t22min=2;
+        if(std::abs(t22evalm[0])>=std::abs(t22evalm[1])>=std::abs(t22evalm[2])) {t22dir=0; t22sec=1; t22min=2;}
+        if(std::abs(t22evalm[0])>=std::abs(t22evalm[2])>=std::abs(t22evalm[1])) {t22dir=0; t22sec=2; t22min=1;}
+        if(std::abs(t22evalm[1])>=std::abs(t22evalm[2])>=std::abs(t22evalm[0])) {t22dir=1; t22sec=2; t22min=0;}
+        if(std::abs(t22evalm[1])>=std::abs(t22evalm[0])>=std::abs(t22evalm[2])) {t22dir=1; t22sec=0; t22min=2;}
+        if(std::abs(t22evalm[2])>=std::abs(t22evalm[0])>=std::abs(t22evalm[1])) {t22dir=2; t22sec=0; t22min=1;}
+        if(std::abs(t22evalm[2])>=std::abs(t22evalm[1])>=std::abs(t22evalm[0])) {t22dir=2; t22sec=1; t22min=0;}
+
+        double t20a[3];
+        double t20b[3];
+        double t20c[3];
+        double t22a[3];
+        double t22b[3];
+        double t22c[3];
+
+        t20a[0] = t20evectm[t20sec][0]; t20a[1] = t20evectm[t20sec][1]; t20a[2] = t20evectm[t20sec][2];
+        t20b[0] = t20evectm[t20min][0]; t20b[1] = t20evectm[t20min][1]; t20b[2] = t20evectm[t20min][2];
+        t20c[0] = t20evectm[t20dir][0]; t20c[1] = t20evectm[t20dir][1]; t20c[2] = t20evectm[t20dir][2];
+        t22a[0] = t22evectm[t22sec][0]; t22a[1] = t22evectm[t22sec][1]; t22a[2] = t22evectm[t22sec][2];
+        t22b[0] = t22evectm[t22min][0]; t22b[1] = t22evectm[t22min][1]; t22b[2] = t22evectm[t22min][2];
+        t22c[0] = t22evectm[t22dir][0]; t22c[1] = t22evectm[t22dir][1]; t22c[2] = t22evectm[t22dir][2];
+
+
+        //iloczyny tensorowe
+        vect t20aa(0.0,6);
+        vect t20bb(0.0,6);
+        vect t20cc(0.0,6);
+        vect t22aa(0.0,6);
+        vect t22bb(0.0,6);
+        vect t22cc(0.0,6);
+
+        t20aa[0]=t20a[0]*t20a[0];   t20aa[1]=t20a[1]*t20a[0];   t20aa[2]=t20a[2]*t20a[0];
+                                    t20aa[3]=t20a[1]*t20a[1];   t20aa[4]=t20a[2]*t20a[1];
+                                                                t20aa[5]=t20a[2]*t20a[2];
+
+        t20bb[0]=t20b[0]*t20b[0];   t20bb[1]=t20b[1]*t20b[0];   t20bb[2]=t20b[2]*t20b[0];
+                                    t20bb[3]=t20b[1]*t20b[1];   t20bb[4]=t20b[2]*t20b[1];
+                                                                t20bb[5]=t20b[2]*t20b[2];
+
+        t20cc[0]=t20c[0]*t20c[0];   t20cc[1]=t20c[1]*t20c[0];   t20cc[2]=t20c[2]*t20c[0];
+                                    t20cc[3]=t20c[1]*t20c[1];   t20cc[4]=t20c[2]*t20c[1];
+                                                                t20cc[5]=t20c[2]*t20c[2];
+
+
+        t22aa[0]=t22a[0]*t22a[0];   t22aa[1]=t22a[1]*t22a[0];   t22aa[2]=t22a[2]*t22a[0];
+                                    t22aa[3]=t22a[1]*t22a[1];   t22aa[4]=t22a[2]*t22a[1];
+                                                                t22aa[5]=t22a[2]*t22a[2];
+
+        t22bb[0]=t22b[0]*t22b[0];   t22bb[1]=t22b[1]*t22b[0];   t22bb[2]=t22b[2]*t22b[0];
+                                    t22bb[3]=t22b[1]*t22b[1];   t22bb[4]=t22b[2]*t22b[1];
+                                                                t22bb[5]=t22b[2]*t22b[2];
+
+        t22cc[0]=t22c[0]*t22c[0];   t22cc[1]=t22c[1]*t22c[0];   t22cc[2]=t22c[2]*t22c[0];
+                                    t22cc[3]=t22c[1]*t22c[1];   t22cc[4]=t22c[2]*t22c[1];
+                                                                t22cc[5]=t22c[2]*t22c[2];
+
+        //tensory molekularne
+        vect t20mol(0.0,6);
+        vect t22mol(0.0,6);
+        t20mol = std::sqrt(1.5)*(t20cc - Identity(3)/3.);
+        t22mol = (t22aa-t22bb)/std::sqrt(2.);
+
+        mean_d200 = MatrixDotProduct(t20mol,t20);
+        mean_d220 = MatrixDotProduct(t22mol,t20);
+        mean_d202 = MatrixDotProduct(t20mol,t22);
+        mean_d222 = MatrixDotProduct(t22mol,t22);
+
+    }
     const Value & TemporalMeanEnergyPerMolecule() const {
         return energy;
+    }
+    const double & MeanDelta200() const {
+        return mean_d200;
+    }
+    const double & MeanDelta220() const {
+        return mean_d220;
+    }
+    const double & MeanDelta202() const {
+        return mean_d202;
+    }
+    const double & MeanDelta222() const {
+        return mean_d222;
     }
     const Value & SpecificHeat() const {
         //return specific_heat;
@@ -709,6 +1016,10 @@ void operator|(serializer_t & s, PRE79MeanProperties & p){
     s|p.mean_d222cory;
     s|p.mean_d322cor;
     s|p.mean_paritycor;
+//    s|p.mean_d200;
+//    s|p.mean_d220;
+//    s|p.mean_d202;
+//    s|p.mean_d222;
     s|p.mean_qx;
     s|p.mean_qy;
     s|p.mean_qz;

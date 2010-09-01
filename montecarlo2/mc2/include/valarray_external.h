@@ -20,6 +20,7 @@ extern double  Norm(const vect &);
 //macierz jednostkowa
 extern vect Identity(const int & dim);
 extern std::string MathematicaForm(const vect &);
+extern double MatrixDotProduct(const vect & a, const vect & b);
 
 template<class stream_t>
 void operator|(boostbase::outserializer<stream_t> & s, std::vector<vect> & v){
