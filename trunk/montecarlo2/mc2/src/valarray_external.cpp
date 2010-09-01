@@ -24,6 +24,13 @@ std::string MathematicaForm(const vect & v){
 double  DotProduct(const vect & a, const vect & b){
     return (a*b).sum();
 }
+
+double MatrixDotProduct(const vect & a, const vect & b){
+    vect p(0.0,6);
+    p = a*b;
+    return p[0]+p[3]+p[5]+2.*p[1]+2.*p[2]+2.*p[4];
+}
+
 double  Norm(const vect & v){
     vect result = std::pow(v,2.0);
     return std::sqrt(result.sum());
