@@ -17,6 +17,7 @@
 #include "PRE79SpatialCorrelations.h"
 
 #include "serializer.h"
+#include "dsyevj3.h"
 
 ///obliczanie właściwości układu i przechowywanie historii stanów
 class PRE79StandardProperties {
