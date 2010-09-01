@@ -23,6 +23,7 @@
       <itemPath>../../montecarlo2/mc2/include/SimulationDBFind.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/SpatialCorrelationEvolution.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/Statistical.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/dsyevj3.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/quantity_iterator.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/random01.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/singleton.h</itemPath>
@@ -41,6 +42,7 @@
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Particle.cpp</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Random.cpp</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Statistical.cpp</itemPath>
+      <itemPath>../../montecarlo2/mc2/src/dsyevj3.c</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/valarray_external.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -62,6 +64,9 @@
         <platform>2</platform>
       </toolsSet>
       <compileType>
+        <cTool>
+          <commandLine>-std=c99 -fopenmp</commandLine>
+        </cTool>
         <ccTool>
           <incDir>
             <pElem>../../montecarlo2/mc2/include</pElem>
