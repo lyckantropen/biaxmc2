@@ -8,6 +8,7 @@
 #include "base.h"
 #include "boost.h"
 #include "std.h"
+#include "valarray_external.h"
 #include "SimulationDB.h"
 
 /*
@@ -20,10 +21,33 @@ void    do_count(const std::string & data_type,const std::vector<std::string> & 
 		std::cout << db.get<PRE79MeanProperties>(wheres,betweens).size() << std::endl;
 	if(data_type=="lattice" || data_type=="final_lattice")
 		std::cout << db.get<Lattice>(wheres,betweens).size() << std::endl;
-	if(data_type=="properties_evolution")
+	if(data_type=="properties_evolution" || data_type=="thermalization_history")
 		std::cout << db.get<PRE79StandardProperties>(wheres,betweens).size() << std::endl;
 }
 void    table_output(const std::string & data_type,const std::vector<std::string> & columns,boostbase::base & db,const boostbase::tween_t_proxy & betweens,const boostbase::pair_t_proxy & wheres){
+
+    if(data_type=="thermalization_history") {
+        std::vector<PRE79StandardProperties> whatwegot= db.get<PRE79StandardProperties>(wheres,betweens);
+
+        std::cout << "## some of the columns may imply an additional column with error values\n";
+        std::cout << "# ";
+
+        foreach(const std::string & col,columns){
+            std::cout << col << " ";
+        }
+
+        std::cout << std::endl;
+        foreach(const PRE79StandardProperties & prop,whatwegot){
+            foreach(const std::string & column,columns){
+                if(column=="energy"){
+                    vect energy = prop.EnergyEvolution();
+                    for(int i=0;i<prop.GetNCycles();i++){
+                        std::cout << i << "\t" << energy[i] << std::endl;
+                    }
+                }
+            }
+        }
+    }
 
     if(data_type=="final_properties" || data_type=="properties") {
         std::vector<PRE79MeanProperties> whatwegot= db.get<PRE79MeanProperties>(wheres,betweens);
