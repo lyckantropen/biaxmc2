@@ -130,9 +130,9 @@ void    table_output(const std::string & data_type,const std::vector<std::string
                 if(column=="mean_qz")
                     std::cout << prop.MeanQzTensor() << "\t" ;
 
-                if(column=="tetrahedral_correaltion")
+                if(column=="tetrahedral_correlation")
                     std::cout << prop.Delta322MeanCorrelation() << "\t";
-                if(column=="parity_correaltion")
+                if(column=="parity_correlation")
                     std::cout << prop.ParityMeanCorrelation() << "\t";
 
             }
