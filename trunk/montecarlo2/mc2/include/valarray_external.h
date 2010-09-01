@@ -22,7 +22,7 @@ extern vect Identity(const int & dim);
 extern std::string MathematicaForm(const vect &);
 extern double MatrixDotProduct(const vect & a, const vect & b);
 
-#define sgn(x) (((x)*(x))/(x))
+#define sgn(x) (std::ceil((std::abs(x))/(x)))
 
 template<class stream_t>
 void operator|(boostbase::outserializer<stream_t> & s, std::vector<vect> & v){

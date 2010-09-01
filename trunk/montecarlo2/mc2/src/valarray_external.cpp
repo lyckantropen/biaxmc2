@@ -26,9 +26,12 @@ double  DotProduct(const vect & a, const vect & b){
 }
 
 double MatrixDotProduct(const vect & a, const vect & b){
-    vect p(0.0,6);
-    p = a*b;
-    return p[0]+p[3]+p[5]+2.*p[1]+2.*p[2]+2.*p[4];
+    return a[0]*b[0]+
+	   a[3]*b[3]+
+	   a[5]*b[5]+
+	   2.0*a[1]*b[1]+
+	   2.0*a[2]*b[2]+
+	   2.0*a[4]*b[4];
 }
 
 double  Norm(const vect & v){
