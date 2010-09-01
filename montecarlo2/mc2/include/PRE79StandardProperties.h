@@ -869,12 +869,12 @@ public:
         vect t20mol(0.0,6);
         vect t22mol(0.0,6);
         t20mol = std::sqrt(1.5)*(t20cc - Identity(3)/3.);
-        t22mol = (t22aa-t22bb)/std::sqrt(2.);
+        t22mol = (t20aa-t20bb)/std::sqrt(2.);
 
-        mean_d200 = MatrixDotProduct(t20mol,t20);
-        mean_d220 = MatrixDotProduct(t22mol,t20);
-        mean_d202 = MatrixDotProduct(t20mol,t22);
-        mean_d222 = MatrixDotProduct(t22mol,t22);
+        mean_d200 = sgn(t20evalm[t20dir])*MatrixDotProduct(t20mol,t20);
+        mean_d220 = sgn(t20evalm[t20dir])*MatrixDotProduct(t22mol,t20);
+        mean_d202 = sgn(t20evalm[t20dir])*MatrixDotProduct(t20mol,t22);
+        mean_d222 = sgn(t20evalm[t20dir])*MatrixDotProduct(t22mol,t22);
 
     }
     const Value & TemporalMeanEnergyPerMolecule() const {
