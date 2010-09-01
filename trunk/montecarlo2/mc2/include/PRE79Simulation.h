@@ -11,7 +11,6 @@
 #include "Simulation.h"
 #include "Settings.h"
 #include "serializer.h"
-#include "SimulationDB.h"
 #include "ILoggable.h"
 #include "SimulationDBFind.h"
 #include <omp.h>
@@ -247,6 +246,21 @@ public:
         return DurationOf1000Cycles()*total1kruns;
     }
 
+    void Thermalize() {
+        //historia termalizacji
+        PRE79StandardProperties thermalprops(lattice,settings.simulation.thermalization_cycles/100);
+        int tcycle=0;
+        while(thermalization->Iterate()){
+            if(tcycle%100==0)
+                thermalprops.Update(tcycle,H);
+            if(tcycle%1000==0)
+                Log() << "E = " << thermalprops.EnergyEvolution()[tcycle/100] << std::endl;
+            tcycle++;
+        }
+        //-- zapisywanie historii termalizacji
+        database.StoreThermalizationHistory(settings,thermalprops);
+    }
+
     ///jednowątkowa termalizacja i wielowątkowa produkcja
     Lattice RunParallel(){
         //--- termalizacja
@@ -258,7 +272,7 @@ public:
         Log() << "Expected time of simulation: " << pt::to_simple_string(expected) << std::endl;
 
         Log() << "Thermalization\n";
-        while(thermalization->Iterate());
+        Thermalize();
         //---
         
         //--- tworzymy fragmentaryczne symulacje
@@ -320,7 +334,7 @@ public:
         pt::time_duration   expected=ExpectedSimulationTime();
         Log() << "Expected time of simulation: " << pt::to_simple_string(expected) << std::endl;
         Log() << "Thermalization\n";
-        while(thermalization->Iterate());
+        Thermalize();
 
         //--- zapisywanie stanów pośrednich
         int intermediate_frequency = simulation->GetNCycles()/settings.output.intermediate_states;

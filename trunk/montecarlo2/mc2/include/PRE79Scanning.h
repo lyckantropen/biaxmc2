@@ -9,10 +9,8 @@
 #define	_PRE79SCANNING_H
 
 #include "PRE79Simulation.h"
-#include "SimulationDB.h"
 #include "Settings.h"
 #include "ILoggable.h"
-#include "SimulationDBFind.h"
 #include <omp.h>
 
 class PRE79Scanning:public ILoggable {

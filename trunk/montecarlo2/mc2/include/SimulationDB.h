@@ -31,6 +31,7 @@ public:
     const std::string current_lattice_kw;           ///<słowo kluczowe znaczące stan siatki 
     const std::string final_lattice_kw;     ///<słowo kluczowe znaczące ostateczny stan siatki
     const std::string properties_evolution_kw;        ///<słowo kluczowe znaczące całość ewolucji właściwości systemu
+    const std::string thermalization_history_kw;
     const std::string current_properties_kw;
     const std::string cycle_label;             ///<słowo kluczowe oznaczające numer cyklu
     const std::string ncycles_label;           ///<słowo kluczowe oznaczające ilość wszystkich cykli w symulacji
@@ -51,6 +52,7 @@ public:
             current_lattice_kw("lattice"),
             final_lattice_kw("final_lattice"),
             properties_evolution_kw("properties_evolution"),
+            thermalization_history_kw("thermalization_history"),
             current_properties_kw("properties"),
             cycle_label("production_cycle"),
             ncycles_label("total_production_cycles"),
@@ -110,6 +112,22 @@ public:
           (tau_label,settings.hamiltonian.tau)
           (h_label,settings.hamiltonian.h)
           (type_label,properties_evolution_kw)
+        );
+    }
+    void StoreThermalizationHistory(const Settings & settings,PRE79StandardProperties & prop){
+        db.store<PRE79StandardProperties>(prop,boostbase::where
+          (id_kw,id)
+          (user_label,user)
+          (L_label,settings.lattice.L)
+          (W_label,settings.lattice.W)
+          (H_label,settings.lattice.H)
+          (cycle_label,ncycles-1)
+          (ncycles_label,ncycles)
+          (temperature_label,settings.hamiltonian.temperature)
+          (lambda_label,settings.hamiltonian.lambda)
+          (tau_label,settings.hamiltonian.tau)
+          (h_label,settings.hamiltonian.h)
+          (type_label,thermalization_history_kw)
         );
     }
     const std::stringstream & SqliteLog(){
