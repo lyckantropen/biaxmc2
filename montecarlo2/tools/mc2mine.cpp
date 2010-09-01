@@ -59,8 +59,9 @@ void    table_output(const std::string & data_type,const std::vector<std::string
         }
         std::cout << std::endl;
 
-        foreach(const PRE79MeanProperties & prop,whatwegot){
+        foreach(PRE79MeanProperties & prop,whatwegot){
             //std::cout << prop << std::endl;
+            prop.CalculateMeanTensors();
             foreach(const std::string & column,columns){
                 if(column=="temperature")
                     std::cout << prop.Temperature() << "\t";
@@ -112,6 +113,15 @@ void    table_output(const std::string & data_type,const std::vector<std::string
                     std::cout << prop.Delta222YMeanCorrelation() << "\t";
                 if(column=="mean_d220cory")
                     std::cout << prop.Delta220YMeanCorrelation() << "\t";
+                if(column=="mean_d200")
+                    std::cout << prop.MeanDelta200() << "\t";
+                if(column=="mean_d220")
+                    std::cout << prop.MeanDelta220() << "\t";
+                if(column=="mean_d202")
+                    std::cout << prop.MeanDelta202() << "\t";
+                if(column=="mean_d222")
+                    std::cout << prop.MeanDelta222() << "\t";
+
 
                 if(column=="mean_qx")
                     std::cout << prop.MeanQxTensor() << "\t" ;
@@ -228,7 +238,8 @@ void    table_output(const std::string & data_type,const std::vector<std::string
 void mathematica_output(const std::string & data_type,const std::vector<std::string> & /*columns*/,boostbase::base & db,const boostbase::tween_t_proxy & betweens,const boostbase::pair_t_proxy & wheres){
     if(data_type=="properties" || data_type=="final_properties"){
         std::vector<PRE79MeanProperties> whatwegot= db.get<PRE79MeanProperties>(wheres,betweens);
-        foreach(const PRE79MeanProperties & prop,whatwegot){
+        foreach(PRE79MeanProperties & prop,whatwegot){
+            prop.CalculateMeanTensors();
             //współrzędne - wszystko jest w zależności od T,h,lambda i tau
             std::stringstream coord;
             coord << "[" << prop.Temperature() << "," << prop.Field() << "," << prop.Lambda() << "," << prop.Tau() << "]" ;
@@ -257,6 +268,11 @@ void mathematica_output(const std::string & data_type,const std::vector<std::str
             std::cout << "Delta200YMeanCorrelation" << coord.str() << "=" << MathematicaForm(prop.Delta200YMeanCorrelation()) << ";\n";
             std::cout << "Delta220YMeanCorrelation" << coord.str() << "=" << MathematicaForm(prop.Delta220YMeanCorrelation()) << ";\n";
             std::cout << "Delta222YMeanCorrelation" << coord.str() << "=" << MathematicaForm(prop.Delta222YMeanCorrelation()) << ";\n";
+
+            std::cout << "Delta200" << coord.str() << "=" << prop.MeanDelta200() << ";\n";
+            std::cout << "Delta220" << coord.str() << "=" << prop.MeanDelta220() << ";\n";
+            std::cout << "Delta202" << coord.str() << "=" << prop.MeanDelta202() << ";\n";
+            std::cout << "Delta222" << coord.str() << "=" << prop.MeanDelta222() << ";\n";
 
             std::cout << "MeanQxTensor" << coord.str() << "=" << MathematicaForm(prop.MeanQxTensor()) << ";\n";
             std::cout << "MeanQyTensor" << coord.str() << "=" << MathematicaForm(prop.MeanQyTensor()) << ";\n";
