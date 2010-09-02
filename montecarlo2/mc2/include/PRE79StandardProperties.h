@@ -20,6 +20,9 @@
 #include "eig3.h"
 #include "evsort.h"
 
+//extern "C" void Jacobi_Cyclic_Method(double *eigenvalues, double *eigenvectors, double *A, int n);
+
+
 ///obliczanie właściwości układu i przechowywanie historii stanów
 class PRE79StandardProperties {
     template<class serializer_t>
@@ -120,115 +123,6 @@ private:
         MeanQxTensor[acc_idx]=mqx/double(lat->GetN());
         MeanQyTensor[acc_idx]=mqy/double(lat->GetN());
         MeanQzTensor[acc_idx]=mqz/double(lat->GetN());
-/*
-        vect t20(0.0,6);
-        vect t22(0.0,6);
-        t20 = std::sqrt(1.5)*(mqz - Identity(3)/3.)/double(lat->GetN());
-        t22 = (mqx-mqy)/std::sqrt(2.)/double(lat->GetN());
-
-        double t20evectm[3][3];
-        double t20evalm[3];
-        double t22evectm[3][3];
-        double t22evalm[3];
-
-        double t20mat[3][3];
-        double t22mat[3][3];
-
-        t20mat[0][0]=t20[0];    t20mat[0][1]=t20mat[1][0]=t20[1];   t20mat[0][2]=t20mat[2][0]=t20[2];
-                                t20mat[1][1]=t20[3];                t20mat[1][2]=t20mat[2][1]=t20[4];
-                                                                    t20mat[2][2]=t20[5];
-
-        t22mat[0][0]=t22[0];    t22mat[0][1]=t22mat[1][0]=t22[1];   t22mat[0][2]=t22mat[2][0]=t22[2];
-                                t22mat[1][1]=t22[3];                t22mat[1][2]=t22mat[2][1]=t22[4];
-                                                                    t22mat[2][2]=t22[5];
-
-        //diagonalizacja
-        dsyevj3(t20mat,t20evectm,t20evalm);
-        dsyevj3(t22mat,t22evectm,t22evalm);
-
-        //segregacja wartości własnych
-        int t20dir=0,t20sec=1,t20min=2;
-        if(std::abs(t20evalm[0])>=std::abs(t20evalm[1])>=std::abs(t20evalm[2])) {t20dir=0; t20sec=1; t20min=2;}
-        if(std::abs(t20evalm[0])>=std::abs(t20evalm[2])>=std::abs(t20evalm[1])) {t20dir=0; t20sec=2; t20min=1;}
-        if(std::abs(t20evalm[1])>=std::abs(t20evalm[2])>=std::abs(t20evalm[0])) {t20dir=1; t20sec=2; t20min=0;}
-        if(std::abs(t20evalm[1])>=std::abs(t20evalm[0])>=std::abs(t20evalm[2])) {t20dir=1; t20sec=0; t20min=2;}
-        if(std::abs(t20evalm[2])>=std::abs(t20evalm[0])>=std::abs(t20evalm[1])) {t20dir=2; t20sec=0; t20min=1;}
-        if(std::abs(t20evalm[2])>=std::abs(t20evalm[1])>=std::abs(t20evalm[0])) {t20dir=2; t20sec=1; t20min=0;}
-
-        int t22dir=0,t22sec=1,t22min=2;
-        if(std::abs(t22evalm[0])>=std::abs(t22evalm[1])>=std::abs(t22evalm[2])) {t22dir=0; t22sec=1; t22min=2;}
-        if(std::abs(t22evalm[0])>=std::abs(t22evalm[2])>=std::abs(t22evalm[1])) {t22dir=0; t22sec=2; t22min=1;}
-        if(std::abs(t22evalm[1])>=std::abs(t22evalm[2])>=std::abs(t22evalm[0])) {t22dir=1; t22sec=2; t22min=0;}
-        if(std::abs(t22evalm[1])>=std::abs(t22evalm[0])>=std::abs(t22evalm[2])) {t22dir=1; t22sec=0; t22min=2;}
-        if(std::abs(t22evalm[2])>=std::abs(t22evalm[0])>=std::abs(t22evalm[1])) {t22dir=2; t22sec=0; t22min=1;}
-        if(std::abs(t22evalm[2])>=std::abs(t22evalm[1])>=std::abs(t22evalm[0])) {t22dir=2; t22sec=1; t22min=0;}
-
-        double t20a[3];
-        double t20b[3];
-        double t20c[3];
-        double t22a[3];
-        double t22b[3];
-        double t22c[3];
-
-        t20a[0] = t20evectm[t20sec][0]; t20a[1] = t20evectm[t20sec][1]; t20a[2] = t20evectm[t20sec][2];
-        t20b[0] = t20evectm[t20min][0]; t20b[1] = t20evectm[t20min][1]; t20b[2] = t20evectm[t20min][2];
-        t20c[0] = t20evectm[t20dir][0]; t20c[1] = t20evectm[t20dir][1]; t20c[2] = t20evectm[t20dir][2];
-        t22a[0] = t22evectm[t22sec][0]; t22a[1] = t22evectm[t22sec][1]; t22a[2] = t22evectm[t22sec][2];
-        t22b[0] = t22evectm[t22min][0]; t22b[1] = t22evectm[t22min][1]; t22b[2] = t22evectm[t22min][2];
-        t22c[0] = t22evectm[t22dir][0]; t22c[1] = t22evectm[t22dir][1]; t22c[2] = t22evectm[t22dir][2];
-
-
-        //iloczyny tensorowe
-        vect t20aa(0.0,6);
-        vect t20bb(0.0,6);
-        vect t20cc(0.0,6);
-        vect t22aa(0.0,6);
-        vect t22bb(0.0,6);
-        vect t22cc(0.0,6);
-
-        t20aa[0]=t20a[0]*t20a[0];   t20aa[1]=t20a[1]*t20a[0];   t20aa[2]=t20a[2]*t20a[0];
-                                    t20aa[3]=t20a[1]*t20a[1];   t20aa[4]=t20a[2]*t20a[1];
-                                                                t20aa[5]=t20a[2]*t20a[2];
-
-        t20bb[0]=t20b[0]*t20b[0];   t20bb[1]=t20b[1]*t20b[0];   t20bb[2]=t20b[2]*t20b[0];
-                                    t20bb[3]=t20b[1]*t20b[1];   t20bb[4]=t20b[2]*t20b[1];
-                                                                t20bb[5]=t20b[2]*t20b[2];
-
-        t20cc[0]=t20c[0]*t20c[0];   t20cc[1]=t20c[1]*t20c[0];   t20cc[2]=t20c[2]*t20c[0];
-                                    t20cc[3]=t20c[1]*t20c[1];   t20cc[4]=t20c[2]*t20c[1];
-                                                                t20cc[5]=t20c[2]*t20c[2];
-
-
-        t22aa[0]=t22a[0]*t22a[0];   t22aa[1]=t22a[1]*t22a[0];   t22aa[2]=t22a[2]*t22a[0];
-                                    t22aa[3]=t22a[1]*t22a[1];   t22aa[4]=t22a[2]*t22a[1];
-                                                                t22aa[5]=t22a[2]*t22a[2];
-
-        t22bb[0]=t22b[0]*t22b[0];   t22bb[1]=t22b[1]*t22b[0];   t22bb[2]=t22b[2]*t22b[0];
-                                    t22bb[3]=t22b[1]*t22b[1];   t22bb[4]=t22b[2]*t22b[1];
-                                                                t22bb[5]=t22b[2]*t22b[2];
-
-        t22cc[0]=t22c[0]*t22c[0];   t22cc[1]=t22c[1]*t22c[0];   t22cc[2]=t22c[2]*t22c[0];
-                                    t22cc[3]=t22c[1]*t22c[1];   t22cc[4]=t22c[2]*t22c[1];
-                                                                t22cc[5]=t22c[2]*t22c[2];
-
-        //tensory molekularne
-        vect t20mol(0.0,6);
-        vect t22mol(0.0,6);
-        t20mol = std::sqrt(1.5)*(t20cc - Identity(3)/3.);
-        t22mol = (t22aa-t22bb)/std::sqrt(2.);
-
-        double d200 = MatrixDotProduct(t20mol,t20);
-        double d220 = MatrixDotProduct(t22mol,t20);
-        double d202 = MatrixDotProduct(t20mol,t22);
-        double d222 = MatrixDotProduct(t22mol,t22);
-
-        D200[acc_idx] = d200;
-        D220[acc_idx] = d220;
-        D202[acc_idx] = d202;
-        D222[acc_idx] = d222;
-*/
-        //std::cout << "D200: " << d200 << " D222: " << d222 << std::endl;
-        //std::cout << "G200: " << d200corz.Limit() << " G222: " << d222corz.Limit() << std::endl;
     }
 
 public:
@@ -773,9 +667,9 @@ public:
         vect mqx(0.0,6);
         vect mqy(0.0,6);
         vect mqz(0.0,6);
-        mqx = MeanQxTensor();
-        mqy = MeanQyTensor();
-        mqz = MeanQzTensor();
+        mqz = MeanQxTensor();
+        mqx = MeanQyTensor();
+        mqy = MeanQzTensor();
 
 	//tensory w bazie cząsteczki
         vect t20(0.0,6);
@@ -802,9 +696,13 @@ public:
         //diagonalizacja
         //dsyevj3(t20mat,t20evectm,t20evalm);
         //dsyevj3(t22mat,t22evectm,t22evalm);
-        eigen_decomposition(t20mat,t20evectm,t20evalm);
+	//Jacobi_Cyclic_Method((double*)t20evalm,(double*)t20evectm,(double*)t20mat,3);
+	//Jacobi_Cyclic_Method((double*)t22evalm,(double*)t22evectm,(double*)t22mat,3);
+      
+	eigen_decomposition(t20mat,t20evectm,t20evalm);
         eigen_decomposition(t22mat,t22evectm,t22evalm);
-
+	
+	
 	std::vector<evs> t20es;
 	std::vector<evs> t22es;
 	t20es.push_back(evs(t20evalm[0],t20evectm[0]));
@@ -826,12 +724,12 @@ public:
         vect t22c(0.0,3);
 
 	for(int i=0;i<3;i++){
-		t20a[i] = t20es[0].v[i];
-		t20b[i] = t20es[1].v[i];
-		t20c[i] = t20es[2].v[i];
-		t22a[i] = t22es[0].v[i];
-		t22b[i] = t22es[1].v[i];
-		t22c[i] = t22es[2].v[i];
+		t20c[i] = t20es[0].v[i];
+		t20a[i] = t20es[1].v[i];
+		t20b[i] = t20es[2].v[i];
+		t22c[i] = t22es[0].v[i];
+		t22a[i] = t22es[1].v[i];
+		t22b[i] = t22es[2].v[i];
 	}
 
 
