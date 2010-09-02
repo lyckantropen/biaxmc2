@@ -147,9 +147,9 @@ static void tql2(double V[n][n], double d[n], double e[n]) {
   }
   e[n-1] = 0.0;
 
-  double f = 0.0;
-  double tst1 = 0.0;
-  double eps = pow(2.0,-52.0);
+  long double f = 0.0;
+  long double tst1 = 0.0;
+  long double eps = pow(10.0,-70.0);
   for (int l = 0; l < n; l++) {
 
     // Find small subdiagonal element
@@ -173,16 +173,16 @@ static void tql2(double V[n][n], double d[n], double e[n]) {
 
         // Compute implicit shift
 
-        double g = d[l];
-        double p = (d[l+1] - g) / (2.0 * e[l]);
-        double r = hypot2(p,1.0);
+        long double g = d[l];
+        long double p = (d[l+1] - g) / (2.0 * e[l]);
+        long double r = hypot2(p,1.0);
         if (p < 0) {
           r = -r;
         }
         d[l] = e[l] / (p + r);
         d[l+1] = e[l] * (p + r);
-        double dl1 = d[l+1];
-        double h = g - d[l];
+        long double dl1 = d[l+1];
+        long double h = g - d[l];
         for (int i = l+2; i < n; i++) {
           d[i] -= h;
         }
@@ -191,12 +191,12 @@ static void tql2(double V[n][n], double d[n], double e[n]) {
         // Implicit QL transformation.
 
         p = d[m];
-        double c = 1.0;
-        double c2 = c;
-        double c3 = c;
-        double el1 = e[l+1];
-        double s = 0.0;
-        double s2 = 0.0;
+        long double c = 1.0;
+        long double c2 = c;
+        long double c3 = c;
+        long double el1 = e[l+1];
+        long double s = 0.0;
+        long double s2 = 0.0;
         for (int i = m-1; i >= l; i--) {
           c3 = c2;
           c2 = c;
@@ -234,7 +234,7 @@ static void tql2(double V[n][n], double d[n], double e[n]) {
 
   for (int i = 0; i < n-1; i++) {
     int k = i;
-    double p = d[i];
+    long double p = d[i];
     for (int j = i+1; j < n; j++) {
       if (d[j] < p) {
         k = j;

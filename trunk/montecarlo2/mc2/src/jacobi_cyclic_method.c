@@ -109,7 +109,7 @@
 #include <float.h>                           // required for DBL_EPSILON
 #include <math.h>                            // required for fabs()
 
-void Jacobi_Cyclic_Method(double eigenvalues[], double *eigenvectors,
+void Jacobi_Cyclic_Method(double *eigenvalues, double *eigenvectors,
                                                               double *A, int n)
 {
    int row, i, j, k, m;
