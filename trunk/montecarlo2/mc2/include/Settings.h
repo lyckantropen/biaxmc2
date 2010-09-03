@@ -50,6 +50,7 @@ public:
     struct _simulation {
         bool find_thermalized;  std::string v_find_thermalized;
         bool pick_up_aborted;   std::string v_pick_up_aborted;
+        bool adjust_radius;     std::string v_adjust_radius;
         double find_thermalized_temperature_tolerance;
         double find_thermalized_h_tolerance;
         long production_cycles;
@@ -63,10 +64,11 @@ public:
         thermalization_cycles(1000),
         supplementary_thermalization_cycles(0),
         radius_adjustment_frequency(100),
-        find_thermalized("yes"),
+        v_adjust_radius("no"),
+        v_find_thermalized("yes"),
         find_thermalized_temperature_tolerance(0.0),
         find_thermalized_h_tolerance(0.0),
-        pick_up_aborted("no")
+        v_pick_up_aborted("no")
         {}
     } simulation;
     struct _sqlite {
@@ -148,6 +150,7 @@ private:
         ("simulation.thermalization_cycles",po::value<long>(&simulation.thermalization_cycles),"Number of thermalization cycles")
         ("simulation.supplementary_thermalization_cycles",po::value<long>(&simulation.supplementary_thermalization_cycles),"Number of thermalization cycles when reusing thermalized state")
         ("simulation.radius_adjustment_frequency",po::value<int>(&simulation.radius_adjustment_frequency),"Number of cycles to skip between radius adjustments. Must be non-zero.")
+        ("simulation.adjust_radius",po::value<std::string>(&simulation.v_adjust_radius),"Whether to adjust MC radius during simulation")
         ("simulation.find_thermalized",po::value<std::string>(&simulation.v_find_thermalized),"(yes/no) Find an already thermalized state in the database")
         ("simulation.find_thermalized_temperature_tolerance",po::value<double>(&simulation.find_thermalized_temperature_tolerance),"Temperature tolerance for thermalized state in units of scanning.delta")
         ("simulation.find_thermalized_h_tolerance",po::value<double>(&simulation.find_thermalized_h_tolerance),"Field tolerance for thermalized state in units of h")
@@ -182,6 +185,7 @@ private:
         output.save_final_configuration = TextBool(output.v_save_final_configuration);
         output.save_final_properties = TextBool(output.v_save_final_properties);
         output.save_properties_evolution = TextBool(output.v_save_properties_evolution);
+	output.save_intermediate_states = TextBool(output.v_save_intermediate_states);
         initial.biaxial = TextBool(initial.v_biaxial);
         initial.righthanded = TextBool(initial.v_righthanded);
         initial.isotropic = TextBool(initial.v_isotropic);
@@ -193,6 +197,7 @@ private:
         openmp.dynamic = TextBool(openmp.v_dynamic);
         simulation.find_thermalized = TextBool(simulation.v_find_thermalized);
         simulation.pick_up_aborted = TextBool(simulation.v_pick_up_aborted);
+        simulation.adjust_radius = TextBool(simulation.v_adjust_radius);
     }
 public:
     Settings(const fs::path & file){
