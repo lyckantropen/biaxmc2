@@ -60,7 +60,7 @@ public:
             }
             //---
             //--- poprawa promienia błądzenia przypadkowego
-            if(k%settings.simulation.radius_adjustment_frequency==0)
+            if(k%settings.simulation.radius_adjustment_frequency==0 && settings.simulation.adjust_radius)
                 metro->AdjustRadius(lattice);
             //---
             
@@ -367,8 +367,7 @@ public:
             }
 
             //--- poprawa promienia błądzenia przypadkowego
-            if(k%settings.simulation.radius_adjustment_frequency==0)
-                metro->AdjustRadius(lattice);
+            if(k%settings.simulation.radius_adjustment_frequency==0 && settings.simulation.adjust_radius)
             //---
             
             if((k+1)%remaining_interval==0){
