@@ -142,7 +142,7 @@ private:
         ("hamiltonian.lambda",po::value<double>(&hamiltonian.lambda),"Lambda coupling constant")
         ("hamiltonian.tau",po::value<double>(&hamiltonian.tau),"Tau coupling constant")
         ("hamiltonian.temperature",po::value<double>(&hamiltonian.temperature),"Temperature")
-        ("hamiltonian.h",po::value<double>(&hamiltonian.h),"Field coupling to second order tensor (along x)")
+        ("hamiltonian.h",po::value<double>(&hamiltonian.h),"Field coupling to second order tensor (along z)")
         ("simulation.production_cycles",po::value<long>(&simulation.production_cycles),"Total number of production cycles")
         ("simulation.measure_frequency",po::value<int>(&simulation.measure_frequency),"Number of cycles to skip between measurements. Must be non-zero.")
         ("simulation.thermalization_cycles",po::value<long>(&simulation.thermalization_cycles),"Number of thermalization cycles")
