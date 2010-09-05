@@ -375,12 +375,12 @@ int main(int argc, char** argv)
 
         if(std::string(argv[i])=="--days-ago"){
             pt::ptime day_end = pt::second_clock::local_time();
-            pt::ptime day_start = day_end - pt::hours(std::atof(argv[i+2])*24);
+            pt::ptime day_start = day_end - pt::hours(std::atof(argv[i+1])*24);
             betweens(std::string("date"),pt::to_simple_string(day_start),pt::to_simple_string(day_end));
         }
         if(std::string(argv[i])=="--hours-ago"){
             pt::ptime day_end = pt::second_clock::local_time();
-            pt::ptime day_start = day_end - pt::hours(std::atof(argv[i+2]));
+            pt::ptime day_start = day_end - pt::hours(std::atof(argv[i+1]));
             betweens(std::string("date"),pt::to_simple_string(day_start),pt::to_simple_string(day_end));
         }
         if(std::string(argv[i])=="--hours"){

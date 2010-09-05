@@ -65,7 +65,7 @@ public:
             //---
 
             //--- pomiar poziomu akceptacji
-            if(settings.simulation.measure_acceptance && tcycle%settings.simulation.measure_acceptance_frequency==0)
+            if(settings.simulation.measure_acceptance && k%settings.simulation.measure_acceptance_frequency==0)
                 Log() << "Acceptance rate: " << metro->MeasureAccepted(lattice)*100.0 << "%\n";
             //---
             
@@ -380,7 +380,7 @@ public:
             //---
 
             //--- pomiar poziomu akceptacji
-            if(settings.simulation.measure_acceptance && tcycle%settings.simulation.measure_acceptance_frequency==0)
+            if(settings.simulation.measure_acceptance && k%settings.simulation.measure_acceptance_frequency==0)
                 Log() << "Acceptance rate: " << metro->MeasureAccepted(lattice)*100.0 << "%\n";
             //---
             
