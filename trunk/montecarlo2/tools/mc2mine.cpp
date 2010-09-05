@@ -367,6 +367,22 @@ int main(int argc, char** argv)
             pt::ptime day_start = day_end - pt::hours(24);
             betweens(std::string("date"),pt::to_simple_string(day_start),pt::to_simple_string(day_end));
         }
+        if(std::string(argv[i])=="--last-week"){
+            pt::ptime day_end = pt::second_clock::local_time();
+            pt::ptime day_start = day_end - pt::hours(7*24);
+            betweens(std::string("date"),pt::to_simple_string(day_start),pt::to_simple_string(day_end));
+        }
+
+        if(std::string(argv[i])=="--days-ago"){
+            pt::ptime day_end = pt::second_clock::local_time();
+            pt::ptime day_start = day_end - pt::hours(std::atof(argv[i+2])*24);
+            betweens(std::string("date"),pt::to_simple_string(day_start),pt::to_simple_string(day_end));
+        }
+        if(std::string(argv[i])=="--hours-ago"){
+            pt::ptime day_end = pt::second_clock::local_time();
+            pt::ptime day_start = day_end - pt::hours(std::atof(argv[i+2]));
+            betweens(std::string("date"),pt::to_simple_string(day_start),pt::to_simple_string(day_end));
+        }
         if(std::string(argv[i])=="--hours"){
             pt::ptime hour_start;
             pt::ptime hour_end;
