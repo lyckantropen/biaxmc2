@@ -64,7 +64,7 @@ public:
         return double(acc_moves)/(N*tries);
 
     }
-    void AdjustRadius(Lattice * lat, const double & lowest_acc=0.4, const double & highest_acc=0.5, const double & decimation=0.15){
+    void AdjustRadius(Lattice * lat, const double & lowest_acc=0.3, const double & highest_acc=0.4, const double & decimation=0.15){
         if(lat==NULL) return ;
         double acc_fraction=0.0;
         double N=0.0;
