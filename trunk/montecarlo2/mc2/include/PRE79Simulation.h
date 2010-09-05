@@ -59,9 +59,14 @@ public:
                 prop->Update(k,H);
             }
             //---
-            //--- poprawa promienia błądzenia przypadkowego
+            //--- poprawa promienia błądzenia przypadkowego <-- czyżby źródło błędów???
             if(k%settings.simulation.radius_adjustment_frequency==0 && settings.simulation.adjust_radius)
                 metro->AdjustRadius(lattice);
+            //---
+
+            //--- pomiar poziomu akceptacji
+            if(settings.simulation.measure_acceptance && tcycle%settings.simulation.measure_acceptance_frequency==0)
+                Log() << "Acceptance rate: " << metro->MeasureAccepted(lattice)*100.0 << "%\n";
             //---
             
             if((k+1)%remaining_interval==0){
@@ -109,6 +114,7 @@ class PRE79Simulation:public ILoggable {
         H = new PRE79StandardHamiltonian(settings.hamiltonian.temperature, settings.hamiltonian.lambda, settings.hamiltonian.tau,settings.hamiltonian.h);
         Log() << "Creating Metropolis\n";
         metro = new Metropolis(H,0.065);
+        metro->SetStream(&std::cout);
         if(!restored){
 
             //--- szukamy ewentualnego zapisanego stermalizowanego stanu
@@ -255,6 +261,8 @@ public:
                 thermalprops.Update(tcycle,H);
             if(tcycle%1000==0)
                 Log() << "E = " << thermalprops.EnergyEvolution()[tcycle/100] << std::endl;
+            if(settings.simulation.measure_acceptance && tcycle%settings.simulation.measure_acceptance_frequency==0)
+                Log() << "Acceptance rate: " << metro->MeasureAccepted(lattice)*100.0 << "%\n";
             tcycle++;
         }
         //-- zapisywanie historii termalizacji
@@ -366,8 +374,14 @@ public:
 
             }
 
-            //--- poprawa promienia błądzenia przypadkowego
+            //--- poprawa promienia błądzenia przypadkowego <-- czyżby źródło błędów???
             if(k%settings.simulation.radius_adjustment_frequency==0 && settings.simulation.adjust_radius)
+                metro->AdjustRadius(lattice);
+            //---
+
+            //--- pomiar poziomu akceptacji
+            if(settings.simulation.measure_acceptance && tcycle%settings.simulation.measure_acceptance_frequency==0)
+                Log() << "Acceptance rate: " << metro->MeasureAccepted(lattice)*100.0 << "%\n";
             //---
             
             if((k+1)%remaining_interval==0){

@@ -51,10 +51,12 @@ public:
         bool find_thermalized;  std::string v_find_thermalized;
         bool pick_up_aborted;   std::string v_pick_up_aborted;
         bool adjust_radius;     std::string v_adjust_radius;
+        bool measure_acceptance;std::string v_measure_acceptance;
         double find_thermalized_temperature_tolerance;
         double find_thermalized_h_tolerance;
         long production_cycles;
         int measure_frequency;
+        int measure_acceptance_frequency;
         long thermalization_cycles;
         long supplementary_thermalization_cycles;
         int radius_adjustment_frequency;
@@ -68,7 +70,9 @@ public:
         v_find_thermalized("yes"),
         find_thermalized_temperature_tolerance(0.0),
         find_thermalized_h_tolerance(0.0),
-        v_pick_up_aborted("no")
+        measure_acceptance_frequency(100),
+        v_pick_up_aborted("no"),
+        v_measure_acceptance("no")
         {}
     } simulation;
     struct _sqlite {
@@ -151,6 +155,8 @@ private:
         ("simulation.supplementary_thermalization_cycles",po::value<long>(&simulation.supplementary_thermalization_cycles),"Number of thermalization cycles when reusing thermalized state")
         ("simulation.radius_adjustment_frequency",po::value<int>(&simulation.radius_adjustment_frequency),"Number of cycles to skip between radius adjustments. Must be non-zero.")
         ("simulation.adjust_radius",po::value<std::string>(&simulation.v_adjust_radius),"Whether to adjust MC radius during simulation")
+        ("simulation.measure_acceptance",po::value<std::string>(&simulation.v_measure_acceptance),"Whether to measure MC acceptance rate during simulation")
+        ("simulation.measure_acceptance_frequency",po::value<int>(&simulation.measure_acceptance_frequency),"Cycles to skip between measuring MC acceptance rate")
         ("simulation.find_thermalized",po::value<std::string>(&simulation.v_find_thermalized),"(yes/no) Find an already thermalized state in the database")
         ("simulation.find_thermalized_temperature_tolerance",po::value<double>(&simulation.find_thermalized_temperature_tolerance),"Temperature tolerance for thermalized state in units of scanning.delta")
         ("simulation.find_thermalized_h_tolerance",po::value<double>(&simulation.find_thermalized_h_tolerance),"Field tolerance for thermalized state in units of h")
@@ -198,6 +204,7 @@ private:
         simulation.find_thermalized = TextBool(simulation.v_find_thermalized);
         simulation.pick_up_aborted = TextBool(simulation.v_pick_up_aborted);
         simulation.adjust_radius = TextBool(simulation.v_adjust_radius);
+        simulation.measure_acceptance = TextBool(simulation.v_measure_acceptance);
     }
 public:
     Settings(const fs::path & file){

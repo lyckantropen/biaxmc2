@@ -50,16 +50,31 @@ public:
     virtual Hamiltonian * GetHamiltonian(){
         return hamiltonian;
     }
-    void AdjustRadius(Lattice * lat, const double & lowest_acc=0.3, const double & highest_acc=0.4, const double & decimation=0.15){
+    double MeasureAccepted(Lattice * lat){
+        if(lat==NULL) return -1 ;
+        double N=0.0;
+        int acc_moves=0;
+        Lattice testlat=*lat;
+
+        double tries=5;
+        N=testlat.GetN();
+        for(int i=0;i<tries;i++){
+            acc_moves+=testlat.Sweep(this);
+        }
+        return double(acc_moves)/(N*tries);
+
+    }
+    void AdjustRadius(Lattice * lat, const double & lowest_acc=0.4, const double & highest_acc=0.5, const double & decimation=0.15){
         if(lat==NULL) return ;
         double acc_fraction=0.0;
         double N=0.0;
         int acc_moves=0;
 
+
         while(acc_fraction<lowest_acc || acc_fraction>highest_acc){
             Lattice testlat=*lat;
             acc_moves=0;
-            double tries=1;
+            double tries=5;
             N=testlat.GetN();
             for(int i=0;i<tries;i++){
                 acc_moves+=testlat.Sweep(this);
@@ -75,16 +90,19 @@ public:
             }
             
             if(radius>=1.0){
-                radius=0.99;
+                radius=0.999;
                 break;
             }
             if(radius<=0.01){
-                radius=0.01;
+                radius=0.001;
                 break;
             }
             
         }
         Log() << acc_fraction << " (" << acc_moves << "/" << N << ") accepted, radius " << radius << std::endl;
+    }
+    virtual void SetStream(std::ostream * os){
+        ILoggable::SetStream(os);
     }
 };
 
