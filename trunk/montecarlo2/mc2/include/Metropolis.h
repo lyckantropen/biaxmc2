@@ -22,8 +22,9 @@
 class Metropolis:public MCProto,protected ILoggable {
     Hamiltonian     *   hamiltonian;
     double              radius; ///<promień dający odpowiednią akceptację ruchów
+    double  acc_llimit,acc_ulimit;
 public:
-    Metropolis(Hamiltonian * h=NULL,const double & r=1):hamiltonian(h),radius(r){}
+    Metropolis(Hamiltonian * h=NULL,const double & r=1):hamiltonian(h),radius(r),acc_llimit(0.3),acc_ulimit(0.4){}
     virtual vect OrientationNudge(const vect & old){
         return RandomWalkOn4DSphere(radius,old);
     }
@@ -64,14 +65,14 @@ public:
         return double(acc_moves)/(N*tries);
 
     }
-    void AdjustRadius(Lattice * lat, const double & lowest_acc=0.3, const double & highest_acc=0.4, const double & decimation=0.02){
+    void AdjustRadius(Lattice * lat, const double & decimation=0.02){
         if(lat==NULL) return ;
         double acc_fraction=0.0;
         double N=0.0;
         int acc_moves=0;
 
 
-        while(acc_fraction<lowest_acc || acc_fraction>highest_acc){
+        while(acc_fraction<acc_llimit || acc_fraction>acc_ulimit){
             Lattice testlat=*lat;
             acc_moves=0;
             double tries=2;
@@ -82,11 +83,11 @@ public:
             acc_fraction = double(acc_moves)/(N*tries);
             
             
-            if(acc_fraction<lowest_acc){
+            if(acc_fraction<acc_llimit){
                 radius*=(1.0-decimation);
                 Log() << "decimating down to r=" << radius << " because acc_fraction=" << acc_fraction << std::endl;
             }
-            if(acc_fraction>highest_acc){
+            if(acc_fraction>acc_ulimit){
                 radius*=(1.0+decimation);
                 Log() << "decimating up to r=" << radius << " because acc_fraction=" << acc_fraction << std::endl;
             }
@@ -105,6 +106,12 @@ public:
     }
     virtual void SetStream(std::ostream * os){
         ILoggable::SetStream(os);
+    }
+    const double & GetAccLLimit() const {
+        return acc_llimit;
+    }
+    const double & GetAccULimit() const {
+        return acc_ulimit;
     }
 };
 

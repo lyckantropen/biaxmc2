@@ -65,9 +65,11 @@ public:
             //---
 
             //--- pomiar poziomu akceptacji
-            if(settings.simulation.measure_acceptance && k%settings.simulation.measure_acceptance_frequency==0)
+            if(settings.simulation.measure_acceptance && k%settings.simulation.measure_acceptance_frequency==0){
                 //Log() << "Acceptance rate: " << metro->MeasureAccepted(lattice)*100.0 << "%\n";
                 Log() << "Acceptance rate: " << simulation->GetAcceptance()*100.0 << "%\n";
+                Log() << "Mean acceptance rate: " << simulation->GetMeanAcceptance()*100.0 << "%\n";
+            }
 
             //---
             
@@ -267,9 +269,11 @@ public:
             if(tcycle%settings.simulation.radius_adjustment_frequency==0 && settings.simulation.adjust_radius_thermalization)
                 metro->AdjustRadius(lattice);
             //---
-            if(settings.simulation.measure_acceptance && tcycle%settings.simulation.measure_acceptance_frequency==0)
+            if(settings.simulation.measure_acceptance && tcycle%settings.simulation.measure_acceptance_frequency==0){
                 //Log() << "Acceptance rate: " << metro->MeasureAccepted(lattice)*100.0 << "%\n";
                 Log() << "Acceptance rate: " << thermalization->GetAcceptance()*100.0 << "%\n";
+                Log() << "Mean acceptance rate: " << simulation->GetMeanAcceptance()*100.0 << "%\n";
+            }
             tcycle++;
         }
         //-- zapisywanie historii termalizacji
@@ -387,9 +391,11 @@ public:
             //---
 
             //--- pomiar poziomu akceptacji
-            if(settings.simulation.measure_acceptance && k%settings.simulation.measure_acceptance_frequency==0)
+            if(settings.simulation.measure_acceptance && k%settings.simulation.measure_acceptance_frequency==0){
                 //Log() << "Acceptance rate: " << metro->MeasureAccepted(lattice)*100.0 << "%\n";
                 Log() << "Acceptance rate: " << simulation->GetAcceptance()*100.0 << "%\n";
+                Log() << "Mean acceptance rate: " << simulation->GetMeanAcceptance()*100.0 << "%\n";
+            }
             //---
             
             if((k+1)%remaining_interval==0){

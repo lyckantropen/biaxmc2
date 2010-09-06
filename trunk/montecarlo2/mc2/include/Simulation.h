@@ -11,6 +11,8 @@
 #include "Metropolis.h"
 #include "Lattice.h"
 #include "std.h"
+#include "valarray_external.h"
+#include "Statistical.h"
 
 class Simulation {
     int acc_idx;
@@ -43,8 +45,12 @@ class LatticeSimulation:public Simulation {
     Hamiltonian * H;
     Metropolis * metropolis;
     double  accepted_fraction;
+    vect acf;
     virtual void DoIterate(){
         accepted_fraction = double(lat->Sweep(metropolis))/double(lat->GetN());
+        if(accepted_fraction>metropolis->GetAccULimit() || accepted_fraction<metropolis->GetAccLLimit())
+            metropolis->AdjustRadius(lat);
+        acf[GetAccIdx()]=accepted_fraction;
     }
 public:
     LatticeSimulation(Hamiltonian * h=NULL,Lattice * l=NULL,Metropolis * metro=NULL,int nc=0,int startc=0):
@@ -53,10 +59,16 @@ public:
     H(h),
     lat(l),
     accepted_fraction(1.0)
-    {}
+    {
+        acf.resize(nc,0.0);
+    }
 
     const double & GetAcceptance() const {
         return accepted_fraction;
+    }
+
+    const double & GetMeanAcceptance() const {
+        return Mean(acf,0,GetAccIdx()+1);
     }
 };
 
