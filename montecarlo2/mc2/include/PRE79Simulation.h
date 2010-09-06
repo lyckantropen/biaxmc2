@@ -272,7 +272,7 @@ public:
             if(settings.simulation.measure_acceptance && tcycle%settings.simulation.measure_acceptance_frequency==0){
                 //Log() << "Acceptance rate: " << metro->MeasureAccepted(lattice)*100.0 << "%\n";
                 Log() << "Acceptance rate: " << thermalization->GetAcceptance()*100.0 << "%\n";
-                Log() << "Mean acceptance rate: " << simulation->GetMeanAcceptance()*100.0 << "%\n";
+                Log() << "Mean acceptance rate: " << thermalization->GetMeanAcceptance()*100.0 << "%\n";
             }
             tcycle++;
         }
