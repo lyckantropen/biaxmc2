@@ -64,7 +64,7 @@ public:
         return double(acc_moves)/(N*tries);
 
     }
-    void AdjustRadius(Lattice * lat, const double & lowest_acc=0.3, const double & highest_acc=0.4, const double & decimation=0.15){
+    void AdjustRadius(Lattice * lat, const double & lowest_acc=0.3, const double & highest_acc=0.4, const double & decimation=0.02){
         if(lat==NULL) return ;
         double acc_fraction=0.0;
         double N=0.0;
@@ -74,7 +74,7 @@ public:
         while(acc_fraction<lowest_acc || acc_fraction>highest_acc){
             Lattice testlat=*lat;
             acc_moves=0;
-            double tries=5;
+            double tries=2;
             N=testlat.GetN();
             for(int i=0;i<tries;i++){
                 acc_moves+=testlat.Sweep(this);
@@ -84,16 +84,18 @@ public:
             
             if(acc_fraction<lowest_acc){
                 radius*=(1.0-decimation);
+                Log() << "decimating down to r=" << radius << " because acc_fraction=" << acc_fraction << std::endl;
             }
             if(acc_fraction>highest_acc){
                 radius*=(1.0+decimation);
+                Log() << "decimating up to r=" << radius << " because acc_fraction=" << acc_fraction << std::endl;
             }
             
             if(radius>=1.0){
                 radius=0.999;
                 break;
             }
-            if(radius<=0.01){
+            if(radius<=0.001){
                 radius=0.001;
                 break;
             }

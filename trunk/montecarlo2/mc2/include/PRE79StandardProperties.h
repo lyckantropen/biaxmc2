@@ -105,7 +105,8 @@ public:
         }
         //std::cout << "TEST SPH from old BS: " << BootstrapMean(fluct2) << std::endl;
         //specific_heat=BootstrapMean(fluct2);
-        fluctuation=BootstrapMean(fluct3);
+        //fluctuation=BootstrapMean(fluct3);
+        fluctuation=Mean(fluct3);
 
         //std::cout << "TEST SPH from Fluctuation by bootstrap: " << (std::pow(BootstrapMean(energy).Error(),2.0)*lat->GetN()/T/T) << std::endl;
     }

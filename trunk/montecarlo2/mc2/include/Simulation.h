@@ -42,16 +42,22 @@ class LatticeSimulation:public Simulation {
     Lattice * lat;
     Hamiltonian * H;
     Metropolis * metropolis;
+    double  accepted_fraction;
     virtual void DoIterate(){
-        lat->Sweep(metropolis);
+        accepted_fraction = double(lat->Sweep(metropolis))/double(lat->GetN());
     }
 public:
     LatticeSimulation(Hamiltonian * h=NULL,Lattice * l=NULL,Metropolis * metro=NULL,int nc=0,int startc=0):
     Simulation(nc,startc),
     metropolis(metro),
     H(h),
-    lat(l)
+    lat(l),
+    accepted_fraction(1.0)
     {}
+
+    const double & GetAcceptance() const {
+        return accepted_fraction;
+    }
 };
 
 #endif	/* _SIMULATION_H */
