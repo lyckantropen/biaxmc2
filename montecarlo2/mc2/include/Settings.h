@@ -51,6 +51,7 @@ public:
         bool find_thermalized;  std::string v_find_thermalized;
         bool pick_up_aborted;   std::string v_pick_up_aborted;
         bool adjust_radius;     std::string v_adjust_radius;
+        bool adjust_radius_thermalization;  std::string v_adjust_radius_thermalization;
         bool measure_acceptance;std::string v_measure_acceptance;
         double find_thermalized_temperature_tolerance;
         double find_thermalized_h_tolerance;
@@ -72,7 +73,8 @@ public:
         find_thermalized_h_tolerance(0.0),
         measure_acceptance_frequency(100),
         v_pick_up_aborted("no"),
-        v_measure_acceptance("no")
+        v_measure_acceptance("no"),
+        v_adjust_radius_thermalization("yes")
         {}
     } simulation;
     struct _sqlite {
@@ -155,6 +157,7 @@ private:
         ("simulation.supplementary_thermalization_cycles",po::value<long>(&simulation.supplementary_thermalization_cycles),"Number of thermalization cycles when reusing thermalized state")
         ("simulation.radius_adjustment_frequency",po::value<int>(&simulation.radius_adjustment_frequency),"Number of cycles to skip between radius adjustments. Must be non-zero.")
         ("simulation.adjust_radius",po::value<std::string>(&simulation.v_adjust_radius),"Whether to adjust MC radius during simulation")
+        ("simulation.adjust_radius_thermalization",po::value<std::string>(&simulation.v_adjust_radius_thermalization),"Whether to adjust MC radius during thermalization")
         ("simulation.measure_acceptance",po::value<std::string>(&simulation.v_measure_acceptance),"Whether to measure MC acceptance rate during simulation")
         ("simulation.measure_acceptance_frequency",po::value<int>(&simulation.measure_acceptance_frequency),"Cycles to skip between measuring MC acceptance rate")
         ("simulation.find_thermalized",po::value<std::string>(&simulation.v_find_thermalized),"(yes/no) Find an already thermalized state in the database")
@@ -204,6 +207,7 @@ private:
         simulation.find_thermalized = TextBool(simulation.v_find_thermalized);
         simulation.pick_up_aborted = TextBool(simulation.v_pick_up_aborted);
         simulation.adjust_radius = TextBool(simulation.v_adjust_radius);
+        simulation.adjust_radius_thermalization = TextBool(simulation.v_adjust_radius_thermalization);
         simulation.measure_acceptance = TextBool(simulation.v_measure_acceptance);
     }
 public:

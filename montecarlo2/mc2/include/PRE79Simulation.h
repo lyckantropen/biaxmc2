@@ -66,7 +66,9 @@ public:
 
             //--- pomiar poziomu akceptacji
             if(settings.simulation.measure_acceptance && k%settings.simulation.measure_acceptance_frequency==0)
-                Log() << "Acceptance rate: " << metro->MeasureAccepted(lattice)*100.0 << "%\n";
+                //Log() << "Acceptance rate: " << metro->MeasureAccepted(lattice)*100.0 << "%\n";
+                Log() << "Acceptance rate: " << simulation->GetAcceptance()*100.0 << "%\n";
+
             //---
             
             if((k+1)%remaining_interval==0){
@@ -261,8 +263,13 @@ public:
                 thermalprops.Update(tcycle,H);
             if(tcycle%1000==0)
                 Log() << "E = " << thermalprops.EnergyEvolution()[tcycle/100] << std::endl;
+            //--- poprawa promienia błądzenia przypadkowego <-- czyżby źródło błędów???
+            if(tcycle%settings.simulation.radius_adjustment_frequency==0 && settings.simulation.adjust_radius_thermalization)
+                metro->AdjustRadius(lattice);
+            //---
             if(settings.simulation.measure_acceptance && tcycle%settings.simulation.measure_acceptance_frequency==0)
-                Log() << "Acceptance rate: " << metro->MeasureAccepted(lattice)*100.0 << "%\n";
+                //Log() << "Acceptance rate: " << metro->MeasureAccepted(lattice)*100.0 << "%\n";
+                Log() << "Acceptance rate: " << thermalization->GetAcceptance()*100.0 << "%\n";
             tcycle++;
         }
         //-- zapisywanie historii termalizacji
@@ -381,7 +388,8 @@ public:
 
             //--- pomiar poziomu akceptacji
             if(settings.simulation.measure_acceptance && k%settings.simulation.measure_acceptance_frequency==0)
-                Log() << "Acceptance rate: " << metro->MeasureAccepted(lattice)*100.0 << "%\n";
+                //Log() << "Acceptance rate: " << metro->MeasureAccepted(lattice)*100.0 << "%\n";
+                Log() << "Acceptance rate: " << simulation->GetAcceptance()*100.0 << "%\n";
             //---
             
             if((k+1)%remaining_interval==0){
