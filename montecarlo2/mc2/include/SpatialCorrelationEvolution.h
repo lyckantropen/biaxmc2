@@ -107,7 +107,8 @@ public:
         for(int i=0;i<(acc_idx+1);i++){
             cor[i]=correlation[i][max];
         }
-        return BootstrapMean(cor);
+        //return BootstrapMean(cor);
+        return ::Mean(cor);
     }
     
     ///dołożenie danych z innej ewolucji tej samej funkcji korelacji, nie należy wykonywać przed zakończeniem obliczania bieżącej funkcji

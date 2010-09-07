@@ -314,7 +314,8 @@ public:
     }
 
     Value TemporalMeanEnergyPerMolecule() const {
-        return BootstrapMean(energy,0,acc_idx+1);
+        //return BootstrapMean(energy,0,acc_idx+1);
+        return Mean(energy,0,acc_idx+1);
     }
     /*
     Value MeanDelta200() const {

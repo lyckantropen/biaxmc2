@@ -73,7 +73,7 @@ public:
 
             //---
             
-            if((k+1)%remaining_interval==0){
+            if((k+1)%remaining_interval==0 && settings.simulation.calculate_time){
                 pt::time_duration run1k = pt::second_clock::local_time() - start_t;
                 int total1kruns = (simulation->GetNCycles()-k-1)/remaining_interval;
                 std::cout << "Thread: " << omp_get_thread_num() << "/" << omp_get_num_threads() <<  ": "<< pt::to_simple_string(run1k*total1kruns) << " remaining\n";
@@ -286,10 +286,11 @@ public:
         Log() << "Thermalization cycles: " << thermalization->GetNCycles() << std::endl;
         Log() << "Adjusting radius\n";
         metro->AdjustRadius(lattice);
-        Log() << "Calculating expected duration of simulation\n";
-        pt::time_duration   expected = DurationOf1000Cycles()*(thermalization->GetNCycles()+settings.simulation.production_cycles/settings.openmp.number_of_threads)/1000;
-        Log() << "Expected time of simulation: " << pt::to_simple_string(expected) << std::endl;
-
+        if(settings.simulation.calculate_time){
+            Log() << "Calculating expected duration of simulation\n";
+            pt::time_duration   expected = DurationOf1000Cycles()*(thermalization->GetNCycles()+settings.simulation.production_cycles/settings.openmp.number_of_threads)/1000;
+            Log() << "Expected time of simulation: " << pt::to_simple_string(expected) << std::endl;
+        }
         Log() << "Thermalization\n";
         Thermalize();
         //---
@@ -349,9 +350,11 @@ public:
         Log() << "Production cycles: " << simulation->GetNCycles() << std::endl;
         Log() << "Adjusting radius\n";
         metro->AdjustRadius(lattice);
-        Log() << "Calculating expected duration of simulation\n";
-        pt::time_duration   expected=ExpectedSimulationTime();
-        Log() << "Expected time of simulation: " << pt::to_simple_string(expected) << std::endl;
+        if(settings.simulation.calculate_time){
+            Log() << "Calculating expected duration of simulation\n";
+            pt::time_duration   expected=ExpectedSimulationTime();
+            Log() << "Expected time of simulation: " << pt::to_simple_string(expected) << std::endl;
+        }
         Log() << "Thermalization\n";
         Thermalize();
 
@@ -398,7 +401,7 @@ public:
             }
             //---
             
-            if((k+1)%remaining_interval==0){
+            if((k+1)%remaining_interval==0 && settings.simulation.calculate_time){
                 pt::time_duration run1k = pt::second_clock::local_time() - start_t;
                 int total1kruns = (simulation->GetNCycles()-k-1)/remaining_interval;
                 std::cout << "Thread: " << omp_get_thread_num() << "/" << omp_get_num_threads() <<  ": "<< pt::to_simple_string(run1k*total1kruns) << " remaining\n";
