@@ -255,8 +255,10 @@ public:
         while(thermalization->Iterate()){
             if(tcycle%100==0)
                 thermalprops.Update(tcycle,H);
-            if(tcycle%1000==0)
+            if(tcycle%1000==0){
                 Log() << "E = " << thermalprops.EnergyEvolution()[tcycle/100] << std::endl;
+                Log() << "Progress: " << (double(tcycle)/double(thermalization->GetNCycles()))*100.0 << "%\n";
+            }
             //--- poprawa promienia błądzenia przypadkowego <-- czyżby źródło błędów???
             if(tcycle%settings.simulation.radius_adjustment_frequency==0 && settings.simulation.adjust_radius_thermalization)
                 metro->AdjustRadius(lattice);
