@@ -50,7 +50,8 @@ public:
 
         pt::ptime start_t = pt::second_clock::local_time();
         int remaining_interval = simulation->GetNCycles()/5;
-        Log() << "Remaining time will be reported every " << remaining_interval << " cycles\n";
+	if(settings.simulation.calculate_time)
+        	Log() << "Remaining time will be reported every " << remaining_interval << " cycles\n";
 
         long k=0;
         while(simulation->Iterate()){
@@ -153,17 +154,8 @@ class PRE79Simulation:public ILoggable {
                     delete lattice;
                     lattice = new Lattice(found_state);
                     
-                    //--- jeżeli wczytujemy z tolerancją temperatury lub pola, musimy dotermalizować
-                    if(settings.simulation.find_thermalized_temperature_tolerance!=0.0 || settings.simulation.find_thermalized_h_tolerance!=0.0) {
-                        Log() << "Creating Supplementary Thermalization\n";
-                        thermalization = new LatticeSimulation(H,lattice,metro,settings.simulation.supplementary_thermalization_cycles);
-                    }
-                    else
-                        //pusta termalizacja, jeżeli wczytany został dobry stermalizowany stan
-                        thermalization = new LatticeSimulation(H,lattice,metro,0);
-                    //---
-
-                    Log() << "Thermalized state found, picking up\n";
+                    Log() << "Creating Supplementary Thermalization for recovered state\n";
+                    thermalization = new LatticeSimulation(H,lattice,metro,settings.simulation.supplementary_thermalization_cycles);
                 }
                 else {
                     Log() << "No thermalized state found, creating Thermalization\n";
@@ -258,7 +250,7 @@ public:
 
     void Thermalize() {
         //historia termalizacji
-        PRE79StandardProperties thermalprops(lattice,settings.simulation.thermalization_cycles/100);
+        PRE79StandardProperties thermalprops(lattice,thermalization->GetNCycles()/100);
         int tcycle=0;
         while(thermalization->Iterate()){
             if(tcycle%100==0)
@@ -367,7 +359,8 @@ public:
 
         pt::ptime start_t = pt::second_clock::local_time();
         int remaining_interval = simulation->GetNCycles()/20+1;
-        Log() << "Remaining time will be reported every " << remaining_interval << " cycles\n";
+	if(settings.simulation.calculate_time)
+	    Log() << "Remaining time will be reported every " << remaining_interval << " cycles\n";
         while(simulation->Iterate()){
             //--- pomiary
             if(k%settings.simulation.measure_frequency==0){

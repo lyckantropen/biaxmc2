@@ -41,16 +41,19 @@ public:
         Settings current_settings = settings ;
 
         //--- obliczanie czasu działania
-	Log() << "Calculating expected time of execution\n";
-        pt::time_duration timeof1000cycles = PRE79Simulation(settings).DurationOf1000Cycles();
-        int nkcycles=0;
-        if(settings.scanning.threaded_production)
-            nkcycles = ((nscans-1)*settings.simulation.supplementary_thermalization_cycles + nscans*settings.simulation.production_cycles/settings.openmp.number_of_threads + settings.simulation.thermalization_cycles)/1000;
-        else
-            nkcycles = ((nscans-1)*settings.simulation.supplementary_thermalization_cycles + nscans*settings.simulation.production_cycles + settings.simulation.thermalization_cycles)/1000;
+	if(settings.simulation.calculate_time){
+		Log() << "Calculating expected time of execution\n";
+		pt::time_duration timeof1000cycles = PRE79Simulation(settings).DurationOf1000Cycles();
+		int nkcycles=0;
+		if(settings.scanning.threaded_production)
+		    nkcycles = ((nscans-1)*settings.simulation.supplementary_thermalization_cycles + nscans*settings.simulation.production_cycles/settings.openmp.number_of_threads + settings.simulation.thermalization_cycles)/1000;
+		else
+		    nkcycles = ((nscans-1)*settings.simulation.supplementary_thermalization_cycles + nscans*settings.simulation.production_cycles + settings.simulation.thermalization_cycles)/1000;
 
-        Log() << "Expected time of execution: " << pt::to_simple_string(timeof1000cycles*nkcycles) << std::endl;
+		Log() << "Expected time of execution: " << pt::to_simple_string(timeof1000cycles*nkcycles) << std::endl;
+	}
         //---
+
 
 
         Log() << "Non-parallel version\n";

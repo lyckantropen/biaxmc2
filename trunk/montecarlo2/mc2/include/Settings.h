@@ -53,7 +53,7 @@ public:
         bool adjust_radius;     std::string v_adjust_radius;
         bool adjust_radius_thermalization;  std::string v_adjust_radius_thermalization;
         bool measure_acceptance;std::string v_measure_acceptance;
-        bool calculate_time;    std:string v_calculate_time;
+        bool calculate_time;    std::string v_calculate_time;
         double find_thermalized_temperature_tolerance;
         double find_thermalized_h_tolerance;
         long production_cycles;
