@@ -53,6 +53,7 @@ public:
         bool adjust_radius;     std::string v_adjust_radius;
         bool adjust_radius_thermalization;  std::string v_adjust_radius_thermalization;
         bool measure_acceptance;std::string v_measure_acceptance;
+        bool calculate_time;    std:string v_calculate_time;
         double find_thermalized_temperature_tolerance;
         double find_thermalized_h_tolerance;
         long production_cycles;
@@ -74,7 +75,8 @@ public:
         measure_acceptance_frequency(100),
         v_pick_up_aborted("no"),
         v_measure_acceptance("no"),
-        v_adjust_radius_thermalization("yes")
+        v_adjust_radius_thermalization("yes"),
+        v_calculate_time("yes")
         {}
     } simulation;
     struct _sqlite {
@@ -164,6 +166,7 @@ private:
         ("simulation.find_thermalized_temperature_tolerance",po::value<double>(&simulation.find_thermalized_temperature_tolerance),"Temperature tolerance for thermalized state in units of scanning.delta")
         ("simulation.find_thermalized_h_tolerance",po::value<double>(&simulation.find_thermalized_h_tolerance),"Field tolerance for thermalized state in units of h")
         ("simulation.pick_up_aborted",po::value<std::string>(&simulation.v_pick_up_aborted),"(yest/no) Continue from last saved state from an aborted simulation. Relevant only when saving configurations. [DON'T USE YET]")
+        ("simulation.calculate_time",po::value<std::string>(&simulation.v_calculate_time),"(yes/no) Calculate remaining simulation time")
         ("sqlite.file",po::value<std::string>(&sqlite.file),"Database file")
         ("sqlite.dir",po::value<std::string>(&sqlite.dir),"Database directory")
         ("output.save_configuration_evolution",po::value<std::string>(&output.v_save_configuration_evolution),"(yes/no) Save entire configuration evolution in production cycle (large db entry)")
@@ -209,6 +212,7 @@ private:
         simulation.adjust_radius = TextBool(simulation.v_adjust_radius);
         simulation.adjust_radius_thermalization = TextBool(simulation.v_adjust_radius_thermalization);
         simulation.measure_acceptance = TextBool(simulation.v_measure_acceptance);
+        simulation.calculate_time = TextBool(simulation.v_calculate_time);
     }
 public:
     Settings(const fs::path & file){
