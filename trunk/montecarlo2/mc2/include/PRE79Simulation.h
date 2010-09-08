@@ -271,6 +271,7 @@ public:
             tcycle++;
         }
         //-- zapisywanie historii termalizacji
+	Log() << "Saving thermalization history\n";
         database.StoreThermalizationHistory(settings,thermalprops);
     }
 
