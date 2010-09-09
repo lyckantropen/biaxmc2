@@ -38,14 +38,15 @@ void    table_output(const std::string & data_type,const std::vector<std::string
 
         std::cout << std::endl;
         foreach(const PRE79StandardProperties & prop,whatwegot){
+            for(int i=0;i<prop.GetNCycles();i++){
             foreach(const std::string & column,columns){
-                if(column=="energy"){
-                    vect energy = prop.EnergyEvolution();
-                    for(int i=0;i<prop.GetNCycles();i++){
-                        std::cout << i << "\t" << energy[i] << std::endl;
-                    }
+                if(column=="energy")
+                    std::cout << prop.EnergyEvolution()[i] << "\t";
+                if(column=="time")
+                    std::cout << i << "\t";
                 }
             }
+            std::cout << std::endl;
         }
     }
 
