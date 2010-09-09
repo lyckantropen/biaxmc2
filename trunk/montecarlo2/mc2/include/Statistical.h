@@ -92,18 +92,39 @@ inline Value sqrt(const Value & v){
 }
 extern std::ostream & operator<<(std::ostream & s, Value & v);
 
+/*
+template<class value_type>
+Value MeanSub(const std::valarray<value_type> & v){
+    int limit = v.size();
+    int start = 0;
+    value_type mean = v.sum()/value_type(v.size());
+    std::valarray<value_type> dev = std::pow(v-mean,2);
+    return Value(mean,std::sqrt(dev.sum()/(value_type(v.size())-value_type(1.0)) ));
+}
+ */
 
 template<class value_type>
-Value Mean(const std::valarray<value_type> & v,const int start=0, const int limit=0){
+Value Mean(const std::valarray<value_type> & v,const int start=0, const int limit=0, const int slices=10){
     int lim;
     if(limit==0)
         lim=v.size();
     else
         lim=limit;
+    /*
     std::valarray<value_type> relevant = v[std::slice(start,lim-start,1)];
     value_type mean = relevant.sum()/value_type(relevant.size());
     std::valarray<value_type> dev = std::pow(relevant-mean,2);
     return Value(mean,std::sqrt(dev.sum()/(value_type(relevant.size())-value_type(1.0)) ));
+     */
+    std::valarray<value_type> means(0.0,slices);
+    int samplesize = (lim-start)/slices;
+    for(int i=0;i<slices;i++){
+        std::valarray<value_type> submean = v[std::slice(start+i*samplesize,samplesize,1)];
+        means[i] = submean.sum()/value_type(samplesize);
+    }
+    value_type mean = means.sum()/value_type(slices);
+    std::valarray<value_type> dev = std::pow(means-mean,2);
+    return Value(mean,std::sqrt(dev.sum()/value_type(slices-1)));
 }
 
 template<class value_type>
@@ -125,7 +146,7 @@ std::valarray<value_type> MeanVector(const std::vector<std::valarray<value_type>
 }
 //Efron, Tibshirani, "An Introduction to Bootstrap", 1993 Chapman & Hall, Inc., pp. 45-47
 template<class value_type>
-Value BootstrapMean(const std::valarray<value_type> & v, const int start=0, const int limit=0, const int res=0){
+Value BootstrapMean(const std::valarray<value_type> & v, const int start=0, const int limit=0, const int res=200){
     int resamples = res;
     if(res==0)
         resamples=v.size();
@@ -155,8 +176,8 @@ Value BootstrapMean(const std::valarray<value_type> & v, const int start=0, cons
 };
 
 
-template  Value Mean<Value>(const std::valarray<Value> & v,const int, const int);
-template  Value Mean<double>(const std::valarray<double> & v, const int, const int);
+template  Value Mean<Value>(const std::valarray<Value> & v,const int, const int, const int);
+template  Value Mean<double>(const std::valarray<double> & v, const int, const int, const int);
 template  std::valarray<double> MeanVector<double>(const std::vector<vect> & v, const int start, const int limit);
 template  Value BootstrapMean<double>(const std::valarray<double> & v, const int start, const int limit, const int resamples);
 //template<>  std::valarray<double> MeanVector<>(const std::vector<std::valarray<Value> > & v, const int & limit);
