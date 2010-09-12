@@ -13,6 +13,7 @@
 #include "4DSphereRW.h"
 #include "Lattice.h"
 #include "ILoggable.h"
+#include "Settings.h"
 
 /**
  * Implementacja algorytmu Metropolisa dla naszego przypadku
@@ -23,18 +24,19 @@ class Metropolis:public MCProto,protected ILoggable {
     Hamiltonian     *   hamiltonian;
     double              radius; ///<promień dający odpowiednią akceptację ruchów
     double  acc_llimit,acc_ulimit;
+    const Settings & settings;
 public:
-    Metropolis(Hamiltonian * h=NULL,const double & r=1):hamiltonian(h),radius(r),acc_llimit(0.3),acc_ulimit(0.4){}
+    Metropolis(const Settings & set, Hamiltonian * h=NULL,const double & r=1):settings(set),hamiltonian(h),radius(r),acc_llimit(0.3),acc_ulimit(0.4){}
     virtual vect OrientationNudge(const vect & old){
         return RandomWalkOn4DSphere(radius,old);
     }
     virtual short ParityNudge(const short & old){
-        /*
-        if(random01()<0.5)
+        
+        if(random01()<settings.simulation.parity_flip_probability)
             return -old;
         else return old;
-        */
-        return plusminusone();
+        
+        //return plusminusone();
     }
     virtual bool Accept(const double & dE){
         if(dE<0)

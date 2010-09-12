@@ -6,6 +6,7 @@
                    projectFiles="true">
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/4DSphereRW.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/Contractions.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/FIFOInterface.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/Hamiltonian.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/ILoggable.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/Lattice.h</itemPath>
@@ -17,6 +18,7 @@
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/PRE79StandardHamiltonian.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/PRE79StandardProperties.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/Particle.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/RuntimePropertiesServer.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/Settings.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/Simulation.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/SimulationDB.h</itemPath>
@@ -24,6 +26,7 @@
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/SpatialCorrelationEvolution.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/Statistical.h</itemPath>
       <itemPath>../../montecarlo2/mc2/include/eig3.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/evsort.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/quantity_iterator.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/random01.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/singleton.h</itemPath>
@@ -38,9 +41,11 @@
                    projectFiles="true">
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/4DSphereRW.cpp</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Contractions.cpp</itemPath>
+      <itemPath>../../montecarlo2/mc2/src/FIFOInterface.cpp</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Lattice.cpp</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Particle.cpp</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Random.cpp</itemPath>
+      <itemPath>../../montecarlo2/mc2/src/RuntimePropertiesServer.cpp</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Statistical.cpp</itemPath>
       <itemPath>../../montecarlo2/mc2/src/eig3.cpp</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/valarray_external.cpp</itemPath>
