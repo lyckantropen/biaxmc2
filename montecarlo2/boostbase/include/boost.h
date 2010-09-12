@@ -30,6 +30,7 @@
 #include <boost/random/uniform_01.hpp>
 #include <boost/program_options.hpp>
 #include <boost/algorithm/string.hpp>
+#include <boost/thread.hpp>
 
 #define foreach BOOST_FOREACH
 

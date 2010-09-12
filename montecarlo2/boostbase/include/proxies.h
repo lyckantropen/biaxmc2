@@ -12,7 +12,7 @@ namespace boostbase {
     typedef std::pair<std::string, std::string> pair_t;
 
     ///predykat do sortowania wektora pair_t
-    bool pair_t_pred(const pair_t & a, const pair_t & b) {
+    inline bool pair_t_pred(const pair_t & a, const pair_t & b) {
         return a.first <= b.first;
     }
     
