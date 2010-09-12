@@ -72,6 +72,7 @@
             <linkerLibLibItem>boost_program_options-mt</linkerLibLibItem>
             <linkerLibLibItem>boost_system-mt</linkerLibLibItem>
             <linkerLibLibItem>dl</linkerLibLibItem>
+            <linkerLibLibItem>boost_thread-mt</linkerLibLibItem>
           </linkerLibItems>
         </linkerTool>
         <requiredProjects>
