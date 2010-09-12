@@ -8,10 +8,13 @@
 #ifndef _PRE79SCANNING_H
 #define	_PRE79SCANNING_H
 
-#include "PRE79Simulation.h"
+//#include "PRE79Simulation.h"
 #include "Settings.h"
 #include "ILoggable.h"
+#include "RuntimePropertiesServer.h"
 #include <omp.h>
+
+//void call_run(Lattice & state, PRE79Simulation & sim) ;
 
 class PRE79Scanning:public ILoggable {
     const Settings &        settings;       ///<globalne ustawienia
@@ -92,21 +95,31 @@ public:
 
             if(i==0 || settings.scanning.reuse_thermalized==false){
                 PRE79Simulation simulation(current_settings);
+                //serwer dostępu do symulacji w trakcie jej trwania, uruchamiany w osobnym wątku
+                RuntimePropertiesServer rt(current_settings,simulation);
+                boost::thread thread1(rt);
+                //--
                 Log() << simulation.GetLog();
                 simulation.SetStream(&Log());
                 if(settings.scanning.threaded_production)
                     state = simulation.RunParallel();
                 else
                     state = simulation.Run();
+                    
             }
             else{
                 PRE79Simulation simulation(current_settings,state);
+                //serwer dostępu do symulacji w trakcie jej trwania, uruchamiany w osobnym wątku
+                RuntimePropertiesServer rt(current_settings,simulation);
+                boost::thread thread1(rt);
+                //--
                 Log() << simulation.GetLog();
                 simulation.SetStream(&Log());
                 if(settings.scanning.threaded_production)
                     state = simulation.RunParallel();
-                else
+                else 
                     state = simulation.Run();
+                    
             }
             //międzyczasy
             pt::time_duration t1scan = pt::second_clock::local_time()-start_t;

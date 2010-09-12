@@ -16,7 +16,7 @@ struct evs {
 	}
 };
 
-bool operator<(const evs & a, const evs &b){
+inline bool operator<(const evs & a, const evs &b){
 	return std::abs(a.e)>std::abs(b.e);
 }
 

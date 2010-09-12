@@ -14,7 +14,7 @@
 
 
 
-class Settings:protected ILoggable {
+class Settings:public ILoggable {
     po::variables_map           vm;
     po::options_description     desc;
     bool TextBool(const std::string & s){
@@ -56,6 +56,7 @@ public:
         bool calculate_time;    std::string v_calculate_time;
         double find_thermalized_temperature_tolerance;
         double find_thermalized_h_tolerance;
+        double parity_flip_probability;
         long production_cycles;
         int measure_frequency;
         int measure_acceptance_frequency;
@@ -76,7 +77,8 @@ public:
         v_pick_up_aborted("no"),
         v_measure_acceptance("no"),
         v_adjust_radius_thermalization("yes"),
-        v_calculate_time("yes")
+        v_calculate_time("yes"),
+        parity_flip_probability(0.5)
         {}
     } simulation;
     struct _sqlite {
@@ -167,6 +169,7 @@ private:
         ("simulation.find_thermalized_h_tolerance",po::value<double>(&simulation.find_thermalized_h_tolerance),"Field tolerance for thermalized state in units of h")
         ("simulation.pick_up_aborted",po::value<std::string>(&simulation.v_pick_up_aborted),"(yest/no) Continue from last saved state from an aborted simulation. Relevant only when saving configurations. [DON'T USE YET]")
         ("simulation.calculate_time",po::value<std::string>(&simulation.v_calculate_time),"(yes/no) Calculate remaining simulation time")
+        ("simulation.parity_flip_probability",po::value<double>(&simulation.parity_flip_probability),"Probability of parity flip")
         ("sqlite.file",po::value<std::string>(&sqlite.file),"Database file")
         ("sqlite.dir",po::value<std::string>(&sqlite.dir),"Database directory")
         ("output.save_configuration_evolution",po::value<std::string>(&output.v_save_configuration_evolution),"(yes/no) Save entire configuration evolution in production cycle (large db entry)")
@@ -233,7 +236,7 @@ public:
             project.name=project.name_format;
             for(std::vector<po::basic_option<char> >::iterator i=basic_options.options.begin();i!=basic_options.options.end();i++){
                 if(vm.count(i->string_key)){
-                    project.name = boost::replace_all_copy(project.name_format,std::string("&")+i->string_key,i->value[0]);
+                    boost::replace_all(project.name,std::string("&")+i->string_key,i->value[0]);
                 }
             }
 

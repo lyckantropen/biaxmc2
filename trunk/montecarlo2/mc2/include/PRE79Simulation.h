@@ -9,7 +9,6 @@
 #define	_PRE79SIMULATION_H
 
 #include "Simulation.h"
-#include "Settings.h"
 #include "serializer.h"
 #include "ILoggable.h"
 #include "SimulationDBFind.h"
@@ -23,7 +22,6 @@ class PRE79Production:public ILoggable {
     PRE79StandardProperties     *prop;
     Metropolis                  *metro;
     const Settings  &   settings;
-//    SimulationDB        database;
     long nprod;
     long ncycles;
 public:
@@ -35,11 +33,10 @@ public:
 
         lattice = new Lattice(start);
         H = new PRE79StandardHamiltonian(settings.hamiltonian.temperature, settings.hamiltonian.lambda, settings.hamiltonian.tau,settings.hamiltonian.h);
-        metro = new Metropolis(H,0.065);
+        metro = new Metropolis(settings,H,0.065);
         prop = new PRE79StandardProperties(lattice,ncycles);
         simulation = new LatticeSimulation(H,lattice,metro,nprod,0);
         SetStream(&std::cout);
-
     }
 
     void Run() {
@@ -87,8 +84,11 @@ public:
     Lattice & GetLattice(){
         return *lattice;
     }
-    const PRE79StandardProperties & GetProperties(){
+    PRE79StandardProperties & GetProperties(){
         return *prop;
+    }
+    const LatticeSimulation * GetSimulation() const {
+        return simulation;
     }
     virtual std::ostream & Log(){
         ILoggable::Log() << "Thread: " << omp_get_thread_num() << "/" << omp_get_num_threads() << ": ";
@@ -110,6 +110,8 @@ class PRE79Simulation:public ILoggable {
     LatticeSimulation           *simulation;
     PRE79StandardProperties     *prop;
     Metropolis                  *metro;
+    std::vector<PRE79Production*>    productions;
+    PRE79StandardProperties     *thermalprops;
     const Settings  &   settings;
     SimulationDB        database;
     bool    restored;      ///<zaczynamy z wczytanego stanu sieci
@@ -118,8 +120,8 @@ class PRE79Simulation:public ILoggable {
         Log() << "Creating Hamiltonian\n";
         H = new PRE79StandardHamiltonian(settings.hamiltonian.temperature, settings.hamiltonian.lambda, settings.hamiltonian.tau,settings.hamiltonian.h);
         Log() << "Creating Metropolis\n";
-        metro = new Metropolis(H,0.065);
-        metro->SetStream(&std::cout);
+        metro = new Metropolis(settings,H,0.065);
+        //metro->SetStream(&std::cout);
         if(!restored){
 
             //--- szukamy ewentualnego zapisanego stermalizowanego stanu
@@ -195,12 +197,15 @@ class PRE79Simulation:public ILoggable {
         simulation = new LatticeSimulation(H,lattice,metro,cycle_advantage,found_cycle);
         Log() << "Creating Properties\n";
         prop = new PRE79StandardProperties(lattice,settings.simulation.production_cycles/settings.simulation.measure_frequency);
+        thermalprops = new PRE79StandardProperties(lattice,thermalization->GetNCycles()/100);
+
     }
 
 public:
     PRE79Simulation(const Settings & set):
     settings(set),
-    database(set)
+    database(set),
+            thermalprops(NULL),thermalization(NULL),lattice(NULL)
     {
         if(set.initial.isotropic)
             lattice = new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::Isotropic);
@@ -249,14 +254,12 @@ public:
     }
 
     void Thermalize() {
-        //historia termalizacji
-        PRE79StandardProperties thermalprops(lattice,thermalization->GetNCycles()/100);
         int tcycle=0;
         while(thermalization->Iterate()){
             if(tcycle%100==0)
-                thermalprops.Update(tcycle,H);
+                thermalprops->Update(tcycle,H);
             if(tcycle%1000==0){
-                Log() << "E = " << thermalprops.EnergyEvolution()[tcycle/100] << std::endl;
+                Log() << "E = " << thermalprops->EnergyEvolution()[tcycle/100] << std::endl;
                 Log() << "Progress: " << (double(tcycle)/double(thermalization->GetNCycles()))*100.0 << "%\n";
             }
             //--- poprawa promienia błądzenia przypadkowego <-- czyżby źródło błędów???
@@ -272,7 +275,9 @@ public:
         }
         //-- zapisywanie historii termalizacji
 	Log() << "Saving thermalization history\n";
-        database.StoreThermalizationHistory(settings,thermalprops);
+        database.StoreThermalizationHistory(settings,*thermalprops);
+
+
     }
 
     ///jednowątkowa termalizacja i wielowątkowa produkcja
@@ -297,7 +302,7 @@ public:
         omp_set_num_threads(settings.openmp.number_of_threads);
         
         //PRE79Production prototype(settings,settings.simulation.production_cycles/settings.openmp.number_of_threads,*lattice);
-        std::vector<PRE79Production*>    productions;//(settings.openmp.number_of_threads,prototype);
+        //(settings.openmp.number_of_threads,prototype);
         for(int i=0;i<settings.openmp.number_of_threads;i++)
             productions.push_back(new PRE79Production(settings,settings.simulation.production_cycles/settings.openmp.number_of_threads,*lattice));
 
@@ -437,7 +442,31 @@ public:
         delete prop;
         delete thermalization;
         delete simulation;
+        delete thermalprops;
     }
+
+    Lattice & GetLattice(){
+        return *lattice;
+    }
+    PRE79StandardProperties & GetProperties(){
+        return *prop;
+    }
+    PRE79StandardProperties & GetThermalizationProperties(){
+        return *thermalprops;
+    }
+    int GetNProductions(){
+        return productions.size();
+    }
+    PRE79Production & GetProduction(const int & i) {
+        return *productions[i];
+    }
+    const LatticeSimulation * GetSimulation() const {
+        return simulation;
+    }
+    const LatticeSimulation * GetThermalization() const {
+        return thermalization;
+    }
+
 };
 
 
