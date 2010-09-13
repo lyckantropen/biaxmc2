@@ -156,20 +156,46 @@ public:
     ///pojedynczy ruch Monte Carlo względem danego prototypu procesu i hamiltonianu
     bool Nudge(MCProto * proto){
         Particle old_state = *this;
-        SetOrientation(proto->OrientationNudge(x),proto->ParityNudge(parity));
+        vect newX = proto->OrientationNudge(x);
+        short newP = proto->ParityNudge(parity);
+
+        //stan akceptacji ruchu rotacyjnego
+        bool accepted = false;
+
+        //SetOrientation(proto->OrientationNudge(x),proto->ParityNudge(parity));
+        
+        //ruch rotacyjny
+        SetOrientation(newX,parity);
         UpdateEnergy(proto->GetHamiltonian());
         // mnożymy przez 2 bo mamy energię na cząstkę
         if(!proto->Accept(2.0*(energy-old_state.energy))){
-        //if(!proto->Accept((energy-old_state.energy))){
             // ruch niezaakceptowany
             RestoreState(old_state);
-            return false;
+            accepted=false;
         }
         else{
             // ruch zaakceptowany
             UpdateNeighborsEnergy(proto->GetHamiltonian());
-            return true;
+            accepted=true;
         }
+        //--
+
+        old_state = *this;
+        //ruch parzystości
+        SetOrientation(x,newP);
+        UpdateEnergy(proto->GetHamiltonian());
+        // mnożymy przez 2 bo mamy energię na cząstkę
+        if(!proto->Accept(2.0*(energy-old_state.energy))){
+            // ruch niezaakceptowany
+            RestoreState(old_state);
+        }
+        else{
+            // ruch zaakceptowany
+            UpdateNeighborsEnergy(proto->GetHamiltonian());
+        }
+        //--
+
+        return accepted;
     }
 
     //Accessors

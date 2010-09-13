@@ -8,7 +8,7 @@
 #include "random01.h"
 
 
-boost::mt19937   rng2;
+boost::lagged_fibonacci607   rng2;
 rangen * rg = NULL;
 
 double random01(){
