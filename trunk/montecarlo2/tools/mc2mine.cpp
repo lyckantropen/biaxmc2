@@ -44,6 +44,33 @@ void    table_output(const std::string & data_type,const std::vector<std::string
                     std::cout << prop.EnergyEvolution()[i] << "\t";
                 if(column=="time")
                     std::cout << i << "\t";
+                if(column=="parity")
+                    std::cout << prop.ParityEvolution()[i] << "\t";
+
+                if(column=="d200corz")
+                    std::cout << prop.Delta200ZCorrelationEvolution()[i] << "\t";
+                if(column=="d222corz")
+                    std::cout << prop.Delta222ZCorrelationEvolution()[i] << "\t";
+                if(column=="d220corz")
+                    std::cout << prop.Delta220ZCorrelationEvolution()[i] << "\t";
+                if(column=="d200corx")
+                    std::cout << prop.Delta200XCorrelationEvolution()[i] << "\t";
+                if(column=="d222corx")
+                    std::cout << prop.Delta222XCorrelationEvolution()[i] << "\t";
+                if(column=="d220corx")
+                    std::cout << prop.Delta220XCorrelationEvolution()[i] << "\t";
+                if(column=="d200cory")
+                    std::cout << prop.Delta200YCorrelationEvolution()[i] << "\t";
+                if(column=="d222cory")
+                    std::cout << prop.Delta222YCorrelationEvolution()[i] << "\t";
+                if(column=="d220cory")
+                    std::cout << prop.Delta220YCorrelationEvolution()[i] << "\t";
+
+                if(column=="d322cor")
+                    std::cout << prop.Delta322CorrelationEvolution()[i] << "\t";
+
+                if(column=="paritycor")
+                    std::cout << prop.ParityCorrelationEvolution()[i] << "\t";
                 }
             }
             std::cout << std::endl;
