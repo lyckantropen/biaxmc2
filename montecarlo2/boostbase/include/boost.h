@@ -27,6 +27,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <boost/random/mersenne_twister.hpp>
 #include <boost/random/linear_congruential.hpp>
+#include <boost/random/lagged_fibonacci.hpp>
 #include <boost/random/uniform_01.hpp>
 #include <boost/program_options.hpp>
 #include <boost/algorithm/string.hpp>
