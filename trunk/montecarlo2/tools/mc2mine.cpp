@@ -70,6 +70,8 @@ void    table_output(const std::string & data_type,const std::vector<std::string
                     std::cout << prop.SpecificHeat().TableForm() << "\t";
                 if(column=="energy")
                     std::cout << prop.TemporalMeanEnergyPerMolecule().TableForm() << "\t";
+                if(column=="parity")
+                    std::cout << prop.TemporalMeanParity().TableForm() << "\t";
 
                 if(column=="d200z_from_correlation")
                     std::cout << prop.Delta200ZByCorrelation().TableForm() << "\t";
@@ -199,6 +201,8 @@ void    table_output(const std::string & data_type,const std::vector<std::string
                         std::cout << t << "\t";
                     if(column=="energy")
                         std::cout << prop.EnergyEvolution()[t] << "\t";
+                    if(column=="parity")
+                        std::cout << prop.ParityEvolution()[t] << "\t";
 
                     if(column=="d200corz")
                         std::cout << prop.Delta200ZCorrelationEvolution()[t] << "\t";
@@ -248,6 +252,7 @@ void mathematica_output(const std::string & data_type,const std::vector<std::str
             std::cout << "SpecificHeat" << coord.str() << "=" << prop.SpecificHeat().MathematicaForm() << ";\n";
             std::cout << "Fluctuation" << coord.str() << "=" << prop.Fluctuation().MathematicaForm() << ";\n";
             std::cout << "TemporalMeanEnergyPerMolecule" << coord.str() << "=" << prop.TemporalMeanEnergyPerMolecule().MathematicaForm() << ";\n";
+            std::cout << "TemporalMeanParity" << coord.str() << "=" << prop.TemporalMeanParity().MathematicaForm() << ";\n";
             std::cout << "Delta200ZByCorrelation" << coord.str() << "=" << prop.Delta200ZByCorrelation().MathematicaForm() << ";\n";
             std::cout << "Delta222ZByCorrelation" << coord.str() << "=" << prop.Delta222ZByCorrelation().MathematicaForm() << ";\n";
             std::cout << "Delta200XByCorrelation" << coord.str() << "=" << prop.Delta200XByCorrelation().MathematicaForm() << ";\n";
