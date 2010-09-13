@@ -65,7 +65,7 @@ protected:
 
         readonly=false;
         lat=l;
-        max=lat->GetL()/2;
+        max=lat->GetL()/2-1;
         ncycles=nc;
         acc_idx=-1;
         for(int i=0;i<ncycles;i++)
