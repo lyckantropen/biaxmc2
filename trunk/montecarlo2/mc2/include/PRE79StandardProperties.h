@@ -35,6 +35,7 @@ class PRE79StandardProperties {
     int ncycles;            ///<liczba cykli do średniej
     
     vect    energy;         ///<energia w funkcji czasu
+    vect    parity;         ///<średnia parzystość w funkcji czasu
 //    vect    D200;
 //    vect    D220;
 //    vect    D202;
@@ -71,6 +72,14 @@ class PRE79StandardProperties {
         }
         E/=double(lat->GetN());
         energy[acc_idx]=E;
+    }
+    ///obliczanie średniej parzystości
+    void CalculateMeanParity(){
+        double p=0.0;
+        for(int site=0;site<lat->GetN();site++)
+            p+=lat->GetParticles()[site].GetEnergy();
+        p/=double(lat->GetN());
+        parity[acc_idx]=p;
     }
 public:
     ///obliczanie ciepła właściwego metodą bootstrapu
@@ -154,6 +163,7 @@ public:
         acc_idx=-1;
         index=0;
         energy.resize(ncycles,0.0);
+        parity.resize(ncycles,0.0);
         for(int i=0;i<ncycles;i++){
             MeanQxTensor[i].resize(6,0.0);
             MeanQyTensor[i].resize(6,0.0);
@@ -171,6 +181,8 @@ public:
 //        D222.resize(p.D222.size());
         energy.resize(p.energy.size());
         energy = p.energy;
+        parity.resize(p.parity.size());
+        parity = p.parity;
         lat=p.lat;
         readonly=p.readonly;
         index=p.index;
@@ -202,6 +214,8 @@ public:
         */
         energy.resize(p.energy.size());
         energy = p.energy;
+        parity.resize(p.parity.size());
+        parity = p.parity;
         lat=p.lat;
         readonly=p.readonly;
         index=p.index;
@@ -247,6 +261,7 @@ public:
         paritycor.Update();
 
         CalculateMeanEnergy();
+        CalculateMeanParity();
         CalculateMeanTensors();
 
         if((acc_idx+1)>=ncycles)
@@ -276,6 +291,7 @@ public:
 
         int oldsize=energy.size();
         vect tmpenergy(0.0,ncycles);
+        vect tmpparity(0.0,ncycles);
         /*
         vect tmpD200(0.0,ncycles);
         vect tmpD220(0.0,ncycles);
@@ -284,6 +300,7 @@ public:
          */
         for(int i=0;i<oldsize;i++){
             tmpenergy[i]=energy[i];
+            tmpparity[i]=parity[i];
             /*
             tmpD200[i]=D200[i];
             tmpD220[i]=D220[i];
@@ -294,6 +311,7 @@ public:
 
         for(int i=oldsize;i<ncycles;i++){
             tmpenergy[i]=p.energy[i-oldsize];
+            tmpparity[i]=p.parity[i-oldsize];
             /*
             tmpD200[i]=p.D200[i-oldsize];
             tmpD220[i]=p.D220[i-oldsize];
@@ -302,11 +320,13 @@ public:
              */
         }
         energy.resize(ncycles,0.0);
+        parity.resize(ncycles,0.0);
         //D200.resize(ncycles,0.0);
         //D220.resize(ncycles,0.0);
         //D202.resize(ncycles,0.0);
         //D222.resize(ncycles,0.0);
         energy=tmpenergy;
+        parity=tmpparity;
         //D200=tmpD200;
         //D220=tmpD220;
         //D202=tmpD202;
@@ -316,6 +336,9 @@ public:
     Value TemporalMeanEnergyPerMolecule() const {
         //return BootstrapMean(energy,0,acc_idx+1);
         return Mean(energy,0,acc_idx+1);
+    }
+    Value TemporalMeanParity() const {
+        return Mean(parity,0,acc_idx+1);
     }
     /*
     Value MeanDelta200() const {
@@ -462,6 +485,9 @@ public:
     const vect & EnergyEvolution() const {
         return energy;
     }
+    const vect & ParityEvolution() const {
+        return parity;
+    }
 
     const Delta200CorrelationZ & Delta200ZCorrelationEvolution() const {
         return d200corz;
@@ -551,6 +577,7 @@ void operator|(serializer_t & s, PRE79StandardProperties & prop){
     s|prop.MeanQyTensor;
     s|prop.MeanQzTensor;
     s|prop.energy;
+    s|prop.parity;
 }
 
 /**
@@ -560,6 +587,7 @@ class PRE79MeanProperties {
     template<class serializer_t>
     friend void operator|(serializer_t & s, PRE79MeanProperties & prop);
     Value energy;
+    Value parity;
     //Value specific_heat;
     Value fluctuation;
     Value d200z_from_correlation;
@@ -622,6 +650,7 @@ public:
 
 
         energy = prop.TemporalMeanEnergyPerMolecule();
+        parity = prop.TemporalMeanParity();
         //specific_heat = prop.SpecificHeat();
         fluctuation = prop.Fluctuation();
 
@@ -785,6 +814,9 @@ public:
     const Value & TemporalMeanEnergyPerMolecule() const {
         return energy;
     }
+    const Value & TemporalMeanParity() const {
+        return parity;
+    }
     const double & MeanDelta200() const {
         return mean_d200;
     }
@@ -932,6 +964,7 @@ void operator|(serializer_t & s, PRE79MeanProperties & p){
     s|p.tau;
     s|p.lambda;
     s|p.h;
+    s|p.parity;
 }
 inline std::ostream & operator<<(std::ostream & o,const PRE79MeanProperties & p){
     o << "Temperature=" << p.Temperature() << std::endl;
@@ -939,6 +972,7 @@ inline std::ostream & operator<<(std::ostream & o,const PRE79MeanProperties & p)
     o << "Tau=" << p.Tau() << std::endl;
     o << "Field=" << p.Field() << std::endl;
     o << "MeanEPM=" << p.TemporalMeanEnergyPerMolecule().Print() << std::endl;
+    o << "MeanParity=" << p.TemporalMeanParity().Print() << std::endl;
     //o << "SpecHeat=" << p.SpecificHeat().Print() << std::endl;
     o << "Fluctuation=" << p.Fluctuation().Print() << std::endl;
 
