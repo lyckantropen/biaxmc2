@@ -22,7 +22,7 @@ class rangen;
 extern rangen * rg;
 #pragma omp threadprivate(rg)
 ///ten generator jest wspólny dla każdego wątku i służy tylko do inicjalizacji instancji generatora rg (dyrektywa shared)
-extern boost::lagged_fibonacci607   rng2;
+extern boost::rand48   rng2;
 #pragma omp shared(rng2)
 
 
