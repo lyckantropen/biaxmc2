@@ -77,7 +77,7 @@ class PRE79StandardProperties {
     void CalculateMeanParity(){
         double p=0.0;
         for(int site=0;site<lat->GetN();site++)
-            p+=lat->GetParticles()[site].GetEnergy();
+            p+=lat->GetParticles()[site].GetParity();
         p/=double(lat->GetN());
         parity[acc_idx]=p;
     }
