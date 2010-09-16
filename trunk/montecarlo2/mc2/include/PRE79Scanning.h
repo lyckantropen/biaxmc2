@@ -96,8 +96,10 @@ public:
             if(i==0 || settings.scanning.reuse_thermalized==false){
                 PRE79Simulation simulation(current_settings);
                 //serwer dostępu do symulacji w trakcie jej trwania, uruchamiany w osobnym wątku
-                RuntimePropertiesServer rt(current_settings,simulation);
-                boost::thread thread1(rt);
+                if(settings.output.start_service){
+                    RuntimePropertiesServer rt(current_settings,simulation);
+                    boost::thread thread1(rt);
+                }
                 //--
                 Log() << simulation.GetLog();
                 simulation.SetStream(&Log());
@@ -110,8 +112,10 @@ public:
             else{
                 PRE79Simulation simulation(current_settings,state);
                 //serwer dostępu do symulacji w trakcie jej trwania, uruchamiany w osobnym wątku
-                RuntimePropertiesServer rt(current_settings,simulation);
-                boost::thread thread1(rt);
+                if(settings.output.start_service){
+                    RuntimePropertiesServer rt(current_settings,simulation);
+                    boost::thread thread1(rt);
+                }
                 //--
                 Log() << simulation.GetLog();
                 simulation.SetStream(&Log());
