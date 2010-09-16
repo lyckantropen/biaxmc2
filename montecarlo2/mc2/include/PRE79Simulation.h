@@ -258,7 +258,7 @@ public:
         while(thermalization->Iterate()){
             if(tcycle%100==0)
                 thermalprops->Update(tcycle,H);
-            if(tcycle%1000==0){
+            if(tcycle%1000==0 && settings.output.report_progress){
                 Log() << "E = " << thermalprops->EnergyEvolution()[tcycle/100] << std::endl;
                 Log() << "Progress: " << (double(tcycle)/double(thermalization->GetNCycles()))*100.0 << "%\n";
             }

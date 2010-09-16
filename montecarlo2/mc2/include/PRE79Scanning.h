@@ -162,7 +162,7 @@ public:
                 current_settings.hamiltonian.temperature=value;
 
             //--- znajdowanie zapisanego stanu - jeżeli znajdziemy, możemy pominąć ten krok
-            if(settings.scanning.continue_if_results_exist){
+            if(current_settings.scanning.continue_if_results_exist){
                 #pragma omp critical
                 Log() << "Thread: "<< omp_get_thread_num() << "/" << omp_get_num_threads() << ": Searching database for results of previous simulation\n";
                 bool found=false;
