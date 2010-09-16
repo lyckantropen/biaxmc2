@@ -94,6 +94,7 @@ public:
         bool save_final_properties;         std::string v_save_final_properties;
         bool save_properties_evolution;     std::string v_save_properties_evolution;
         bool save_intermediate_states;      std::string v_save_intermediate_states;
+        bool start_service;                 std::string v_start_service;
         int intermediate_states;
         _output():
         v_save_configuration_evolution("no"),
@@ -101,6 +102,7 @@ public:
         v_save_final_properties("yes"),
         v_save_properties_evolution("yes"),
         v_save_intermediate_states("yes"),
+        v_start_service("no"),
         intermediate_states(10)
         {}
     } output ;
@@ -177,6 +179,7 @@ private:
         ("output.save_final_properties",po::value<std::string>(&output.v_save_final_properties),"(yes/no) Save resulting (mean) properties of the system")
         ("output.save_properties_evolution",po::value<std::string>(&output.v_save_properties_evolution),"(yes/no) Save evolution of the properties of the system")
         ("output.save_intermediate_states",po::value<std::string>(&output.v_save_intermediate_states),"(yes/no) Save intermediate states for recovery")
+        ("output.start_service",po::value<std::string>(&output.v_start_service),"(yes/no) Start convenience service for remote inference at runtime")
         ("output.intermediate_states",po::value<int>(&output.intermediate_states),"Number of intermediate states to save")
         ("initial.biaxial",po::value<std::string>(&initial.v_biaxial),"(yes/no) Initial state is biaxial")
         ("initial.righthanded",po::value<std::string>(&initial.v_righthanded),"(yes/no) Initial state is righthanded")
@@ -201,6 +204,7 @@ private:
         output.save_final_properties = TextBool(output.v_save_final_properties);
         output.save_properties_evolution = TextBool(output.v_save_properties_evolution);
 	output.save_intermediate_states = TextBool(output.v_save_intermediate_states);
+        output.start_service = TextBool(output.v_start_service);
         initial.biaxial = TextBool(initial.v_biaxial);
         initial.righthanded = TextBool(initial.v_righthanded);
         initial.isotropic = TextBool(initial.v_isotropic);
