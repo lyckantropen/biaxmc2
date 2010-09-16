@@ -44,8 +44,9 @@ public:
     virtual double ExternalInteractionEnergy(const Particle & p){
         // pole skierowane wzdłuż osi z
         // uwaga - h jest równoważne h kwadrat w literaturze, a h/abs(h) jest równoważne delta epsilon i jest równe sgn(h)
+        //int sign = std::ceil(h)/std::abs(std::ceil(h));
         if(h==0.0) return 0.0;
-        return - epsilon*(h/std::abs(h))*h*h*(hxx*p.GetQX()[5] + hyy*p.GetQY()[5] + hzz*p.GetQZ()[5]);
+        return - epsilon*h*(hxx*p.GetQX()[5] + hyy*p.GetQY()[5] + hzz*p.GetQZ()[5]);
 
         //return 0.0;
     }
