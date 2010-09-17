@@ -9,8 +9,10 @@
 
 
 boost::rand48   rng2;
-rangen * rg = NULL;
+rangen random01;
+//rangen * rg = NULL;
 
+/*
 double random01(){
     double retval = 0.0;
     if(rg==NULL)
@@ -19,6 +21,7 @@ double random01(){
     retval = rg->Gen01();
     return retval;
 }
+*/
 int plusminusone(){
     if(random01()>0.5)
         return 1;
