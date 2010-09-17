@@ -13,9 +13,13 @@
 class ILoggable {
 protected:
     std::stringstream log;
+    io::null_sink	null_sink;
+    io::stream<io::null_sink>	null;
     std::ostream * stream;
-    ILoggable(){
-        stream = &log;
+    ILoggable():null(null_sink)
+	{
+        //stream = &log;
+	stream = &null;
     }
 
 public:

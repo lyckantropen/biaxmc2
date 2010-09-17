@@ -36,7 +36,7 @@ public:
         metro = new Metropolis(settings,H,0.065);
         prop = new PRE79StandardProperties(lattice,ncycles);
         simulation = new LatticeSimulation(H,lattice,metro,nprod,0);
-        SetStream(&std::cout);
+        //SetStream(&std::cout);
     }
 
     void Run() {
@@ -93,6 +93,9 @@ public:
     virtual std::ostream & Log(){
         ILoggable::Log() << "Thread: " << omp_get_thread_num() << "/" << omp_get_num_threads() << ": ";
 	return ILoggable::Log();
+    }
+    void SetStream(std::ostream * os) {
+	ILoggable::SetStream(os);
     }
     ~PRE79Production(){
         delete lattice;
@@ -310,6 +313,7 @@ public:
         Log() << "Starting " << settings.openmp.number_of_threads << " productions\n";
         #pragma omp parallel for schedule(runtime) shared(rng2) private(random01)
         for(int i=0;i<productions.size();i++){
+	    productions[i]->SetStream(&Log());
             productions[i]->Run();
         }
         PRE79StandardProperties generalprop = productions[0]->GetProperties();

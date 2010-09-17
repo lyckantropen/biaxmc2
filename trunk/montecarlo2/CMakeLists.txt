@@ -30,6 +30,11 @@ set(LIBRARIY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 link_directories(${PROJECT_SOURCE_DIR}/bin)
 
 #set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -msse4")
+if(CMAKE_C_COMPILER MATCHES "icc")
+	set(OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS} -parallel -openmp-link static")
+	set(OpenMP_C_FLAGS "${OpenMP_C_FLAGS} -parallel -openmp-link static")
+endif(CMAKE_C_COMPILER MATCHES "icc")
+
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -O3 -msse4.1")
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} -O3 -msse4.1 -std=c99")
 

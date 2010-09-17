@@ -87,11 +87,11 @@ public:
             
             if(acc_fraction<acc_llimit){
                 radius*=(1.0-decimation);
-                Log() << "decimating down to r=" << radius << " because acc_fraction=" << acc_fraction << std::endl;
+                //Log() << "decimating down to r=" << radius << " because acc_fraction=" << acc_fraction << std::endl;
             }
             if(acc_fraction>acc_ulimit){
                 radius*=(1.0+decimation);
-                Log() << "decimating up to r=" << radius << " because acc_fraction=" << acc_fraction << std::endl;
+                //Log() << "decimating up to r=" << radius << " because acc_fraction=" << acc_fraction << std::endl;
             }
             
             if(radius>=1.0){
@@ -104,7 +104,7 @@ public:
             }
             
         }
-        Log() << acc_fraction << " (" << acc_moves << "/" << N << ") accepted, radius " << radius << std::endl;
+        //Log() << acc_fraction << " (" << acc_moves << "/" << N << ") accepted, radius " << radius << std::endl;
     }
     virtual void SetStream(std::ostream * os){
         ILoggable::SetStream(os);
