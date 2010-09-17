@@ -92,6 +92,7 @@ public:
     }
     virtual std::ostream & Log(){
         ILoggable::Log() << "Thread: " << omp_get_thread_num() << "/" << omp_get_num_threads() << ": ";
+	return ILoggable::Log();
     }
     ~PRE79Production(){
         delete lattice;
@@ -307,7 +308,7 @@ public:
             productions.push_back(new PRE79Production(settings,settings.simulation.production_cycles/settings.openmp.number_of_threads,*lattice));
 
         Log() << "Starting " << settings.openmp.number_of_threads << " productions\n";
-        #pragma omp parallel for schedule(runtime)
+        #pragma omp parallel for schedule(runtime) shared(rng2)
         for(int i=0;i<productions.size();i++){
             productions[i]->Run();
         }
@@ -434,6 +435,7 @@ public:
     }
     virtual std::ostream & Log(){
         ILoggable::Log() << "Thread: " << omp_get_thread_num() << "/" << omp_get_num_threads() << ": ";
+	return ILoggable::Log();
     }
     ~PRE79Simulation(){
         delete metro;
