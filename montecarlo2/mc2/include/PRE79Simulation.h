@@ -307,7 +307,7 @@ public:
             productions.push_back(new PRE79Production(settings,settings.simulation.production_cycles/settings.openmp.number_of_threads,*lattice));
 
         Log() << "Starting " << settings.openmp.number_of_threads << " productions\n";
-        #pragma omp parallel for
+        #pragma omp parallel for schedule(runtime)
         for(int i=0;i<productions.size();i++){
             productions[i]->Run();
         }

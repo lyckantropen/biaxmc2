@@ -156,11 +156,12 @@ int main(int argc, char** argv)
 	    MeanQ2/=lat.GetN();
 	    MeanQ3/=lat.GetN();
 
-	    std::cout << "MeanQxTensor" << coord.str() << "=" << MathematicaForm(MeanQxTensor) << ";\n";
-	    std::cout << "MeanQyTensor" << coord.str() << "=" << MathematicaForm(MeanQyTensor) << ";\n";
-	    std::cout << "MeanQzTensor" << coord.str() << "=" << MathematicaForm(MeanQzTensor) << ";\n";
-	    std::cout << "TrMeanQ2" << coord.str() << "=" << (MeanQ2[0]+MeanQ2[3]+MeanQ2[5]) << ";\n";
-	    std::cout << "TrMeanQ3" << coord.str() << "=" << (MeanQ3[0]+MeanQ3[3]+MeanQ3[5]) << ";\n";
+	    //std::cout << "MeanQxTensor" << coord.str() << "=" << MathematicaForm(MeanQxTensor) << ";\n";
+	    //std::cout << "MeanQyTensor" << coord.str() << "=" << MathematicaForm(MeanQyTensor) << ";\n";
+	    //std::cout << "MeanQzTensor" << coord.str() << "=" << MathematicaForm(MeanQzTensor) << ";\n";
+	    //std::cout << "TrMeanQ2" << coord.str() << "=" << (MeanQ2[0]+MeanQ2[3]+MeanQ2[5]) << ";\n";
+	    //std::cout << "TrMeanQ3" << coord.str() << "=" << (MeanQ3[0]+MeanQ3[3]+MeanQ3[5]) << ";\n";
+	    std::cout << "W" << coord.str() << "=" << (MeanQ3[0]+MeanQ3[3]+MeanQ3[5])/pow((MeanQ2[0]+MeanQ2[3]+MeanQ2[5]),1.5);
 
         }
     }

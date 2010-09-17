@@ -145,7 +145,7 @@ public:
         else
             omp_set_dynamic(0);
         omp_set_num_threads(settings.openmp.number_of_threads);
-        #pragma omp parallel for schedule(static)
+        #pragma omp parallel for schedule(runtime)
         for(int i=0;i<nscans;i++){
 
             double value = start + double(i)*delta;
