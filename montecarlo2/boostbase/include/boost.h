@@ -19,6 +19,7 @@
 #include <boost/iostreams/device/array.hpp>
 #include <boost/iostreams/categories.hpp>
 #include <boost/iostreams/filter/counter.hpp>
+#include <boost/iostreams/device/null.hpp>
 #include <boost/iostreams/operations.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/foreach.hpp>
