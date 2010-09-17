@@ -15,10 +15,12 @@
 #include "Metropolis.h"
 #include "SimulationDB.h"
 #include "PRE79Scanning.h"
+#include "cstdlib"
 //#include <omp.h>
 
 int main(int argc, char** argv)
 {
+    setenv("OMP_SCHEDULE","static",0);
     std::string cfg("simulation.ini");
     if(argc>1)
         cfg=argv[1];
