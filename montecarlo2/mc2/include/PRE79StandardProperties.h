@@ -999,6 +999,7 @@ inline std::ostream & operator<<(std::ostream & o,const PRE79MeanProperties & p)
 
     o << "TetrahedralMeanCorrelation=\n" << p.Delta322MeanCorrelation() << std::endl;
     o << "ParityMeanCorrelation=\n" << p.ParityMeanCorrelation() << std::endl;
+    return o;
 }
 #endif	/* _STANDARDPROPERTIES_H */
 
