@@ -72,8 +72,8 @@ void    table_output(const std::string & data_type,const std::vector<std::string
                 if(column=="paritycor")
                     std::cout << prop.ParityCorrelationEvolution()[i] << "\t";
                 }
+            	std::cout << std::endl;
             }
-            std::cout << std::endl;
         }
     }
 

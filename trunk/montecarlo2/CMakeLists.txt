@@ -35,8 +35,13 @@ if(CMAKE_C_COMPILER MATCHES "icc")
 	set(OpenMP_C_FLAGS "${OpenMP_C_FLAGS} -parallel -openmp-link static")
 endif(CMAKE_C_COMPILER MATCHES "icc")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -O3 -msse4.1")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} -O3 -msse4.1 -std=c99")
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -O3")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} -O3 -std=c99")
+if(WITH_SSE MATCHES "YES")
+	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.1")
+	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} -msse4.1")
+endif(WITH_SSE MATCHES "YES")
 
 add_subdirectory(boostbase)
 add_subdirectory(mc2)
