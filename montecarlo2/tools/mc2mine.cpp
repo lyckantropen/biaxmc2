@@ -270,10 +270,14 @@ void    table_output(const std::string & data_type,const std::vector<std::string
 void mathematica_output(const std::string & data_type,const std::vector<std::string> & /*columns*/,boostbase::base & db,const boostbase::tween_t_proxy & betweens,const boostbase::pair_t_proxy & wheres){
     if(data_type=="properties" || data_type=="final_properties"){
         std::vector<PRE79MeanProperties> whatwegot= db.get<PRE79MeanProperties>(wheres,betweens);
-        foreach(PRE79MeanProperties & prop,whatwegot){
+        vect temperature(0.0,whatwegot.size());
+        //foreach(PRE79MeanProperties & prop,whatwegot){
+        for(int i=0;i<whatwegot.size();i++){
+            PRE79MeanProperties & prop = whatwegot[i];
             prop.CalculateMeanTensors();
             //współrzędne - wszystko jest w zależności od T,h,lambda i tau
             std::stringstream coord;
+            temperature[i]=prop.Temperature();
             coord << "[" << prop.Temperature() << "," << prop.Field() << "," << prop.Lambda() << "," << prop.Tau() << "]" ;
 
             std::cout << "SpecificHeat" << coord.str() << "=" << prop.SpecificHeat().MathematicaForm() << ";\n";
@@ -313,6 +317,7 @@ void mathematica_output(const std::string & data_type,const std::vector<std::str
 
 
         }
+        std::cout << "Temp=" << MathematicaForm(temperature) << ";\n";
     }
     if(data_type=="lattice" || data_type=="final_lattice") {
         std::vector<Lattice> whatwegot= db.get<Lattice>(wheres,betweens);
