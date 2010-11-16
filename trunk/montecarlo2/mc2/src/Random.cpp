@@ -72,4 +72,4 @@ vect    RandomPointOn4DSphereOld(const double & r){
 	return x;
 }
 
-template<> rangen * Singleton<rangen>::instance=NULL;
+//template<> rangen * Singleton<rangen>::instance=NULL;

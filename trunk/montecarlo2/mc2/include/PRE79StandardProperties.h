@@ -20,6 +20,7 @@
 #include "eig3.h"
 #include "evsort.h"
 
+
 //extern "C" void Jacobi_Cyclic_Method(double *eigenvalues, double *eigenvectors, double *A, int n);
 
 
@@ -41,7 +42,8 @@ class PRE79StandardProperties {
 //    vect    D202;
 //    vect    D222;
     //Value   specific_heat;  ///<ciepło właściwe w funkcji czasu (w praktyce obliczanie całej historii jest bardzo kosztowne, obliczamy dopiero na końcu)
-    Value   fluctuation;
+    Value   fluctuation;    ///<fluktuacje energii
+
 
     //ewolucja średnich tensorów xx,yy,zz
     std::vector<vect>  MeanQxTensor;
@@ -83,41 +85,8 @@ class PRE79StandardProperties {
     }
 public:
     ///obliczanie ciepła właściwego metodą bootstrapu
-    void CalculateSpecificHeat(const double & T){
-        /*
-        vect fluct(acc_idx+1);
-        for(int i=0;i<(acc_idx+1);i++){
-            double E = BootstrapMean(energy,0,acc_idx+1,1);
-            double E2 = BootstrapMean(vect(energy*energy),0,acc_idx+1,1);
-            fluct[i] = (E2-E*E)*lat->GetN()/T/T;
-        }
-        //specific_heat=BootstrapMean(fluct);
-        specific_heat=Mean(fluct);
-         */
-
-        
-        //std::cout << "TEST SPH from Boostrap/Boostrap: " << specific_heat << std::endl;
-        //std::cout << "TEST SPH from Boostrap/Mean: " << Mean(fluct) << std::endl;
-
-        vect fluct2(acc_idx+1);
-        vect fluct3(acc_idx+1);
-        for(int i=0;i<(acc_idx+1);i++){
-            vect e(acc_idx+1);
-            vect e2(acc_idx+1);
-            for(int j=0;j<(acc_idx+1);j++){
-                int t = (acc_idx)*random01();
-                e[j]=energy[t];
-                e2[j]=energy[t]*energy[t];
-            }
-            fluct2[i]=(double(Mean(e2))-double(Mean(e))*double(Mean(e)))*lat->GetN()/T/T;
-            fluct3[i]=(double(Mean(e2))-double(Mean(e))*double(Mean(e)))*lat->GetN();
-        }
-        //std::cout << "TEST SPH from old BS: " << BootstrapMean(fluct2) << std::endl;
-        //specific_heat=BootstrapMean(fluct2);
-        //fluctuation=BootstrapMean(fluct3);
-        fluctuation=Mean(fluct3);
-
-        //std::cout << "TEST SPH from Fluctuation by bootstrap: " << (std::pow(BootstrapMean(energy).Error(),2.0)*lat->GetN()/T/T) << std::endl;
+    void CalculateSpecificHeat(){
+        fluctuation=CalculateFluctuation(energy,acc_idx)*Value(lat->GetN());
     }
 private:
     ///obliczanie średnich tensorów xx,yy i zz
@@ -265,7 +234,7 @@ public:
         CalculateMeanTensors();
 
         if((acc_idx+1)>=ncycles)
-            CalculateSpecificHeat(H->GetTemperature());
+            CalculateSpecificHeat();
     }
 
     ///dołożenie danych z innych właściwości, koniecznie po zakończeniu obliczeń
@@ -340,6 +309,9 @@ public:
     Value TemporalMeanParity() const {
         return Mean(parity,0,acc_idx+1);
     }
+    Value ParitySusceptibility() const {
+        return CalculateFluctuation(parity,acc_idx)*Value(lat->GetN());
+    }
     /*
     Value MeanDelta200() const {
         return BootstrapMean(D200,0,acc_idx+1);
@@ -359,28 +331,51 @@ public:
     Value Delta200ZByCorrelation() const {
         return sqrt(d200corz.Limit());
     }
+    Value Delta200ZByCorrelationSusceptibility() const {
+        return CalculateFluctuation(d200corz.LimitHistory(),acc_idx)*Value(lat->GetN());
+    }
     Value Delta222ZByCorrelation() const {
         return sqrt(d222corz.Limit());
+    }
+    Value Delta222ZByCorrelationSusceptibility() const {
+        return CalculateFluctuation(d222corz.LimitHistory(),acc_idx)*Value(lat->GetN());
     }
     Value Delta200XByCorrelation() const {
         return sqrt(d200corx.Limit());
     }
+    Value Delta200XByCorrelationSusceptibility() const {
+        return CalculateFluctuation(d200corx.LimitHistory(),acc_idx)*Value(lat->GetN());
+    }
     Value Delta222XByCorrelation() const {
         return sqrt(d222corx.Limit());
+    }
+    Value Delta222XByCorrelationSusceptibility() const {
+        return CalculateFluctuation(d222corx.LimitHistory(),acc_idx)*Value(lat->GetN());
     }
     Value Delta200YByCorrelation() const {
         return sqrt(d200cory.Limit());
     }
+    Value Delta200YByCorrelationSusceptibility() const {
+        return CalculateFluctuation(d200cory.LimitHistory(),acc_idx)*Value(lat->GetN());
+    }
     Value Delta222YByCorrelation() const {
         return sqrt(d222cory.Limit());
     }
-
+    Value Delta222YByCorrelationSusceptibility() const {
+        return CalculateFluctuation(d222cory.LimitHistory(),acc_idx)*Value(lat->GetN());
+    }
 
     Value Delta322ByCorrelation() const {
         return sqrt(d322cor.Limit());
     }
+    Value Delta322ByCorrelationSusceptibility() const {
+        return CalculateFluctuation(d322cor.LimitHistory(),acc_idx)*Value(lat->GetN());
+    }
     Value ParityByCorrelation() const {
         return sqrt(paritycor.Limit());
+    }
+    Value ParityByCorrelationSusceptibility() const {
+        return CalculateFluctuation(paritycor.LimitHistory(),acc_idx)*Value(lat->GetN());
     }
 
     //średnie funkcje korelacji dla poszczególnych osi
@@ -588,6 +583,7 @@ class PRE79MeanProperties {
     friend void operator|(serializer_t & s, PRE79MeanProperties & prop);
     Value energy;
     Value parity;
+    Value parity_sus;
     //Value specific_heat;
     Value fluctuation;
     Value d200z_from_correlation;
@@ -598,6 +594,14 @@ class PRE79MeanProperties {
     Value d222y_from_correlation;
     Value d322_from_correlation;
     Value parity_from_correlation;
+    Value d200z_from_correlation_sus;
+    Value d222z_from_correlation_sus;
+    Value d200x_from_correlation_sus;
+    Value d222x_from_correlation_sus;
+    Value d200y_from_correlation_sus;
+    Value d222y_from_correlation_sus;
+    Value d322_from_correlation_sus;
+    Value parity_from_correlation_sus;
     double mean_d200;
     double mean_d220;
     double mean_d202;
@@ -651,6 +655,7 @@ public:
 
         energy = prop.TemporalMeanEnergyPerMolecule();
         parity = prop.TemporalMeanParity();
+        parity_sus = prop.ParitySusceptibility();
         //specific_heat = prop.SpecificHeat();
         fluctuation = prop.Fluctuation();
 
@@ -660,10 +665,19 @@ public:
         d222x_from_correlation = prop.Delta222XByCorrelation();
         d200y_from_correlation = prop.Delta200YByCorrelation();
         d222y_from_correlation = prop.Delta222YByCorrelation();
-
+        
+        d200z_from_correlation_sus = prop.Delta200ZByCorrelationSusceptibility();
+        d222z_from_correlation_sus = prop.Delta222ZByCorrelationSusceptibility();
+        d200x_from_correlation_sus = prop.Delta200XByCorrelationSusceptibility();
+        d222x_from_correlation_sus = prop.Delta222XByCorrelationSusceptibility();
+        d200y_from_correlation_sus = prop.Delta200YByCorrelationSusceptibility();
+        d222y_from_correlation_sus = prop.Delta222YByCorrelationSusceptibility();
 
         d322_from_correlation = prop.Delta322ByCorrelation();
         parity_from_correlation = prop.ParityByCorrelation();
+
+        d322_from_correlation_sus = prop.Delta322ByCorrelationSusceptibility();
+        parity_from_correlation_sus = prop.ParityByCorrelationSusceptibility();
 
         mean_d200corz = prop.Delta200ZMeanCorrelation();
         mean_d220corz = prop.Delta220ZMeanCorrelation();
@@ -923,6 +937,8 @@ public:
     }
 };
 
+
+///zapisywanie, jeżeil się doda nowe rzeczy na końcu, to nie będzie konfliktu z danymi zapisywanymi w starym formacie
 template <class serializer_t>
 void operator|(serializer_t & s, PRE79MeanProperties & p){
     s|p.energy;
@@ -965,6 +981,16 @@ void operator|(serializer_t & s, PRE79MeanProperties & p){
     s|p.lambda;
     s|p.h;
     s|p.parity;
+    
+    s|p.parity_sus;
+    s|p.d200z_from_correlation_sus;
+    s|p.d200x_from_correlation_sus;
+    s|p.d200y_from_correlation_sus;
+    s|p.d222z_from_correlation_sus;
+    s|p.d222x_from_correlation_sus;
+    s|p.d222y_from_correlation_sus;
+    s|p.d322_from_correlation_sus;
+    s|p.parity_from_correlation_sus;
 }
 inline std::ostream & operator<<(std::ostream & o,const PRE79MeanProperties & p){
     o << "Temperature=" << p.Temperature() << std::endl;
