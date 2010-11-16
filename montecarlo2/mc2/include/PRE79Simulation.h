@@ -221,6 +221,13 @@ public:
                 lattice = new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::Biaxial);
         }
         else
+        if(set.initial.biaxial_alt){
+            if(set.initial.righthanded)
+                lattice = new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::BiaxialRighthandedAlt);
+            else
+                lattice = new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::BiaxialAlt);
+        }
+        else
         if(set.initial.righthanded)
             lattice = new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::IsotropicRighthanded);
         else

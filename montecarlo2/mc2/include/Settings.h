@@ -110,10 +110,12 @@ public:
     } output ;
     struct _initial {
         bool biaxial;       std::string v_biaxial;
+	bool biaxial_alt;   std::string v_biaxial_alt;
         bool righthanded;   std::string v_righthanded;
         bool isotropic;     std::string v_isotropic;
         _initial():
         v_biaxial("no"),
+	v_biaxial_alt("no"),
         v_righthanded("no"),
         v_isotropic("no")
         {}
@@ -185,6 +187,7 @@ private:
         ("output.report_progress",po::value<std::string>(&output.v_report_progress),"(yes/no) Report progress")
         ("output.intermediate_states",po::value<int>(&output.intermediate_states),"Number of intermediate states to save")
         ("initial.biaxial",po::value<std::string>(&initial.v_biaxial),"(yes/no) Initial state is biaxial")
+        ("initial.biaxial_alt",po::value<std::string>(&initial.v_biaxial_alt),"(yes/no) Initial state is biaxial with b||z")
         ("initial.righthanded",po::value<std::string>(&initial.v_righthanded),"(yes/no) Initial state is righthanded")
         ("initial.isotropic",po::value<std::string>(&initial.v_isotropic),"(yes/no) Initial state is orientationally isotropic (can be chiral still)")
         ("scanning.enabled",po::value<std::string>(&scanning.v_enabled),"(yes/no) Should scanning be done")
@@ -212,6 +215,7 @@ private:
         initial.biaxial = TextBool(initial.v_biaxial);
         initial.righthanded = TextBool(initial.v_righthanded);
         initial.isotropic = TextBool(initial.v_isotropic);
+	initial.biaxial_alt = TextBool(initial.v_biaxial_alt);
         scanning.enabled = TextBool(scanning.v_enabled);
         scanning.reuse_thermalized = TextBool(scanning.v_reuse_thermalized);
         scanning.threaded = TextBool(scanning.v_threaded);
