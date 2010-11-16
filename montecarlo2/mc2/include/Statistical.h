@@ -174,6 +174,7 @@ Value BootstrapMean(const std::valarray<value_type> & v, const int start=0, cons
     double stddev = std::sqrt(std::pow((bootmean-Bsum),value_type(2.0)).sum()/(B-value_type(1)));
     return Value(bootmean.sum()/B,stddev);
 };
+extern Value CalculateFluctuation(const vect & variable,const int & acc_idx);
 
 
 template  Value Mean<Value>(const std::valarray<Value> & v,const int, const int, const int);

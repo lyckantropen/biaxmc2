@@ -327,7 +327,7 @@ public:
         for(int i=1;i<productions.size();i++){
             generalprop.Append(productions[i]->GetProperties());
         }
-        generalprop.CalculateSpecificHeat(H->GetTemperature());
+        generalprop.CalculateSpecificHeat();
 
         if(settings.output.save_properties_evolution) {
             Log() << "Saving Properties Evolution\n";
