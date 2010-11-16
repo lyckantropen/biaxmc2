@@ -65,7 +65,7 @@ class Lattice {
 
     }
 public:
-    typedef enum { Isotropic, IsotropicRighthanded, Biaxial, BiaxialRighthanded } state_t;
+    typedef enum { Isotropic, IsotropicRighthanded, Biaxial, BiaxialRighthanded, BiaxialAlt, BiaxialRighthandedAlt } state_t;
     Lattice():L(0),W(0),H(0),N(0) {}
     Lattice(const int & l, const int & w, const int & h,const state_t & state=Isotropic):
     L(l),W(w),H(h),N(l*w*h)
@@ -83,6 +83,12 @@ public:
                 break;
             case BiaxialRighthanded:
                 BiaxialRighthandedState();
+		break;
+	    case BiaxialAlt:
+		BiaxialStateAlt();
+		break;
+	    case BiaxialRighthandedAlt:
+		BiaxialRighthandedStateAlt();
                 break;
         }
     }
@@ -139,6 +145,27 @@ private:
             p.SetOrientation(o,1);
         }
     }
+    ///porządek dwuosiowy z b||z
+    void BiaxialStateAlt(){
+	    vect o(4);
+	    o[2]=o[3]=0.0;
+	    o[0]=1./std::sqrt(2);
+	    o[1]=1./std::sqrt(2);
+	    foreach(Particle &p, Particles){
+		    p.SetOrientation(o,plusminusone());
+	    }
+    }
+    ///porządek dwuosiowy z b||z + chiralny
+    void BiaxialRighthandedStateAlt(){
+	    vect o(4);
+	    o[2]=o[3]=0.0;
+	    o[0]=1./std::sqrt(2);
+	    o[1]=1./std::sqrt(2);
+	    foreach(Particle &p, Particles){
+		    p.SetOrientation(o,1);
+	    }
+    }
+
 public:
     ///jedno przemiecenie Monte Carlo
     int Sweep(MCProto * proto){
