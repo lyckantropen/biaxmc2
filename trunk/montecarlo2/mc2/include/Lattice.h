@@ -172,7 +172,7 @@ public:
         int accepted = 0;
         for(int i=0;i<N;i++){
             int site = int(N*random01());
-            if(Particles[i].Nudge(proto))
+            if(Particles[site].Nudge(proto))
                 accepted++;
         }
         return accepted;
