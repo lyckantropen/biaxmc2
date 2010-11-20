@@ -310,7 +310,7 @@ public:
         return Mean(parity,0,acc_idx+1);
     }
     Value ParitySusceptibility() const {
-        return CalculateFluctuation(parity,acc_idx)*Value(lat->GetN());
+        return CalculateFluctuation(parity,acc_idx);
     }
     /*
     Value MeanDelta200() const {
@@ -332,50 +332,50 @@ public:
         return sqrt(d200corz.Limit());
     }
     Value Delta200ZByCorrelationSusceptibility() const {
-        return CalculateFluctuation(d200corz.LimitHistory(),acc_idx)*Value(lat->GetN());
+        return CalculateFluctuation(d200corz.LimitHistory());
     }
     Value Delta222ZByCorrelation() const {
         return sqrt(d222corz.Limit());
     }
     Value Delta222ZByCorrelationSusceptibility() const {
-        return CalculateFluctuation(d222corz.LimitHistory(),acc_idx)*Value(lat->GetN());
+        return CalculateFluctuation(d222corz.LimitHistory());
     }
     Value Delta200XByCorrelation() const {
         return sqrt(d200corx.Limit());
     }
     Value Delta200XByCorrelationSusceptibility() const {
-        return CalculateFluctuation(d200corx.LimitHistory(),acc_idx)*Value(lat->GetN());
+        return CalculateFluctuation(d200corx.LimitHistory());
     }
     Value Delta222XByCorrelation() const {
         return sqrt(d222corx.Limit());
     }
     Value Delta222XByCorrelationSusceptibility() const {
-        return CalculateFluctuation(d222corx.LimitHistory(),acc_idx)*Value(lat->GetN());
+        return CalculateFluctuation(d222corx.LimitHistory());
     }
     Value Delta200YByCorrelation() const {
         return sqrt(d200cory.Limit());
     }
     Value Delta200YByCorrelationSusceptibility() const {
-        return CalculateFluctuation(d200cory.LimitHistory(),acc_idx)*Value(lat->GetN());
+        return CalculateFluctuation(d200cory.LimitHistory());
     }
     Value Delta222YByCorrelation() const {
         return sqrt(d222cory.Limit());
     }
     Value Delta222YByCorrelationSusceptibility() const {
-        return CalculateFluctuation(d222cory.LimitHistory(),acc_idx)*Value(lat->GetN());
+        return CalculateFluctuation(d222cory.LimitHistory());
     }
 
     Value Delta322ByCorrelation() const {
         return sqrt(d322cor.Limit());
     }
     Value Delta322ByCorrelationSusceptibility() const {
-        return CalculateFluctuation(d322cor.LimitHistory(),acc_idx)*Value(lat->GetN());
+        return CalculateFluctuation(d322cor.LimitHistory());
     }
     Value ParityByCorrelation() const {
         return sqrt(paritycor.Limit());
     }
     Value ParityByCorrelationSusceptibility() const {
-        return CalculateFluctuation(paritycor.LimitHistory(),acc_idx)*Value(lat->GetN());
+        return CalculateFluctuation(paritycor.LimitHistory());
     }
 
     //średnie funkcje korelacji dla poszczególnych osi
@@ -541,7 +541,8 @@ public:
         return ncycles;
     }
     int GetMaxCorrLen() const {
-        return lat->GetL()/2+1;
+        //return lat->GetL()/2+1;
+        return paritycor.GetMax()+1;
     }
 
 };
@@ -636,6 +637,7 @@ public:
     PRE79MeanProperties(){}
     ///konstruktor tradycyjny
     PRE79MeanProperties(PRE79StandardProperties & prop, PRE79StandardHamiltonian & H){
+
         mean_d200corz.resize(prop.GetMaxCorrLen(),0.0);
         mean_d222corz.resize(prop.GetMaxCorrLen(),0.0);
         mean_d220corz.resize(prop.GetMaxCorrLen(),0.0);
