@@ -24,7 +24,7 @@ void    do_count(const std::string & data_type,const std::vector<std::string> & 
 	if(data_type=="properties_evolution" || data_type=="thermalization_history")
 		std::cout << db.get<PRE79StandardProperties>(wheres,betweens).size() << std::endl;
 }
-void    table_output(const std::string & data_type,const std::vector<std::string> & columns,boostbase::base & db,const boostbase::tween_t_proxy & betweens,const boostbase::pair_t_proxy & wheres){
+void    table_output(const std::string & data_type,const std::vector<std::string> & columns,boostbase::base & db,const boostbase::tween_t_proxy & betweens,const boostbase::pair_t_proxy & wheres,bool recalculate=false){
 
     if(data_type=="thermalization_history") {
         std::vector<PRE79StandardProperties> whatwegot= db.get<PRE79StandardProperties>(wheres,betweens);
@@ -78,7 +78,21 @@ void    table_output(const std::string & data_type,const std::vector<std::string
     }
 
     if(data_type=="final_properties" || data_type=="properties") {
-        std::vector<PRE79MeanProperties> whatwegot= db.get<PRE79MeanProperties>(wheres,betweens);
+        std::vector<PRE79MeanProperties> whatwegot;
+	if(!recalculate)
+		whatwegot = db.get<PRE79MeanProperties>(wheres,betweens);
+	else {
+        	boostbase::pair_t_proxy nwheres = wheres;
+	        nwheres.pop();
+		nwheres(std::string("data_type"),std::string("properties_evolution"));
+		std::vector<PRE79MeanProperties> wwg = db.get<PRE79MeanProperties>(wheres,betweens);
+		std::vector<PRE79StandardProperties> wwg2 = db.get<PRE79StandardProperties>(nwheres,betweens);
+		if(wwg2.size()<wwg.size()) std::cout << "#WARINING: insufficient data to recalculate. output may not be very satisfying\n";
+		for(int i=0;i<wwg2.size()&&i<wwg.size();i++){
+			PRE79StandardHamiltonian H(wwg[i].Temperature(),wwg[i].Lambda(),wwg[i].Tau(),wwg[i].Field());
+			whatwegot.push_back(PRE79MeanProperties(wwg2[i],H));
+		}
+	}
 
         std::cout << "## some of the columns may imply an additional column with error values\n";
         std::cout << "# ";
@@ -99,7 +113,6 @@ void    table_output(const std::string & data_type,const std::vector<std::string
                     std::cout << prop.TemporalMeanEnergyPerMolecule().TableForm() << "\t";
                 if(column=="parity")
                     std::cout << prop.TemporalMeanParity().TableForm() << "\t";
-
                 if(column=="d200z_from_correlation")
                     std::cout << prop.Delta200ZByCorrelation().TableForm() << "\t";
                 if(column=="d222z_from_correlation")
@@ -112,11 +125,28 @@ void    table_output(const std::string & data_type,const std::vector<std::string
                     std::cout << prop.Delta200YByCorrelation().TableForm() << "\t";
                 if(column=="d222y_from_correlation")
                     std::cout << prop.Delta222YByCorrelation().TableForm() << "\t";
-
                 if(column=="d322_from_correlation")
                     std::cout << prop.Delta322ByCorrelation().TableForm() << "\t";
                 if(column=="parity_from_correlation")
                     std::cout << prop.ParityByCorrelation().TableForm() << "\t";
+                if(column=="parity_sus")
+                    std::cout << prop.ParitySusceptibility().TableForm() << "\t";
+                if(column=="d200z_from_correlation_sus")
+                    std::cout << prop.Delta200ZByCorrelationSusceptibility().TableForm() << "\t";
+                if(column=="d222z_from_correlation_sus")
+                    std::cout << prop.Delta222ZByCorrelationSusceptibility().TableForm() << "\t";
+                if(column=="d200x_from_correlation_sus")
+                    std::cout << prop.Delta200XByCorrelationSusceptibility().TableForm() << "\t";
+                if(column=="d222x_from_correlation_sus")
+                    std::cout << prop.Delta222XByCorrelationSusceptibility().TableForm() << "\t";
+                if(column=="d200y_from_correlation_sus")
+                    std::cout << prop.Delta200YByCorrelationSusceptibility().TableForm() << "\t";
+                if(column=="d222y_from_correlation_sus")
+                    std::cout << prop.Delta222YByCorrelationSusceptibility().TableForm() << "\t";
+                if(column=="d322_from_correlation_sus")
+                    std::cout << prop.Delta322ByCorrelationSusceptibility().TableForm() << "\t";
+                if(column=="parity_from_correlation_sus")
+                    std::cout << prop.ParityByCorrelationSusceptibility().TableForm() << "\t";
                 if(column=="tau")
                     std::cout << prop.Tau() << "\t";
                 if(column=="lambda")
@@ -267,9 +297,23 @@ void    table_output(const std::string & data_type,const std::vector<std::string
 /**
  * tutaj ignorujemy columns, tylko wypisujemy wszystko
  */
-void mathematica_output(const std::string & data_type,const std::vector<std::string> & /*columns*/,boostbase::base & db,const boostbase::tween_t_proxy & betweens,const boostbase::pair_t_proxy & wheres){
+void mathematica_output(const std::string & data_type,const std::vector<std::string> & /*columns*/,boostbase::base & db,const boostbase::tween_t_proxy & betweens,const boostbase::pair_t_proxy & wheres,bool recalculate=false){
     if(data_type=="properties" || data_type=="final_properties"){
-        std::vector<PRE79MeanProperties> whatwegot= db.get<PRE79MeanProperties>(wheres,betweens);
+        std::vector<PRE79MeanProperties> whatwegot;
+	if(!recalculate)
+		whatwegot = db.get<PRE79MeanProperties>(wheres,betweens);
+	else {
+        	boostbase::pair_t_proxy nwheres = wheres;
+	        nwheres.pop();
+		nwheres(std::string("data_type"),std::string("properties_evolution"));
+		std::vector<PRE79MeanProperties> wwg = db.get<PRE79MeanProperties>(wheres,betweens);
+		std::vector<PRE79StandardProperties> wwg2 = db.get<PRE79StandardProperties>(nwheres,betweens);
+		if(wwg2.size()<wwg.size()) std::cout << "#WARINING: insufficient data to recalculate. output may not be very satisfying\n";
+		for(int i=0;i<wwg2.size()&&i<wwg.size();i++){
+			PRE79StandardHamiltonian H(wwg[i].Temperature(),wwg[i].Lambda(),wwg[i].Tau(),wwg[i].Field());
+			whatwegot.push_back(PRE79MeanProperties(wwg2[i],H));
+		}
+	}
         vect temperature(0.0,whatwegot.size());
         //foreach(PRE79MeanProperties & prop,whatwegot){
         for(int i=0;i<whatwegot.size();i++){
@@ -284,6 +328,7 @@ void mathematica_output(const std::string & data_type,const std::vector<std::str
             std::cout << "Fluctuation" << coord.str() << "=" << prop.Fluctuation().MathematicaForm() << ";\n";
             std::cout << "TemporalMeanEnergyPerMolecule" << coord.str() << "=" << prop.TemporalMeanEnergyPerMolecule().MathematicaForm() << ";\n";
             std::cout << "TemporalMeanParity" << coord.str() << "=" << prop.TemporalMeanParity().MathematicaForm() << ";\n";
+            std::cout << "ParitySusceptibility" << coord.str() << "=" << prop.ParitySusceptibility().MathematicaForm() << ";\n";
             std::cout << "Delta200ZByCorrelation" << coord.str() << "=" << prop.Delta200ZByCorrelation().MathematicaForm() << ";\n";
             std::cout << "Delta222ZByCorrelation" << coord.str() << "=" << prop.Delta222ZByCorrelation().MathematicaForm() << ";\n";
             std::cout << "Delta200XByCorrelation" << coord.str() << "=" << prop.Delta200XByCorrelation().MathematicaForm() << ";\n";
@@ -293,6 +338,16 @@ void mathematica_output(const std::string & data_type,const std::vector<std::str
 
             std::cout << "Delta322ByCorrelation" << coord.str() << "=" << prop.Delta322ByCorrelation().MathematicaForm() << ";\n";
             std::cout << "ParityByCorrelation" << coord.str() << "=" << prop.ParityByCorrelation().MathematicaForm() << ";\n";
+
+            std::cout << "Delta200ZByCorrelationSusceptibility" << coord.str() << "=" << prop.Delta200ZByCorrelationSusceptibility().MathematicaForm() << ";\n";
+            std::cout << "Delta222ZByCorrelationSusceptibility" << coord.str() << "=" << prop.Delta222ZByCorrelationSusceptibility().MathematicaForm() << ";\n";
+            std::cout << "Delta200XByCorrelationSusceptibility" << coord.str() << "=" << prop.Delta200XByCorrelationSusceptibility().MathematicaForm() << ";\n";
+            std::cout << "Delta222XByCorrelationSusceptibility" << coord.str() << "=" << prop.Delta222XByCorrelationSusceptibility().MathematicaForm() << ";\n";
+            std::cout << "Delta200YByCorrelationSusceptibility" << coord.str() << "=" << prop.Delta200YByCorrelationSusceptibility().MathematicaForm() << ";\n";
+            std::cout << "Delta222YByCorrelationSusceptibility" << coord.str() << "=" << prop.Delta222YByCorrelationSusceptibility().MathematicaForm() << ";\n";
+
+            std::cout << "Delta322ByCorrelationSusceptibility" << coord.str() << "=" << prop.Delta322ByCorrelationSusceptibility().MathematicaForm() << ";\n";
+            std::cout << "ParityByCorrelationSusceptibility" << coord.str() << "=" << prop.ParityByCorrelationSusceptibility().MathematicaForm() << ";\n";
 
             std::cout << "Delta200ZMeanCorrelation" << coord.str() << "=" << MathematicaForm(prop.Delta200ZMeanCorrelation()) << ";\n";
             std::cout << "Delta220ZMeanCorrelation" << coord.str() << "=" << MathematicaForm(prop.Delta220ZMeanCorrelation()) << ";\n";
@@ -364,6 +419,7 @@ int main(int argc, char** argv)
     boostbase::pair_t_proxy     wheres;
     std::vector<std::string>    columns;
     bool sqlite_debug=false;
+    bool recalculate=false;
     output_t output_type = table;
 
     for(int i=1;i<argc;i++){
@@ -437,6 +493,8 @@ int main(int argc, char** argv)
             output_type=mathematica;
 	if(std::string(argv[i])=="--count")
 	    output_type=count;
+	if(std::string(argv[i])=="--recalculate")
+	    recalculate=true;
 
     }
     if(dbfile=="" || dbdir==""){
@@ -452,10 +510,10 @@ int main(int argc, char** argv)
 
     switch(output_type){
         case table:
-            table_output(data_type,columns,db,betweens,wheres);
+            table_output(data_type,columns,db,betweens,wheres,recalculate);
             break;
         case mathematica:
-            mathematica_output(data_type,columns,db,betweens,wheres);
+            mathematica_output(data_type,columns,db,betweens,wheres,recalculate);
             break;
 	case count:
 	    do_count(data_type,columns,db,betweens,wheres);

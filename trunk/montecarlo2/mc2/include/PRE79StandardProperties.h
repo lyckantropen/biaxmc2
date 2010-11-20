@@ -831,6 +831,9 @@ public:
     const Value & TemporalMeanParity() const {
         return parity;
     }
+    const Value & ParitySusceptibility() const {
+        return parity_sus;
+    }
     const double & MeanDelta200() const {
         return mean_d200;
     }
@@ -850,6 +853,7 @@ public:
     const Value & Fluctuation() const {
         return fluctuation;
     }
+
 
     const Value & Delta200ZByCorrelation() const {
         return d200z_from_correlation;
@@ -876,6 +880,34 @@ public:
     const Value & ParityByCorrelation() const {
         return parity_from_correlation;
     }
+
+ 
+    const Value & Delta200ZByCorrelationSusceptibility() const {
+        return d200z_from_correlation_sus;
+    }
+    const Value & Delta222ZByCorrelationSusceptibility() const {
+        return d222z_from_correlation_sus;
+    }
+    const Value & Delta200XByCorrelationSusceptibility() const {
+        return d200x_from_correlation_sus;
+    }
+    const Value & Delta222XByCorrelationSusceptibility() const {
+        return d222x_from_correlation_sus;
+    }
+    const Value & Delta200YByCorrelationSusceptibility() const {
+        return d200y_from_correlation_sus;
+    }
+    const Value & Delta222YByCorrelationSusceptibility() const {
+        return d222y_from_correlation_sus;
+    }
+
+    const Value & Delta322ByCorrelationSusceptibility() const {
+        return d322_from_correlation_sus;
+    }
+    const Value & ParityByCorrelationSusceptibility() const {
+        return parity_from_correlation_sus;
+    }
+
 
     const vect & Delta200ZMeanCorrelation() const {
         return mean_d200corz;
