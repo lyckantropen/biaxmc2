@@ -37,6 +37,9 @@ class PRE79StandardProperties {
     
     vect    energy;         ///<energia w funkcji czasu
     vect    parity;         ///<średnia parzystość w funkcji czasu
+    vect    T20T20;         ///<moduł T20^2 w funkcji czasu
+    vect    T22T22;         ///<moduł T22^2 w funkcji czasu
+
 //    vect    D200;
 //    vect    D220;
 //    vect    D202;
@@ -102,6 +105,14 @@ private:
         MeanQxTensor[acc_idx]=mqx/double(lat->GetN());
         MeanQyTensor[acc_idx]=mqy/double(lat->GetN());
         MeanQzTensor[acc_idx]=mqz/double(lat->GetN());
+
+        vect t20(0.0,6);
+        vect t22(0.0,6);
+
+        t20 = std::sqrt(3./2.)*(mqz-Identity(3))/double(lat->GetN());
+        t22 = std::sqrt(1./2.)*(mqx-mqy)/double(lat->GetN());
+        T20T20[acc_idx]=MatrixDotProduct(t20,t20);
+        T22T22[acc_idx]=MatrixDotProduct(t22,t22);
     }
 
 public:
@@ -133,6 +144,8 @@ public:
         index=0;
         energy.resize(ncycles,0.0);
         parity.resize(ncycles,0.0);
+        T20T20.resize(ncycles,0.0);
+        T22T22.resize(ncycles,0.0);
         for(int i=0;i<ncycles;i++){
             MeanQxTensor[i].resize(6,0.0);
             MeanQyTensor[i].resize(6,0.0);
@@ -152,6 +165,10 @@ public:
         energy = p.energy;
         parity.resize(p.parity.size());
         parity = p.parity;
+        T20T20.resize(p.T20T20.size());
+        T20T20 = p.T20T20;
+        T22T22.resize(p.T22T22.size());
+        T22T22 = p.T22T22;
         lat=p.lat;
         readonly=p.readonly;
         index=p.index;
@@ -185,6 +202,10 @@ public:
         energy = p.energy;
         parity.resize(p.parity.size());
         parity = p.parity;
+        T20T20.resize(p.T20T20.size());
+        T20T20 = p.T20T20;
+        T22T22.resize(p.T22T22.size());
+        T22T22 = p.T22T22;
         lat=p.lat;
         readonly=p.readonly;
         index=p.index;
@@ -261,6 +282,8 @@ public:
         int oldsize=energy.size();
         vect tmpenergy(0.0,ncycles);
         vect tmpparity(0.0,ncycles);
+        vect tmpt20t20(0.0,ncycles);
+        vect tmpt22t22(0.0,ncycles);
         /*
         vect tmpD200(0.0,ncycles);
         vect tmpD220(0.0,ncycles);
@@ -270,6 +293,8 @@ public:
         for(int i=0;i<oldsize;i++){
             tmpenergy[i]=energy[i];
             tmpparity[i]=parity[i];
+            tmpt20t20[i]=T20T20[i];
+            tmpt22t22[i]=T22T22[i];
             /*
             tmpD200[i]=D200[i];
             tmpD220[i]=D220[i];
@@ -281,6 +306,8 @@ public:
         for(int i=oldsize;i<ncycles;i++){
             tmpenergy[i]=p.energy[i-oldsize];
             tmpparity[i]=p.parity[i-oldsize];
+            tmpt20t20[i]=p.T20T20[i-oldsize];
+            tmpt22t22[i]=p.T22T22[i-oldsize];
             /*
             tmpD200[i]=p.D200[i-oldsize];
             tmpD220[i]=p.D220[i-oldsize];
@@ -290,12 +317,16 @@ public:
         }
         energy.resize(ncycles,0.0);
         parity.resize(ncycles,0.0);
+        T20T20.resize(ncycles,0.0);
+        T22T22.resize(ncycles,0.0);
         //D200.resize(ncycles,0.0);
         //D220.resize(ncycles,0.0);
         //D202.resize(ncycles,0.0);
         //D222.resize(ncycles,0.0);
         energy=tmpenergy;
         parity=tmpparity;
+        T20T20=tmpt20t20;
+        T22T22=tmpt22t22;
         //D200=tmpD200;
         //D220=tmpD220;
         //D202=tmpD202;
@@ -376,6 +407,20 @@ public:
     }
     Value ParityByCorrelationSusceptibility() const {
         return CalculateFluctuation(paritycor.LimitHistory());
+    }
+
+    Value MeanT20T20() const {
+        return Mean(T20T20,0,acc_idx+1);
+    }
+    Value MeanT20T20Susceptibility() const {
+        return CalculateFluctuation(T20T20);
+    }
+
+    Value MeanT22T22() const {
+        return Mean(T22T22,0,acc_idx+1);
+    }
+    Value MeanT22T22Susceptibility() const {
+        return CalculateFluctuation(T22T22);
     }
 
     //średnie funkcje korelacji dla poszczególnych osi
@@ -574,6 +619,9 @@ void operator|(serializer_t & s, PRE79StandardProperties & prop){
     s|prop.MeanQzTensor;
     s|prop.energy;
     s|prop.parity;
+
+    s|prop.T20T20;
+    s|prop.T22T22;
 }
 
 /**
@@ -603,6 +651,10 @@ class PRE79MeanProperties {
     Value d222y_from_correlation_sus;
     Value d322_from_correlation_sus;
     Value parity_from_correlation_sus;
+    Value T20T20;
+    Value T22T22;
+    Value T20T20_sus;
+    Value T22T22_sus;
     double mean_d200;
     double mean_d220;
     double mean_d202;
@@ -690,6 +742,12 @@ public:
         mean_d200cory = prop.Delta200YMeanCorrelation();
         mean_d220cory = prop.Delta220YMeanCorrelation();
         mean_d222cory = prop.Delta222YMeanCorrelation();
+
+        T20T20 = prop.MeanT20T20();
+        T20T20_sus = prop.MeanT20T20Susceptibility();
+        T22T22 = prop.MeanT22T22();
+        T22T22_sus = prop.MeanT22T22Susceptibility();
+
         //mean_d200 = prop.MeanDelta200();
         //mean_d220 = prop.MeanDelta220();
         //mean_d202 = prop.MeanDelta202();
@@ -909,7 +967,19 @@ public:
     const Value & ParityByCorrelationSusceptibility() const {
         return parity_from_correlation_sus;
     }
+    Value MeanT20T20() const {
+        return T20T20;
+    }
+    Value MeanT20T20Susceptibility() const {
+        return T20T20_sus;
+    }
 
+    Value MeanT22T22() const {
+        return T22T22;
+    }
+    Value MeanT22T22Susceptibility() const {
+        return T22T22_sus;
+    }
 
     const vect & Delta200ZMeanCorrelation() const {
         return mean_d200corz;
@@ -1025,6 +1095,11 @@ void operator|(serializer_t & s, PRE79MeanProperties & p){
     s|p.d222y_from_correlation_sus;
     s|p.d322_from_correlation_sus;
     s|p.parity_from_correlation_sus;
+
+    s|p.T20T20;
+    s|p.T20T20_sus;
+    s|p.T22T22;
+    s|p.T22T22_sus;
 }
 inline std::ostream & operator<<(std::ostream & o,const PRE79MeanProperties & p){
     o << "Temperature=" << p.Temperature() << std::endl;
