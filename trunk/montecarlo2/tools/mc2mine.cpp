@@ -190,6 +190,15 @@ void    table_output(const std::string & data_type,const std::vector<std::string
                 if(column=="mean_qz")
                     std::cout << prop.MeanQzTensor() << "\t" ;
 
+                if(column=="T20T20")
+                    std::cout << prop.MeanT20T20().TableForm() << "\t";
+                if(column=="T20T20_sus")
+                    std::cout << prop.MeanT20T20Susceptibility().TableForm() << "\t";
+                if(column=="T22T22")
+                    std::cout << prop.MeanT22T22().TableForm() << "\t";
+                if(column=="T22T22_sus")
+                    std::cout << prop.MeanT22T22Susceptibility().TableForm() << "\t";
+
                 if(column=="tetrahedral_correlation")
                     std::cout << prop.Delta322MeanCorrelation() << "\t";
                 if(column=="parity_correlation")
@@ -348,6 +357,12 @@ void mathematica_output(const std::string & data_type,const std::vector<std::str
 
             std::cout << "Delta322ByCorrelationSusceptibility" << coord.str() << "=" << prop.Delta322ByCorrelationSusceptibility().MathematicaForm() << ";\n";
             std::cout << "ParityByCorrelationSusceptibility" << coord.str() << "=" << prop.ParityByCorrelationSusceptibility().MathematicaForm() << ";\n";
+
+            std::cout << "MeanT20T20" << coord.str() << "=" << prop.MeanT20T20().MathematicaForm() << ";\n";
+            std::cout << "MeanT20T20Susceptibility" << coord.str() << "=" << prop.MeanT20T20Susceptibility().MathematicaForm() << ";\n";
+            std::cout << "MeanT22T22" << coord.str() << "=" << prop.MeanT22T22().MathematicaForm() << ";\n";
+            std::cout << "MeanT22T22Susceptibility" << coord.str() << "=" << prop.MeanT22T22Susceptibility().MathematicaForm() << ";\n";
+
 
             std::cout << "Delta200ZMeanCorrelation" << coord.str() << "=" << MathematicaForm(prop.Delta200ZMeanCorrelation()) << ";\n";
             std::cout << "Delta220ZMeanCorrelation" << coord.str() << "=" << MathematicaForm(prop.Delta220ZMeanCorrelation()) << ";\n";
