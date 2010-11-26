@@ -190,14 +190,30 @@ void    table_output(const std::string & data_type,const std::vector<std::string
                 if(column=="mean_qz")
                     std::cout << prop.MeanQzTensor() << "\t" ;
 
-                if(column=="T20T20")
-                    std::cout << prop.MeanT20T20().TableForm() << "\t";
-                if(column=="T20T20_sus")
-                    std::cout << prop.MeanT20T20Susceptibility().TableForm() << "\t";
-                if(column=="T22T22")
-                    std::cout << prop.MeanT22T22().TableForm() << "\t";
-                if(column=="T22T22_sus")
-                    std::cout << prop.MeanT22T22Susceptibility().TableForm() << "\t";
+                if(column=="T20T20z")
+                    std::cout << prop.MeanT20T20Z().TableForm() << "\t";
+                if(column=="T20T20z_sus")
+                    std::cout << prop.MeanT20T20ZSusceptibility().TableForm() << "\t";
+                if(column=="T22T22z")
+                    std::cout << prop.MeanT22T22Z().TableForm() << "\t";
+                if(column=="T22T22z_sus")
+                    std::cout << prop.MeanT22T22ZSusceptibility().TableForm() << "\t";
+                if(column=="T20T20x")
+                    std::cout << prop.MeanT20T20X().TableForm() << "\t";
+                if(column=="T20T20x_sus")
+                    std::cout << prop.MeanT20T20XSusceptibility().TableForm() << "\t";
+                if(column=="T22T22x")
+                    std::cout << prop.MeanT22T22X().TableForm() << "\t";
+                if(column=="T22T22x_sus")
+                    std::cout << prop.MeanT22T22XSusceptibility().TableForm() << "\t";
+                if(column=="T20T20y")
+                    std::cout << prop.MeanT20T20Y().TableForm() << "\t";
+                if(column=="T20T20y_sus")
+                    std::cout << prop.MeanT20T20YSusceptibility().TableForm() << "\t";
+                if(column=="T22T22y")
+                    std::cout << prop.MeanT22T22Y().TableForm() << "\t";
+                if(column=="T22T22y_sus")
+                    std::cout << prop.MeanT22T22YSusceptibility().TableForm() << "\t";
 
                 if(column=="tetrahedral_correlation")
                     std::cout << prop.Delta322MeanCorrelation() << "\t";
@@ -358,10 +374,20 @@ void mathematica_output(const std::string & data_type,const std::vector<std::str
             std::cout << "Delta322ByCorrelationSusceptibility" << coord.str() << "=" << prop.Delta322ByCorrelationSusceptibility().MathematicaForm() << ";\n";
             std::cout << "ParityByCorrelationSusceptibility" << coord.str() << "=" << prop.ParityByCorrelationSusceptibility().MathematicaForm() << ";\n";
 
-            std::cout << "MeanT20T20" << coord.str() << "=" << prop.MeanT20T20().MathematicaForm() << ";\n";
-            std::cout << "MeanT20T20Susceptibility" << coord.str() << "=" << prop.MeanT20T20Susceptibility().MathematicaForm() << ";\n";
-            std::cout << "MeanT22T22" << coord.str() << "=" << prop.MeanT22T22().MathematicaForm() << ";\n";
-            std::cout << "MeanT22T22Susceptibility" << coord.str() << "=" << prop.MeanT22T22Susceptibility().MathematicaForm() << ";\n";
+            std::cout << "MeanT20T20Z" << coord.str() << "=" << prop.MeanT20T20Z().MathematicaForm() << ";\n";
+            std::cout << "MeanT20T20ZSusceptibility" << coord.str() << "=" << prop.MeanT20T20ZSusceptibility().MathematicaForm() << ";\n";
+            std::cout << "MeanT22T22Z" << coord.str() << "=" << prop.MeanT22T22Z().MathematicaForm() << ";\n";
+            std::cout << "MeanT22T22ZSusceptibility" << coord.str() << "=" << prop.MeanT22T22ZSusceptibility().MathematicaForm() << ";\n";
+
+            std::cout << "MeanT20T20X" << coord.str() << "=" << prop.MeanT20T20X().MathematicaForm() << ";\n";
+            std::cout << "MeanT20T20XSusceptibility" << coord.str() << "=" << prop.MeanT20T20XSusceptibility().MathematicaForm() << ";\n";
+            std::cout << "MeanT22T22X" << coord.str() << "=" << prop.MeanT22T22X().MathematicaForm() << ";\n";
+            std::cout << "MeanT22T22XSusceptibility" << coord.str() << "=" << prop.MeanT22T22XSusceptibility().MathematicaForm() << ";\n";
+
+            std::cout << "MeanT20T20Y" << coord.str() << "=" << prop.MeanT20T20Y().MathematicaForm() << ";\n";
+            std::cout << "MeanT20T20YSusceptibility" << coord.str() << "=" << prop.MeanT20T20YSusceptibility().MathematicaForm() << ";\n";
+            std::cout << "MeanT22T22Y" << coord.str() << "=" << prop.MeanT22T22Y().MathematicaForm() << ";\n";
+            std::cout << "MeanT22T22YSusceptibility" << coord.str() << "=" << prop.MeanT22T22YSusceptibility().MathematicaForm() << ";\n";
 
 
             std::cout << "Delta200ZMeanCorrelation" << coord.str() << "=" << MathematicaForm(prop.Delta200ZMeanCorrelation()) << ";\n";
