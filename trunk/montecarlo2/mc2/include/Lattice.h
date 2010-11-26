@@ -194,6 +194,13 @@ public:
     const std::vector<Particle> & GetParticles() const {
         return Particles;
     }
+    const double GetMeanEPM() const {
+        double epm=0.0;
+        foreach(const Particle & p, Particles) {
+            epm+=p.GetEnergy();
+        }
+        return epm/N;
+    }
 };
 
 template<class stream_t>

@@ -45,3 +45,23 @@ vect Identity(const int & dim=3){
     out[1]=out[2]=out[4]=0.0;
     return out;
 }
+
+double Minimum(const vect & a){
+    double min=a[0];
+    for(int i=0;i<a.size();i++){
+        if(a[i]<min) min=a[i];
+    }
+    return min;
+}
+
+int MinimumIndex(const vect & a){
+    double min=a[0];
+    int mid=0;
+    for(int i=0;i<a.size();i++){
+        if(a[i]<min){
+            min=a[i];
+            mid=i;
+        }
+    }
+    return mid;
+}
