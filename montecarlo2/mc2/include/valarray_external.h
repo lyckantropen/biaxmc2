@@ -21,6 +21,8 @@ extern double  Norm(const vect &);
 extern vect Identity(const int & dim);
 extern std::string MathematicaForm(const vect &);
 extern double MatrixDotProduct(const vect & a, const vect & b);
+extern double Minimum(const vect & a);
+extern int MinimumIndex(const vect & a);
 
 #define sgn(x) (std::ceil((std::abs(x))/(x)))
 

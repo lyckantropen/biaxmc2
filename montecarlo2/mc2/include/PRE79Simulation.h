@@ -347,7 +347,17 @@ public:
         Log() << "Mean EPM: " << generalprop.TemporalMeanEnergyPerMolecule().Print() << std::endl;
         Log() << "Specific Heat: " << generalprop.SpecificHeat().Print() << std::endl;
 
-        Lattice ret = productions[0]->GetLattice();
+        //return the state with the lowest energy
+        vect weights(0.0,productions.size());
+        for(int i=0;i<weights.size();i++){
+            weights[i]=productions[i]->GetLattice().GetMeanEPM();
+        }
+        int best = MinimumIndex(weights);
+
+        Lattice ret = productions[best]->GetLattice();
+        //--
+
+        //cleanup
         foreach(PRE79Production * prod,productions){
             delete prod;
         }
