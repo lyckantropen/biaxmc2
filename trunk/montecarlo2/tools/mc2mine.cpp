@@ -88,9 +88,13 @@ void    table_output(const std::string & data_type,const std::vector<std::string
 		std::vector<PRE79MeanProperties> wwg = db.get<PRE79MeanProperties>(wheres,betweens);
 		std::vector<PRE79StandardProperties> wwg2 = db.get<PRE79StandardProperties>(nwheres,betweens);
 		if(wwg2.size()<wwg.size()) std::cout << "#WARINING: insufficient data to recalculate. output may not be very satisfying\n";
-		for(int i=0;i<wwg2.size()&&i<wwg.size();i++){
+                int size = wwg2.size();
+                whatwegot.resize(size);
+
+                #pragma omp parallel for ordered
+		for(int i=0;i<size;i++){
 			PRE79StandardHamiltonian H(wwg[i].Temperature(),wwg[i].Lambda(),wwg[i].Tau(),wwg[i].Field());
-			whatwegot.push_back(PRE79MeanProperties(wwg2[i],H));
+			whatwegot[i]=PRE79MeanProperties(wwg2[i],H);
 		}
 	}
 
@@ -334,9 +338,13 @@ void mathematica_output(const std::string & data_type,const std::vector<std::str
 		std::vector<PRE79MeanProperties> wwg = db.get<PRE79MeanProperties>(wheres,betweens);
 		std::vector<PRE79StandardProperties> wwg2 = db.get<PRE79StandardProperties>(nwheres,betweens);
 		if(wwg2.size()<wwg.size()) std::cout << "#WARINING: insufficient data to recalculate. output may not be very satisfying\n";
-		for(int i=0;i<wwg2.size()&&i<wwg.size();i++){
+                int size = wwg2.size();
+                whatwegot.resize(size);
+
+                #pragma omp parallel for ordered
+		for(int i=0;i<size;i++){
 			PRE79StandardHamiltonian H(wwg[i].Temperature(),wwg[i].Lambda(),wwg[i].Tau(),wwg[i].Field());
-			whatwegot.push_back(PRE79MeanProperties(wwg2[i],H));
+			whatwegot[i]=PRE79MeanProperties(wwg2[i],H);
 		}
 	}
         vect temperature(0.0,whatwegot.size());
