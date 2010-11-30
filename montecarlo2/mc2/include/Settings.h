@@ -151,6 +151,11 @@ public:
         std::string name_format;
         std::string name;
     } project;
+    struct _pbs {
+        std::string queue;
+        _pbs():
+        queue("normal") {}
+    } pbs;
 private:
     void SetupDescription(){
         desc.add_options()
@@ -202,6 +207,7 @@ private:
         ("openmp.number_of_threads",po::value<int>(&openmp.number_of_threads),"Number of threads in threaded scanning")
         ("openmp.dynamic",po::value<std::string>(&openmp.v_dynamic),"(yes/no) Should the number of threads be assigned dynamically")
         ("project.name_format",po::value<std::string>(&project.name_format),"Formatted name")
+        ("pbs.queue",po::value<std::string>(&pbs.queue),"PBS queue name")
         ;
     }
     void LoadBooleans(){
