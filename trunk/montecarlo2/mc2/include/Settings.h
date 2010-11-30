@@ -57,6 +57,8 @@ public:
         double find_thermalized_temperature_tolerance;
         double find_thermalized_h_tolerance;
         double parity_flip_probability;
+        double metropolis_lower_acceptance_limit;
+        double metropolis_higher_acceptance_limit;
         long production_cycles;
         int measure_frequency;
         int measure_acceptance_frequency;
@@ -78,7 +80,9 @@ public:
         v_measure_acceptance("no"),
         v_adjust_radius_thermalization("yes"),
         v_calculate_time("yes"),
-        parity_flip_probability(0.5)
+        parity_flip_probability(0.5),
+        metropolis_lower_acceptance_limit(0.3),
+        metropolis_higher_acceptance_limit(0.4)
         {}
     } simulation;
     struct _sqlite {
@@ -181,6 +185,8 @@ private:
         ("simulation.pick_up_aborted",po::value<std::string>(&simulation.v_pick_up_aborted),"(yest/no) Continue from last saved state from an aborted simulation. Relevant only when saving configurations. [DON'T USE YET]")
         ("simulation.calculate_time",po::value<std::string>(&simulation.v_calculate_time),"(yes/no) Calculate remaining simulation time")
         ("simulation.parity_flip_probability",po::value<double>(&simulation.parity_flip_probability),"Probability of parity flip")
+        ("simulation.metropolis_lower_acceptance_limit",po::value<double>(&simulation.metropolis_lower_acceptance_limit),"Metropolis lower acc level")
+        ("simulation.metropolis_higher_acceptance_limit",po::value<double>(&simulation.metropolis_higher_acceptance_limit),"Metropolis higher acc level")
         ("sqlite.file",po::value<std::string>(&sqlite.file),"Database file")
         ("sqlite.dir",po::value<std::string>(&sqlite.dir),"Database directory")
         ("output.save_configuration_evolution",po::value<std::string>(&output.v_save_configuration_evolution),"(yes/no) Save entire configuration evolution in production cycle (large db entry)")
@@ -200,7 +206,7 @@ private:
         ("scanning.start",po::value<double>(&scanning.start),"Starting value")
         ("scanning.end",po::value<double>(&scanning.end),"End value")
         ("scanning.delta",po::value<double>(&scanning.delta),"Interval")
-        ("scanning.reuse_thermalized",po::value<std::string>(&scanning.v_reuse_thermalized),"(yes/no) Reuse last thermalized state to reduce time of simulation")
+        ("scanning.reuse_thermalized",po::value<std::string>(&scanning.v_reuse_thermalized),"(yes/no) When scanning with replica parallelization, pass the final state as the next initial state")
         ("scanning.threaded",po::value<std::string>(&scanning.v_threaded),"(yes/no) Threaded scanning")
         ("scanning.threaded_production",po::value<std::string>(&scanning.v_threaded_production),"(yes/no) Threaded production")
         ("scanning.continue_if_results_exist",po::value<std::string>(&scanning.v_continue_if_results_exist),"(yes/no) Skip already performed simulations and pick up last saved state")

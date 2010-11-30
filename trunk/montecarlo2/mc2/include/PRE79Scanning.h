@@ -41,7 +41,7 @@ public:
      */
     void RunNonParallel(){
         Lattice state;
-        Settings current_settings = settings ;
+        Settings current_settings(settings) ;
 
         //--- obliczanie czasu działania
 	if(settings.simulation.calculate_time){
