@@ -26,7 +26,9 @@ class Metropolis:public MCProto,protected ILoggable {
     double  acc_llimit,acc_ulimit;
     const Settings & settings;
 public:
-    Metropolis(const Settings & set, Hamiltonian * h=NULL,const double & r=1):settings(set),hamiltonian(h),radius(r),acc_llimit(0.3),acc_ulimit(0.4){}
+    Metropolis(const Settings & set, Hamiltonian * h=NULL,const double & r=1):settings(set),hamiltonian(h),radius(r),
+            acc_llimit(settings.simulation.metropolis_lower_acceptance_limit),
+            acc_ulimit(settings.simulation.metropolis_higher_acceptance_limit){}
     virtual vect OrientationNudge(const vect & old){
         return RandomWalkOn4DSphere(radius,old);
     }

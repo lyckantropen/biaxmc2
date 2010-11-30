@@ -64,12 +64,14 @@ protected:
         return boostbase::serialload<item_t>(s);
     }
 public:
-    FIFOInterface(const fs::path & base):
-    in_name(base/"in"),
-    out_name(base/"out")
+    FIFOInterface(const std::string & bbase)
     {
-        if(!fs::exists(base))
-            fs::create_directories(base);
+        in_name=fs::path(bbase)/"in";
+        out_name=fs::path(bbase)/"out";
+        if(!fs::exists(bbase))
+            fs::create_directories(bbase);
+
+
         mkfifo(in_name.string().c_str(),0666);
         mkfifo(out_name.string().c_str(),0666);
         in = open(in_name.string().c_str(),O_RDONLY|O_NONBLOCK);

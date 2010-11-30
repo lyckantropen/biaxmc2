@@ -23,7 +23,7 @@ class RuntimePropertiesServer:public FIFOInterface {
 public:
     RuntimePropertiesServer(const Settings & _settings, PRE79Simulation & _sim):
     sim(&_sim),settings(_settings),end(false),
-    FIFOInterface("mambo")
+    FIFOInterface(_settings.project.name)
     {
         scanning = NULL;
         if(settings.scanning.threaded_production){
@@ -39,8 +39,9 @@ public:
     }
     RuntimePropertiesServer(const Settings & _settings, PRE79Scanning & _scan):
     scanning(&_scan),settings(_settings),end(false),
-    FIFOInterface("mambo")
+    FIFOInterface(_settings.project.name)
     {
+        std::cout << settings.project.name << std::endl;
         sim = NULL;
         parallel_simulation = true;
         parallel_production = false;
