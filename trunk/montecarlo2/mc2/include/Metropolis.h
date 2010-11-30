@@ -24,17 +24,20 @@ class Metropolis:public MCProto,protected ILoggable {
     Hamiltonian     *   hamiltonian;
     double              radius; ///<promień dający odpowiednią akceptację ruchów
     double  acc_llimit,acc_ulimit;
+    double  parity_prob;
     const Settings & settings;
 public:
     Metropolis(const Settings & set, Hamiltonian * h=NULL,const double & r=1):settings(set),hamiltonian(h),radius(r),
             acc_llimit(set.simulation.metropolis_lower_acceptance_limit),
-            acc_ulimit(set.simulation.metropolis_higher_acceptance_limit){}
+            acc_ulimit(set.simulation.metropolis_higher_acceptance_limit),
+            parity_prob(set.simulation.parity_flip_probability)
+    {}
     virtual vect OrientationNudge(const vect & old){
         return RandomWalkOn4DSphere(radius,old);
     }
     virtual short ParityNudge(const short & old){
         
-        if(random01()<settings.simulation.parity_flip_probability)
+        if(random01()<parity_prob)
             return -old;
         else return old;
         
@@ -64,7 +67,9 @@ public:
         double tries=5;
         N=testlat.GetN();
         for(int i=0;i<tries;i++){
-            acc_moves+=testlat.Sweep(this);
+            int acc_rot=0,acc_p=0;
+            testlat.Sweep(this,acc_rot,acc_p);
+            acc_moves+=acc_p;
         }
         return double(acc_moves)/(N*tries);
 
@@ -82,7 +87,9 @@ public:
             double tries=2;
             N=testlat.GetN();
             for(int i=0;i<tries;i++){
-                acc_moves+=testlat.Sweep(this);
+                int acc_rot=0,acc_p=0;
+                testlat.Sweep(this,acc_rot,acc_p);
+                acc_moves+=acc_rot;
             }
             acc_fraction = double(acc_moves)/(N*tries);
             
@@ -108,6 +115,50 @@ public:
         }
         //Log() << acc_fraction << " (" << acc_moves << "/" << N << ") accepted, radius " << radius << std::endl;
     }
+    /*
+     * to nie ma sensu! zawsze zaakceptowanych jest parity_prob*N ruchów!
+    void AdjustParityProb(Lattice * lat, const double & decimation=0.02){
+        if(lat==NULL) return ;
+        double acc_fraction=0.0;
+        double N=0.0;
+        int acc_moves=0;
+
+
+        while(acc_fraction<acc_llimit || acc_fraction>acc_ulimit){
+            Lattice testlat=*lat;
+            acc_moves=0;
+            double tries=2;
+            N=testlat.GetN();
+            for(int i=0;i<tries;i++){
+                int acc_rot=0,acc_p=0;
+                testlat.Sweep(this,acc_rot,acc_p);
+                acc_moves+=acc_p;
+            }
+            acc_fraction = double(acc_moves)/(N*tries);
+
+
+            if(acc_fraction<acc_llimit){
+                parity_prob*=(1.0+decimation);
+                Log() << "decimating down to r=" << parity_prob << " because acc_fraction=" << acc_fraction << std::endl;
+            }
+            if(acc_fraction>acc_ulimit){
+                parity_prob*=(1.0-decimation);
+                Log() << "decimating up to r=" << parity_prob << " because acc_fraction=" << acc_fraction << std::endl;
+            }
+
+            if(parity_prob>=1.0){
+                parity_prob=0.999;
+                break;
+            }
+            if(parity_prob<=0.001){
+                parity_prob=0.001;
+                break;
+            }
+
+        }
+        //Log() << acc_fraction << " (" << acc_moves << "/" << N << ") accepted, probability " << parity_prob << std::endl;
+    }
+     */
     virtual void SetStream(std::ostream * os){
         ILoggable::SetStream(os);
     }
@@ -116,6 +167,9 @@ public:
     }
     const double & GetAccULimit() const {
         return acc_ulimit;
+    }
+    const double & GetParityProb() const {
+        return parity_prob;
     }
 };
 

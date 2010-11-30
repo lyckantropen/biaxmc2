@@ -45,12 +45,24 @@ class LatticeSimulation:public Simulation {
     Hamiltonian * H;
     Metropolis * metropolis;
     double  accepted_fraction;
+    double  accepted_fraction_p;
     vect acf;
+    vect acfp;
     virtual void DoIterate(){
-        accepted_fraction = double(lat->Sweep(metropolis))/double(lat->GetN());
+        int acc_rot=0,acc_p=0;
+        lat->Sweep(metropolis,acc_rot,acc_p);
+        accepted_fraction = double(acc_rot)/double(lat->GetN());
+        accepted_fraction_p = double(acc_p)/double(lat->GetN());
+
         if(accepted_fraction>metropolis->GetAccULimit() || accepted_fraction<metropolis->GetAccLLimit())
             metropolis->AdjustRadius(lat);
+
+        //to nie ma sensu!
+        //if(accepted_fraction_p>metropolis->GetAccULimit() || accepted_fraction_p<metropolis->GetAccLLimit())
+        //    metropolis->AdjustParityProb(lat);
+
         acf[GetAccIdx()]=accepted_fraction;
+        acfp[GetAccIdx()]=accepted_fraction_p;
     }
 public:
     LatticeSimulation(Hamiltonian * h=NULL,Lattice * l=NULL,Metropolis * metro=NULL,int nc=0,int startc=0):
@@ -61,14 +73,21 @@ public:
     accepted_fraction(1.0)
     {
         acf.resize(nc,0.0);
+        acfp.resize(nc,0.0);
     }
 
     const double & GetAcceptance() const {
         return accepted_fraction;
     }
+    const double & GetAcceptanceP() const {
+        return accepted_fraction_p;
+    }
 
     const double & GetMeanAcceptance() const {
         return Mean(acf,0,GetAccIdx()+1);
+    }
+    const double & GetMeanAcceptanceP() const {
+        return Mean(acfp,0,GetAccIdx()+1);
     }
 };
 
