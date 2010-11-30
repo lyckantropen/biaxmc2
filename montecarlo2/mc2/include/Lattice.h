@@ -168,14 +168,15 @@ private:
 
 public:
     ///jedno przemiecenie Monte Carlo
-    int Sweep(MCProto * proto){
-        int accepted = 0;
+    void Sweep(MCProto * proto, int & acc_rot, int & acc_p){
         for(int i=0;i<N;i++){
             int site = int(N*random01());
-            if(Particles[site].Nudge(proto))
-                accepted++;
+            int ar=0,ap=0;
+            Particles[site].Nudge(proto,ar,ap);
+            acc_rot+=ar;
+            acc_p+=ap;
+                
         }
-        return accepted;
     }
 
     //Accessors
