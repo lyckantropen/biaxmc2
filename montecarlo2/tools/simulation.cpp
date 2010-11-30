@@ -22,21 +22,82 @@ int main(int argc, char** argv)
 {
     setenv("OMP_SCHEDULE","static",0);
     std::string cfg("simulation.ini");
+    std::string mode("submit");
+
     if(argc>1)
         cfg=argv[1];
     Settings setup(cfg);
-    if(setup.scanning.enabled){
-        PRE79Scanning scanning(setup);
-        scanning.SetStream(&std::cout);
-        if(setup.scanning.threaded)
-            scanning.RunParallel();
-        else
-            scanning.RunNonParallel();
+
+    if(argc>2)
+        mode=argv[2];
+
+    if(mode=="run"){
+        if(setup.scanning.enabled){
+            PRE79Scanning scanning(setup);
+            scanning.SetStream(&std::cout);
+            if(setup.scanning.threaded)
+                scanning.RunParallel();
+            else
+                scanning.RunNonParallel();
+        }
+        else {
+            PRE79Simulation simulation(setup);
+            simulation.SetStream(&std::cout);
+            simulation.Run();
+        }
     }
     else {
-        PRE79Simulation simulation(setup);
-        simulation.SetStream(&std::cout);
-        simulation.Run();
+        std::stringstream pt;
+        std::string cput;
+        std::string exec=argv[0];
+        if(setup.pbs.queue=="normal")
+            cput="12:00:00";
+        if(setup.pbs.queue=="long")
+            cput="72:00:00";
+        if(setup.pbs.queue=="vlong")
+            cput="10000:00:00";
+        if(setup.pbs.queue=="mp4")
+            cput="340:00:00";
+        if(setup.pbs.queue=="mp8")
+            cput="2000:00:00";
+        if(setup.pbs.queue=="mp16")
+            cput="900:00:00";
+        if(setup.pbs.queue=="mp24")
+            cput="1200:00:00";
+
+
+        pt      << "#!/bin/bash\n"
+                << "#PBS -N "<< setup.project.name << std::endl
+                << "#PBS -l cput=" << cput <<std::endl
+                << "#PBS -q "<< setup.pbs.queue << std::endl
+                << "#PBS -m ae\n"
+                << std::endl
+                << "cd "<<fs::current_path().string() << std::endl
+                << exec << " " << cfg << " run >> "<< cfg << ".txt" << std::endl
+                << std::endl;
+
+        std::string script = pt.str();
+
+        std::stringstream s;
+        s << "pbs-"<< setup.project.name << std::rand() ;
+        fs::path        script_temp(s.str());
+        fs::path        tmp(".tmp");
+        if(!fs::exists(tmp))
+                fs::create_directory(tmp);
+
+        std::ofstream   t((tmp/script_temp).string().c_str());
+        t << script ;
+        t.close();
+
+        std::string     sub_command("qsub ");
+        sub_command+=(tmp/script_temp).string();
+        std::system(sub_command.c_str());
+
+        fs::remove(tmp/script_temp);
+
+        std::cout << script;
+
+
     }
     return (EXIT_SUCCESS);
 }
