@@ -73,7 +73,7 @@ int main(int argc, char** argv)
                 << "#PBS -m ae\n"
                 << std::endl
                 << "cd "<<fs::current_path().string() << std::endl
-                << exec << " " << cfg << " run >> "<< cfg << ".txt" << std::endl
+                << exec << " " << cfg << " run >> "<< setup.project.name << ".txt" << std::endl
                 << std::endl;
 
         std::string script = pt.str();
@@ -89,11 +89,12 @@ int main(int argc, char** argv)
         t << script ;
         t.close();
 
-        std::string     sub_command("qsub ");
-        sub_command+=(tmp/script_temp).string();
-        std::system(sub_command.c_str());
-
-        fs::remove(tmp/script_temp);
+        if(mode!="generate"){
+            std::string     sub_command("qsub ");
+            sub_command+=(tmp/script_temp).string();
+            std::system(sub_command.c_str());
+            fs::remove(tmp/script_temp);
+        }
 
         std::cout << script;
 
