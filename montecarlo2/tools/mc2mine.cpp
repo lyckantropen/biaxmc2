@@ -159,19 +159,19 @@ void    table_output(const std::string & data_type,const std::vector<std::string
                 if(column=="field")
                     std::cout << prop.Field() << "\t";
 
-                if(column=="mean_d220corz")
+                if(column=="mean_d200corz")
                     std::cout << prop.Delta200ZMeanCorrelation() << "\t";
                 if(column=="mean_d222corz")
                     std::cout << prop.Delta222ZMeanCorrelation() << "\t";
                 if(column=="mean_d220corz")
                     std::cout << prop.Delta220ZMeanCorrelation() << "\t";
-                if(column=="mean_d220corx")
+                if(column=="mean_d200corx")
                     std::cout << prop.Delta200XMeanCorrelation() << "\t";
                 if(column=="mean_d222corx")
                     std::cout << prop.Delta222XMeanCorrelation() << "\t";
                 if(column=="mean_d220corx")
                     std::cout << prop.Delta220XMeanCorrelation() << "\t";
-                if(column=="mean_d220cory")
+                if(column=="mean_d200cory")
                     std::cout << prop.Delta200YMeanCorrelation() << "\t";
                 if(column=="mean_d222cory")
                     std::cout << prop.Delta222YMeanCorrelation() << "\t";
@@ -219,7 +219,7 @@ void    table_output(const std::string & data_type,const std::vector<std::string
                 if(column=="T22T22y_sus")
                     std::cout << prop.MeanT22T22YSusceptibility().TableForm() << "\t";
 
-                if(column=="tetrahedral_correlation")
+                if(column=="tetrahedral_correlation" || column=="mean_d322cor")
                     std::cout << prop.Delta322MeanCorrelation() << "\t";
                 if(column=="parity_correlation")
                     std::cout << prop.ParityMeanCorrelation() << "\t";
