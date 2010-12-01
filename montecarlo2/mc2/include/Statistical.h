@@ -134,13 +134,13 @@ std::valarray<value_type> MeanVector(const std::vector<std::valarray<value_type>
         maxn=v.size();
     else
         maxn=limit;
-    std::valarray<value_type> result(v[0].size());
+    std::valarray<value_type> result(0.0,v[0].size());
     for(int i=start;i<maxn;i++){
-//        std::cout << "v["<<i<<"]=" << v[i] << std::endl;
+    //    std::cout << "v["<<i<<"]=" << v[i] << std::endl;
         result+=v[i];
     }
-    result/=double(maxn);
-//    std::cout << "MeanVector: " << result << std::endl;
+    result/=double(maxn-start);
+    //std::cout << "MeanVector: " << result << std::endl;
 
     return result;
 }

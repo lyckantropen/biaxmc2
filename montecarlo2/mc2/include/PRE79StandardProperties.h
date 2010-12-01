@@ -606,15 +606,15 @@ public:
         return paritycor.CurrentCorrelation();
     }
 
-    const vect GetMeanQxTensor() const {
+    vect GetMeanQxTensor() const {
 //        std::cout << "Qx\n";
         return MeanVector(MeanQxTensor,0,acc_idx+1);
     }
-    const vect GetMeanQyTensor() const {
+    vect GetMeanQyTensor() const {
 //        std::cout << "Qy\n";
         return MeanVector(MeanQyTensor,0,acc_idx+1);
     }
-    const vect GetMeanQzTensor() const {
+    vect GetMeanQzTensor() const {
 //        std::cout << "Qz\n";
         return MeanVector(MeanQzTensor,0,acc_idx+1);
     }
@@ -797,10 +797,27 @@ class PRE79MeanProperties {
 
 public:
     ///konstruktor serializacyjny
-    PRE79MeanProperties(){}
+    PRE79MeanProperties()
+    {
+        int size = 0;
+        mean_d200corz.resize(size,0.0);
+        mean_d222corz.resize(size,0.0);
+        mean_d220corz.resize(size,0.0);
+        mean_d200corx.resize(size,0.0);
+        mean_d222corx.resize(size,0.0);
+        mean_d220corx.resize(size,0.0);
+        mean_d200cory.resize(size,0.0);
+        mean_d222cory.resize(size,0.0);
+        mean_d220cory.resize(size,0.0);
+        mean_qx.resize(6,0.0);
+        mean_qz.resize(6,0.0);
+        mean_qy.resize(6,0.0);
+
+        mean_d322cor.resize(size,0.0);
+        mean_paritycor.resize(size,0.0);
+    }
     ///konstruktor tradycyjny
     PRE79MeanProperties(PRE79StandardProperties & prop, PRE79StandardHamiltonian & H){
-
         mean_d200corz.resize(prop.GetMaxCorrLen(),0.0);
         mean_d222corz.resize(prop.GetMaxCorrLen(),0.0);
         mean_d220corz.resize(prop.GetMaxCorrLen(),0.0);
@@ -880,10 +897,176 @@ public:
         mean_qy = prop.GetMeanQyTensor();
         mean_qz = prop.GetMeanQzTensor();
 
+        //std::cout << mean_qx << std::endl;
+
         temperature = H.GetTemperature();
         tau = H.GetTau();
         lambda = H.GetLambda();
         h = H.GetH();
+    }
+    PRE79MeanProperties(const PRE79MeanProperties & s) {
+        int size = s.mean_paritycor.size();
+        mean_d200corz.resize(size,0.0);
+        mean_d222corz.resize(size,0.0);
+        mean_d220corz.resize(size,0.0);
+        mean_d200corx.resize(size,0.0);
+        mean_d222corx.resize(size,0.0);
+        mean_d220corx.resize(size,0.0);
+        mean_d200cory.resize(size,0.0);
+        mean_d222cory.resize(size,0.0);
+        mean_d220cory.resize(size,0.0);
+        mean_qx.resize(6,0.0);
+        mean_qz.resize(6,0.0);
+        mean_qy.resize(6,0.0);
+
+        mean_d322cor.resize(size,0.0);
+        mean_paritycor.resize(size,0.0);
+
+        mean_d200corx=s.mean_d200corx;
+        mean_d200cory=s.mean_d200cory;
+        mean_d200corz=s.mean_d200corz;
+        mean_d222corx=s.mean_d222corx;
+        mean_d222cory=s.mean_d222cory;
+        mean_d222corz=s.mean_d222corz;
+        mean_d220corx=s.mean_d220corx;
+        mean_d220cory=s.mean_d220cory;
+        mean_d220corz=s.mean_d220corz;
+        mean_d322cor=s.mean_d322cor;
+        mean_paritycor=s.mean_paritycor;
+
+        mean_qx=s.mean_qx;
+        mean_qy=s.mean_qy;
+        mean_qz=s.mean_qz;
+
+        T20T20x=s.T20T20x;
+        T20T20y=s.T20T20y;
+        T20T20x=s.T20T20z;
+        T22T22x=s.T22T22x;
+        T22T22y=s.T22T22y;
+        T22T22x=s.T22T22z;
+
+        T20T20x_sus=s.T20T20x_sus;
+        T20T20y_sus=s.T20T20y_sus;
+        T20T20x_sus=s.T20T20z_sus;
+        T22T22x_sus=s.T22T22x_sus;
+        T22T22y_sus=s.T22T22y_sus;
+        T22T22x_sus=s.T22T22z_sus;
+
+        temperature=s.temperature;
+        tau=s.tau;
+        lambda=s.lambda;
+        h=s.h;
+
+        energy=s.energy;
+        parity=s.parity;
+        parity_sus=s.parity_sus;
+        fluctuation=s.fluctuation;
+
+        d200x_from_correlation=s.d200x_from_correlation;
+        d200y_from_correlation=s.d200y_from_correlation;
+        d200z_from_correlation=s.d200z_from_correlation;
+
+        d222x_from_correlation=s.d222x_from_correlation;
+        d222y_from_correlation=s.d222y_from_correlation;
+        d222z_from_correlation=s.d222z_from_correlation;
+
+        d200x_from_correlation_sus=s.d200x_from_correlation_sus;
+        d200y_from_correlation_sus=s.d200y_from_correlation_sus;
+        d200z_from_correlation_sus=s.d200z_from_correlation_sus;
+
+        d222x_from_correlation_sus=s.d222x_from_correlation_sus;
+        d222y_from_correlation_sus=s.d222y_from_correlation_sus;
+        d222z_from_correlation_sus=s.d222z_from_correlation_sus;
+
+        d322_from_correlation=s.d322_from_correlation;
+        d322_from_correlation_sus=s.d322_from_correlation_sus;
+
+        parity_from_correlation=s.parity_from_correlation;
+        parity_from_correlation_sus=s.parity_from_correlation_sus;
+
+
+    }
+    const PRE79MeanProperties & operator=(const PRE79MeanProperties & s) {
+        int size = s.mean_paritycor.size();
+        mean_d200corz.resize(size,0.0);
+        mean_d222corz.resize(size,0.0);
+        mean_d220corz.resize(size,0.0);
+        mean_d200corx.resize(size,0.0);
+        mean_d222corx.resize(size,0.0);
+        mean_d220corx.resize(size,0.0);
+        mean_d200cory.resize(size,0.0);
+        mean_d222cory.resize(size,0.0);
+        mean_d220cory.resize(size,0.0);
+        mean_qx.resize(6,0.0);
+        mean_qz.resize(6,0.0);
+        mean_qy.resize(6,0.0);
+
+        mean_d322cor.resize(size,0.0);
+        mean_paritycor.resize(size,0.0);
+
+        mean_d200corx=s.mean_d200corx;
+        mean_d200cory=s.mean_d200cory;
+        mean_d200corz=s.mean_d200corz;
+        mean_d222corx=s.mean_d222corx;
+        mean_d222cory=s.mean_d222cory;
+        mean_d222corz=s.mean_d222corz;
+        mean_d220corx=s.mean_d220corx;
+        mean_d220cory=s.mean_d220cory;
+        mean_d220corz=s.mean_d220corz;
+        mean_d322cor=s.mean_d322cor;
+        mean_paritycor=s.mean_paritycor;
+
+        mean_qx=s.mean_qx;
+        mean_qy=s.mean_qy;
+        mean_qz=s.mean_qz;
+
+        T20T20x=s.T20T20x;
+        T20T20y=s.T20T20y;
+        T20T20x=s.T20T20z;
+        T22T22x=s.T22T22x;
+        T22T22y=s.T22T22y;
+        T22T22x=s.T22T22z;
+
+        T20T20x_sus=s.T20T20x_sus;
+        T20T20y_sus=s.T20T20y_sus;
+        T20T20x_sus=s.T20T20z_sus;
+        T22T22x_sus=s.T22T22x_sus;
+        T22T22y_sus=s.T22T22y_sus;
+        T22T22x_sus=s.T22T22z_sus;
+
+        temperature=s.temperature;
+        tau=s.tau;
+        lambda=s.lambda;
+        h=s.h;
+
+        energy=s.energy;
+        parity=s.parity;
+        parity_sus=s.parity_sus;
+        fluctuation=s.fluctuation;
+
+        d200x_from_correlation=s.d200x_from_correlation;
+        d200y_from_correlation=s.d200y_from_correlation;
+        d200z_from_correlation=s.d200z_from_correlation;
+
+        d222x_from_correlation=s.d222x_from_correlation;
+        d222y_from_correlation=s.d222y_from_correlation;
+        d222z_from_correlation=s.d222z_from_correlation;
+
+        d200x_from_correlation_sus=s.d200x_from_correlation_sus;
+        d200y_from_correlation_sus=s.d200y_from_correlation_sus;
+        d200z_from_correlation_sus=s.d200z_from_correlation_sus;
+
+        d222x_from_correlation_sus=s.d222x_from_correlation_sus;
+        d222y_from_correlation_sus=s.d222y_from_correlation_sus;
+        d222z_from_correlation_sus=s.d222z_from_correlation_sus;
+
+        d322_from_correlation=s.d322_from_correlation;
+        d322_from_correlation_sus=s.d322_from_correlation_sus;
+
+        parity_from_correlation=s.parity_from_correlation;
+        parity_from_correlation_sus=s.parity_from_correlation_sus;
+
+        return *this;
     }
     //do wykonania po wczytaniu
     void CalculateMeanTensors() {
@@ -1256,40 +1439,6 @@ void operator|(serializer_t & s, PRE79MeanProperties & p){
     s|p.T22T22y;
     s|p.T22T22y_sus;
 }
-inline std::ostream & operator<<(std::ostream & o,const PRE79MeanProperties & p){
-    o << "Temperature=" << p.Temperature() << std::endl;
-    o << "Lambda=" << p.Lambda() << std::endl;
-    o << "Tau=" << p.Tau() << std::endl;
-    o << "Field=" << p.Field() << std::endl;
-    o << "MeanEPM=" << p.TemporalMeanEnergyPerMolecule().Print() << std::endl;
-    o << "MeanParity=" << p.TemporalMeanParity().Print() << std::endl;
-    //o << "SpecHeat=" << p.SpecificHeat().Print() << std::endl;
-    o << "Fluctuation=" << p.Fluctuation().Print() << std::endl;
 
-    o << "Delta200ZByCorrelation=" << p.Delta200ZByCorrelation().Print() << std::endl;
-    o << "Delta200XByCorrelation=" << p.Delta200XByCorrelation().Print() << std::endl;
-    o << "Delta200YByCorrelation=" << p.Delta200YByCorrelation().Print() << std::endl;
-
-    o << "Delta222ZByCorrelation=" << p.Delta222ZByCorrelation().Print() << std::endl;
-    o << "Delta222XByCorrelation=" << p.Delta222XByCorrelation().Print() << std::endl;
-    o << "Delta222YByCorrelation=" << p.Delta222YByCorrelation().Print() << std::endl;
-
-    o << "TetrahedralOrder=" << p.Delta322ByCorrelation().Print() << std::endl;
-    o << "ParityOrder=" << p.ParityByCorrelation().Print() << std::endl;
-
-    o << "Delta200ZMeanCorrelation=\n" << p.Delta200ZMeanCorrelation() << std::endl;
-    o << "Delta222ZMeanCorrelation=\n" << p.Delta222ZMeanCorrelation() << std::endl;
-    o << "Delta220ZMeanCorrelation=\n" << p.Delta220ZMeanCorrelation() << std::endl;
-    o << "Delta200XMeanCorrelation=\n" << p.Delta200XMeanCorrelation() << std::endl;
-    o << "Delta222XMeanCorrelation=\n" << p.Delta222XMeanCorrelation() << std::endl;
-    o << "Delta220XMeanCorrelation=\n" << p.Delta220XMeanCorrelation() << std::endl;
-    o << "Delta200YMeanCorrelation=\n" << p.Delta200YMeanCorrelation() << std::endl;
-    o << "Delta222YMeanCorrelation=\n" << p.Delta222YMeanCorrelation() << std::endl;
-    o << "Delta220YMeanCorrelation=\n" << p.Delta220YMeanCorrelation() << std::endl;
-
-    o << "TetrahedralMeanCorrelation=\n" << p.Delta322MeanCorrelation() << std::endl;
-    o << "ParityMeanCorrelation=\n" << p.ParityMeanCorrelation() << std::endl;
-    return o;
-}
 #endif	/* _STANDARDPROPERTIES_H */
 
