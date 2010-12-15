@@ -47,7 +47,7 @@ FFLAGS=
 ASFLAGS=
 
 # Link Libraries and Options
-LDLIBSOPTIONS=../libboostbase/dist/Debug/GNU-Linux-x86/liblibboostbase.a ../libmc2/dist/Debug/GNU-Linux-x86/liblibmc2.a -lsqlite3 -lboost_date_time-mt -lboost_filesystem-mt -lboost_iostreams-mt -lboost_program_options-mt -lboost_system-mt
+LDLIBSOPTIONS=../libboostbase/dist/Debug/GNU-Linux-x86/liblibboostbase.a ../libmc2/dist/Debug/GNU-Linux-x86/liblibmc2.a -lboost_date_time-mt -lboost_filesystem-mt -lboost_iostreams-mt -lboost_program_options-mt -lboost_system-mt -ldl -lboost_thread-mt
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
