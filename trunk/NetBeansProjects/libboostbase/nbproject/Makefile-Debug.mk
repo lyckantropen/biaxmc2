@@ -32,6 +32,7 @@ OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
 # Object Files
 OBJECTFILES= \
 	${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/hl_md5wrapper.o \
+	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/boostbase/src/sqlite3.o \
 	${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/serialhash.o \
 	${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/hl_md5.o
 
@@ -65,6 +66,11 @@ ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/
 	${MKDIR} -p ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src
 	${RM} $@.d
 	$(COMPILE.cc) -g -DSQLITE_TEMP_STORE=3 -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/hl_md5wrapper.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/hl_md5wrapper.cpp
+
+${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/boostbase/src/sqlite3.o: nbproject/Makefile-${CND_CONF}.mk ../../montecarlo2/boostbase/src/sqlite3.c 
+	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/boostbase/src
+	${RM} $@.d
+	$(COMPILE.c) -g -DSQLITE_TEMP_STORE=3 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/boostbase/src/sqlite3.o ../../montecarlo2/boostbase/src/sqlite3.c
 
 ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/serialhash.o: nbproject/Makefile-${CND_CONF}.mk /home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/serialhash.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src

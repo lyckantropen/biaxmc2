@@ -30,7 +30,7 @@ class Delta200CorrelationX:public SpatialCorrelationEvolution {
     template<class serializer_t>
     friend void operator|(serializer_t &, Delta200CorrelationX &);
     virtual double CalculateContraction(const Particle &a, const Particle &b){
-        return 3.0/2.0*Rank2Contraction((a.GetQX()-Identity(3)/3.0),(b.GetQZ()-Identity(3)/3.0));
+        return 3.0/2.0*Rank2Contraction((a.GetQX()-Identity(3)/3.0),(b.GetQX()-Identity(3)/3.0));
     }
 public:
     Delta200CorrelationX(Lattice * l=NULL, int nc=0):SpatialCorrelationEvolution(l,nc){}
@@ -41,7 +41,7 @@ class Delta200CorrelationY:public SpatialCorrelationEvolution {
     template<class serializer_t>
     friend void operator|(serializer_t &, Delta200CorrelationY &);
     virtual double CalculateContraction(const Particle &a, const Particle &b){
-        return 3.0/2.0*Rank2Contraction((a.GetQY()-Identity(3)/3.0),(b.GetQZ()-Identity(3)/3.0));
+        return 3.0/2.0*Rank2Contraction((a.GetQY()-Identity(3)/3.0),(b.GetQY()-Identity(3)/3.0));
     }
 public:
     Delta200CorrelationY(Lattice * l=NULL, int nc=0):SpatialCorrelationEvolution(l,nc){}
