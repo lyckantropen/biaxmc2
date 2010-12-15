@@ -43,6 +43,7 @@ class PRE79StandardProperties {
     vect    T22T22x;         ///<moduł T22^2 w funkcji czasu
     vect    T20T20y;         ///<moduł T20^2 w funkcji czasu
     vect    T22T22y;         ///<moduł T22^2 w funkcji czasu
+    vect    T32T32;
 
     //    vect    D200;
 //    vect    D220;
@@ -101,10 +102,12 @@ private:
         vect mqx(0.0,6);
         vect mqy(0.0,6);
         vect mqz(0.0,6);
+	vect mt(0.0,10);
         for(int i=0;i<lat->GetN();i++){
             mqx+=lat->GetParticles()[i].GetQX();
             mqy+=lat->GetParticles()[i].GetQY();
             mqz+=lat->GetParticles()[i].GetQZ();
+	    mt+=lat->GetParticles()[i].GetT();
         }
         MeanQxTensor[acc_idx]=mqx/double(lat->GetN());
         MeanQyTensor[acc_idx]=mqy/double(lat->GetN());
@@ -133,6 +136,8 @@ private:
         t22y = std::sqrt(1./2.)*(mqz-mqx)/double(lat->GetN());
         T20T20y[acc_idx]=MatrixDotProduct(t20y,t20y);
         T22T22y[acc_idx]=MatrixDotProduct(t22y,t22y);
+
+	T32T32[acc_idx]=Rank3Contraction(mt,mt)/double(lat->GetN());
     }
 
 public:
@@ -164,7 +169,9 @@ public:
         index=0;
         energy.resize(ncycles,0.0);
         parity.resize(ncycles,0.0);
-        T20T20z.resize(ncycles,0.0);
+        T32T32.resize(ncycles,0.0);
+
+	T20T20z.resize(ncycles,0.0);
         T22T22z.resize(ncycles,0.0);
 
         T20T20x.resize(ncycles,0.0);
@@ -205,6 +212,9 @@ public:
         T20T20y = p.T20T20y;
         T22T22y.resize(p.T22T22y.size());
         T22T22y = p.T22T22y;
+
+	T32T32.resize(p.T32T32.size());
+	T32T32 = p.T32T32;
 
         lat=p.lat;
         readonly=p.readonly;
@@ -252,8 +262,12 @@ public:
         T20T20y.resize(p.T20T20y.size());
         T20T20y = p.T20T20y;
         T22T22y.resize(p.T22T22y.size());
-        T22T22y = p.T22T22y;
-        lat=p.lat;
+        T22T22y = p.T22T22y; 
+
+	T32T32.resize(p.T32T32.size());
+	T32T32 = p.T32T32;
+	
+	lat=p.lat;
         readonly=p.readonly;
         index=p.index;
         ncycles=p.ncycles;
@@ -337,6 +351,7 @@ public:
 
         vect tmpt20t20y(0.0,ncycles);
         vect tmpt22t22y(0.0,ncycles);
+	vect tmpt32t32(0.0,ncycles);
         /*
         vect tmpD200(0.0,ncycles);
         vect tmpD220(0.0,ncycles);
@@ -354,6 +369,7 @@ public:
 
             tmpt20t20y[i]=T20T20y[i];
             tmpt22t22y[i]=T22T22y[i];
+	    tmpt32t32[i]=T32T32[i];
             /*
             tmpD200[i]=D200[i];
             tmpD220[i]=D220[i];
@@ -371,6 +387,7 @@ public:
             tmpt22t22y[i]=p.T22T22y[i-oldsize];
             tmpt20t20z[i]=p.T20T20z[i-oldsize];
             tmpt22t22z[i]=p.T22T22z[i-oldsize];
+	    tmpt32t32[i]=p.T32T32[i-oldsize];
             /*
             tmpD200[i]=p.D200[i-oldsize];
             tmpD220[i]=p.D220[i-oldsize];
@@ -386,6 +403,7 @@ public:
         T22T22x.resize(ncycles,0.0);
         T20T20y.resize(ncycles,0.0);
         T22T22y.resize(ncycles,0.0);
+	T32T32.resize(ncycles,0.0);
         //D200.resize(ncycles,0.0);
         //D220.resize(ncycles,0.0);
         //D202.resize(ncycles,0.0);
@@ -398,6 +416,7 @@ public:
         T22T22x=tmpt22t22x;
         T20T20y=tmpt20t20y;
         T22T22y=tmpt22t22y;
+	T32T32=tmpt32t32;
         //D200=tmpD200;
         //D220=tmpD220;
         //D202=tmpD202;
@@ -519,6 +538,14 @@ public:
     Value MeanT22T22YSusceptibility() const {
         return CalculateFluctuation(T22T22y);
     }
+
+    Value MeanT32T32() const {
+        return Mean(T32T32,0,acc_idx+1);
+    }
+    Value MeanT32T32Susceptibility() const {
+        return CalculateFluctuation(T32T32);
+    }
+
 
     //średnie funkcje korelacji dla poszczególnych osi
     vect Delta200ZMeanCorrelation() const {
@@ -725,6 +752,7 @@ void operator|(serializer_t & s, PRE79StandardProperties & prop){
 
     s|prop.T20T20y;
     s|prop.T22T22y;
+    s|prop.T32T32;
 }
 
 /**
@@ -766,6 +794,8 @@ class PRE79MeanProperties {
     Value T22T22y;
     Value T20T20y_sus;
     Value T22T22y_sus;
+    Value T32T32;
+    Value T32T32_sus;
     double mean_d200;
     double mean_d220;
     double mean_d202;
@@ -883,6 +913,8 @@ public:
         T20T20y_sus = prop.MeanT20T20YSusceptibility();
         T22T22y = prop.MeanT22T22Y();
         T22T22y_sus = prop.MeanT22T22YSusceptibility();
+        T32T32 = prop.MeanT32T32();
+        T32T32_sus = prop.MeanT32T32Susceptibility();
 
         //mean_d200 = prop.MeanDelta200();
         //mean_d220 = prop.MeanDelta220();
@@ -944,6 +976,7 @@ public:
         T22T22x=s.T22T22x;
         T22T22y=s.T22T22y;
         T22T22x=s.T22T22z;
+        T32T32=s.T32T32;
 
         T20T20x_sus=s.T20T20x_sus;
         T20T20y_sus=s.T20T20y_sus;
@@ -951,6 +984,7 @@ public:
         T22T22x_sus=s.T22T22x_sus;
         T22T22y_sus=s.T22T22y_sus;
         T22T22x_sus=s.T22T22z_sus;
+        T32T32_sus=s.T32T32_sus;
 
         temperature=s.temperature;
         tau=s.tau;
@@ -1026,6 +1060,7 @@ public:
         T22T22x=s.T22T22x;
         T22T22y=s.T22T22y;
         T22T22x=s.T22T22z;
+        T32T32=s.T32T32;
 
         T20T20x_sus=s.T20T20x_sus;
         T20T20y_sus=s.T20T20y_sus;
@@ -1033,6 +1068,7 @@ public:
         T22T22x_sus=s.T22T22x_sus;
         T22T22y_sus=s.T22T22y_sus;
         T22T22x_sus=s.T22T22z_sus;
+        T32T32_sus=s.T32T32_sus;
 
         temperature=s.temperature;
         tau=s.tau;
@@ -1309,6 +1345,13 @@ public:
         return T22T22y_sus;
     }
 
+    Value MeanT32T32() const {
+        return T32T32;
+    }
+    Value MeanT32T32Susceptibility() const {
+        return T32T32_sus;
+    }
+
     const vect & Delta200ZMeanCorrelation() const {
         return mean_d200corz;
     }
@@ -1438,6 +1481,9 @@ void operator|(serializer_t & s, PRE79MeanProperties & p){
     s|p.T20T20y_sus;
     s|p.T22T22y;
     s|p.T22T22y_sus;
+
+    s|p.T32T32;
+    s|p.T32T32_sus;
 }
 
 #endif	/* _STANDARDPROPERTIES_H */
