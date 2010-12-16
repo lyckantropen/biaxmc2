@@ -74,6 +74,8 @@ public:
                 current_settings.hamiltonian.lambda=value;
             if(variable=="hamiltonian.temperature")
                 current_settings.hamiltonian.temperature=value;
+	    if(variable=="hamiltonian.h")
+		current_settings.hamiltonian.h=value;
 
             //--- znajdowanie zapisanego stanu - jeżeli znajdziemy, możemy pominąć ten krok
             if(settings.scanning.continue_if_results_exist){
