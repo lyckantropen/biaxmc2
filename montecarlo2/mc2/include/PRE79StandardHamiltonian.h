@@ -46,10 +46,10 @@ public:
         // uwaga - h jest równoważne h kwadrat w literaturze, a h/abs(h) jest równoważne delta epsilon i jest równe sgn(h)
         //int sign = std::ceil(h)/std::abs(std::ceil(h));
         if(h==0.0) return 0.0;
-	if(h>=0.0)
+	//if(h>=0.0)
         	return - epsilon*h*(hxx*p.GetQX()[5] + hyy*p.GetQY()[5] + hzz*p.GetQZ()[5]);
-	else
-		return - epsilon*h*(hxx*p.GetQX()[0] + hyy*p.GetQY()[0] + hzz*p.GetQZ()[0]);
+	//else
+	//	return - epsilon*h*(hxx*p.GetQX()[0] + hyy*p.GetQY()[0] + hzz*p.GetQZ()[0]);
 
         //return 0.0;
     }
