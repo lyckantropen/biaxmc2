@@ -271,7 +271,7 @@ public:
             if(tcycle%100==0)
                 thermalprops->Update(tcycle,H);
             if(tcycle%1000==0 && settings.output.report_progress){
-                Log() << "E = " << thermalprops->EnergyEvolution()[tcycle/100] << std::endl;
+                Log() << "E = " << thermalprops->EnergyEvolution()[tcycle/1001] << std::endl;
                 Log() << "Progress: " << (double(tcycle)/double(thermalization->GetNCycles()))*100.0 << "%\n";
             }
             //--- poprawa promienia błądzenia przypadkowego <-- czyżby źródło błędów???
@@ -303,7 +303,7 @@ public:
             pt::time_duration   expected = DurationOf1000Cycles()*(thermalization->GetNCycles()+settings.simulation.production_cycles/settings.openmp.number_of_threads)/1000;
             Log() << "Expected time of simulation: " << pt::to_simple_string(expected) << std::endl;
         }
-        if(settings.simulation.thermalization_cycles>0){
+        if(settings.simulation.thermalization_cycles>0 && settings.simulation.supplementary_thermalization_cycles>0){
             Log() << "Thermalization\n";
             Thermalize();
         }
@@ -380,8 +380,10 @@ public:
             pt::time_duration   expected=ExpectedSimulationTime();
             Log() << "Expected time of simulation: " << pt::to_simple_string(expected) << std::endl;
         }
-        Log() << "Thermalization\n";
-        Thermalize();
+        if(settings.simulation.thermalization_cycles>0 && settings.simulation.supplementary_thermalization_cycles>0){
+            Log() << "Thermalization\n";
+            Thermalize();
+        }
 
         //--- zapisywanie stanów pośrednich
         int intermediate_frequency = simulation->GetNCycles()/settings.output.intermediate_states;

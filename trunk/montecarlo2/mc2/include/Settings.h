@@ -131,12 +131,14 @@ public:
         double end;
         double delta;
         bool reuse_thermalized; std::string v_reuse_thermalized;
+        bool pass_on; std::string v_pass_on;
         bool threaded; std::string v_threaded;
         bool threaded_production; std::string v_threaded_production;
         bool continue_if_results_exist; std::string v_continue_if_results_exist;
         
         _scanning():
         v_reuse_thermalized("yes"),
+        v_pass_on("yes"),
         v_enabled("no"),
         v_threaded("no"),
         v_threaded_production("no"),
@@ -206,7 +208,10 @@ private:
         ("scanning.start",po::value<double>(&scanning.start),"Starting value")
         ("scanning.end",po::value<double>(&scanning.end),"End value")
         ("scanning.delta",po::value<double>(&scanning.delta),"Interval")
-        ("scanning.reuse_thermalized",po::value<std::string>(&scanning.v_reuse_thermalized),"(yes/no) When scanning with replica parallelization, pass the final state as the next initial state")
+        ("scanning.reuse_thermalized",po::value<std::string>(&scanning.v_reuse_thermalized),"DEPRECATED use scanning.pass_on")
+
+        ("scanning.pass_on",po::value<std::string>(&scanning.v_pass_on),"(yes/no) When scanning with replica parallelization, pass the final state as the next initial state")
+
         ("scanning.threaded",po::value<std::string>(&scanning.v_threaded),"(yes/no) Threaded scanning")
         ("scanning.threaded_production",po::value<std::string>(&scanning.v_threaded_production),"(yes/no) Threaded production")
         ("scanning.continue_if_results_exist",po::value<std::string>(&scanning.v_continue_if_results_exist),"(yes/no) Skip already performed simulations and pick up last saved state")
@@ -229,6 +234,7 @@ private:
         initial.isotropic = TextBool(initial.v_isotropic);
 	initial.biaxial_alt = TextBool(initial.v_biaxial_alt);
         scanning.enabled = TextBool(scanning.v_enabled);
+        scanning.pass_on = TextBool(scanning.v_pass_on);
         scanning.reuse_thermalized = TextBool(scanning.v_reuse_thermalized);
         scanning.threaded = TextBool(scanning.v_threaded);
         scanning.threaded_production = TextBool(scanning.v_threaded_production);

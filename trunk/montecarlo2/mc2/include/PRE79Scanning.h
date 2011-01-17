@@ -96,7 +96,7 @@ public:
             //---
 
 
-            if(i==0 || settings.scanning.reuse_thermalized==false){
+            if(i==0 || settings.scanning.pass_on==false){
                 PRE79Simulation simulation(current_settings);
                 //serwer dostępu do symulacji w trakcie jej trwania, uruchamiany w osobnym wątku
                 if(settings.output.start_service){
