@@ -41,6 +41,7 @@ public:
 
     void Run() {
         //std::cout << "Thread " << omp_get_thread_num() << " of " << omp_get_num_threads() << std::endl;
+        #pragma omp critical
         Log() << "Production with freq " << settings.simulation.measure_frequency << std::endl ;
 
 
@@ -264,7 +265,7 @@ public:
         return DurationOf1000Cycles()*total1kruns;
     }
 
-    void Thermalize() {
+    const Lattice & Thermalize() {
         int tcycle=0;
         while(thermalization->Iterate()){
             if(tcycle%100==0)
@@ -288,7 +289,7 @@ public:
 	Log() << "Saving thermalization history\n";
         database.StoreThermalizationHistory(settings,*thermalprops);
 
-
+        return *lattice;
     }
 
     ///jednowątkowa termalizacja i wielowątkowa produkcja
@@ -302,8 +303,10 @@ public:
             pt::time_duration   expected = DurationOf1000Cycles()*(thermalization->GetNCycles()+settings.simulation.production_cycles/settings.openmp.number_of_threads)/1000;
             Log() << "Expected time of simulation: " << pt::to_simple_string(expected) << std::endl;
         }
-        Log() << "Thermalization\n";
-        Thermalize();
+        if(settings.simulation.thermalization_cycles>0){
+            Log() << "Thermalization\n";
+            Thermalize();
+        }
         //---
         
         //--- tworzymy fragmentaryczne symulacje
@@ -384,6 +387,7 @@ public:
         int intermediate_frequency = simulation->GetNCycles()/settings.output.intermediate_states;
         //---
 
+        #pragma omp critical
         Log() << "Production with freq " << settings.simulation.measure_frequency << std::endl ;
         long k=0;
 

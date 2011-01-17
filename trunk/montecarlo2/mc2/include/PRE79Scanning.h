@@ -35,6 +35,7 @@ public:
     variable(set.scanning.variable)
     {
     }
+
     /**
      * Uruchamianie symulacji dla różnych wartości parametrów. Tutaj może wejść
      * paralelizacja na poziomie produkcji!
@@ -191,6 +192,122 @@ public:
         }
         Log() << "Scanning finished\n";
     }
+    /*
+     * Dwustopniowa paralelizacja: najpierw termalizacje, potem produkcje
+     */
+    void RunParallelParallel() {
+        Log() << "Parallel thermalization with parallel productions\n";
+        Log() << "Scanning " << variable << " from " << start << " to " << end << " with interval " << delta << std::endl;
+        Log() << "Trying to set the number of concurrent simulations to " << settings.openmp.number_of_threads << std::endl;
+
+        if(settings.openmp.dynamic)
+            omp_set_dynamic(1);
+        else
+            omp_set_dynamic(0);
+        omp_set_num_threads(settings.openmp.number_of_threads);
+
+
+        //-- niesparalelizowana pętla, jedziemy kawałkami rozmiaru liczby dostępnych wątków
+        int incr=settings.openmp.number_of_threads;
+        for(int i=0; i<nscans; i+=incr){
+
+            int chunk = i/incr+1;
+            int chunks = nscans/incr+1;
+
+            int current_nscans = incr;
+            if(chunk*incr > nscans)
+                current_nscans = nscans-(chunk-1)*incr;
+            //-- stany do stermalizowania
+            std::vector<Lattice>    states(current_nscans);
+
+
+            Log() << "Chunk " << chunk << "/" << chunks << ": starting\n";
+            Log() << "Chunk " << chunk << "/" << chunks << ": that is " << current_nscans << " thermalizations/productions of " << nscans << " total\n";
+            Log() << "Chunk " << chunk << "/" << chunks << ": thermalization\n";
+
+            //-- termalizacja
+            #pragma omp parallel for schedule(runtime) shared(rng2) private(random01)
+            for(int t=0;t<current_nscans;t++){
+                double value = start + double((chunk-1)*incr+t)*delta;
+                #pragma omp critical
+                Log() << "Thread: "<< omp_get_thread_num() << "/" << omp_get_num_threads() << ", Value: " << value << std::endl;
+
+                Settings current_settings(settings);
+
+                if(variable=="hamiltonian.tau")
+                    current_settings.hamiltonian.tau=value;
+                if(variable=="hamiltonian.lambda")
+                    current_settings.hamiltonian.lambda=value;
+                if(variable=="hamiltonian.temperature")
+                    current_settings.hamiltonian.temperature=value;
+
+                //current_settings.simulation.production_cycles=1;
+                //current_settings.openmp.number_of_threads=1;
+                //current_settings.scanning.enabled=false;
+                //current_settings.scanning.threaded=false;
+                //current_settings.scanning.threaded_production=false;
+
+                PRE79Simulation termo(current_settings);
+                #pragma omp critical
+                Log() << termo.GetLog();
+                termo.SetStream(&Log());
+                states[t]=termo.Thermalize();
+            }
+
+            Log() << "Chunk " << chunk << "/" << chunks << ": finished thermalization\n";
+            Log() << "Chunk " << chunk << "/" << chunks << ": starting production\n";
+
+            //-- produkcja
+            //#//pragma omp parallel for schedule(runtime) shared(rng2) private(random01)
+            for(int t=0;t<current_nscans;t++){
+                double value = start + double((chunk-1)*incr+t)*delta;
+                #pragma omp critical
+                Log() << "Thread: "<< omp_get_thread_num() << "/" << omp_get_num_threads() << ", Value: " << value << std::endl;
+
+                Settings current_settings(settings);
+
+                if(variable=="hamiltonian.tau")
+                    current_settings.hamiltonian.tau=value;
+                if(variable=="hamiltonian.lambda")
+                    current_settings.hamiltonian.lambda=value;
+                if(variable=="hamiltonian.temperature")
+                    current_settings.hamiltonian.temperature=value;
+
+                current_settings.simulation.thermalization_cycles=0;
+                current_settings.simulation.supplementary_thermalization_cycles=0;
+
+
+                //--- znajdowanie zapisanego stanu - jeżeli znajdziemy, możemy pominąć ten krok
+                if(current_settings.scanning.continue_if_results_exist){
+                    #pragma omp critical
+                    Log() << "Thread: "<< omp_get_thread_num() << "/" << omp_get_num_threads() << ": Searching database for results of previous simulation\n";
+                    bool found=false;
+                    FindFinalProperties(current_settings,found);
+                    if(found){
+                        #pragma omp critical
+                        Log() << "Thread: "<< omp_get_thread_num() << "/" << omp_get_num_threads() << ": Previous results recovered, skipping\n";
+                        // pomijamy ten krok symulacji, stan o dokładnie takich samych parametrach został już policzony
+                        continue;
+                    }
+                    else{
+                        #pragma omp critical
+                        Log() << "Thread: "<< omp_get_thread_num() << "/" << omp_get_num_threads() << ": No previous results recovered, going on\n";
+                    }
+                }
+                //---
+
+
+                PRE79Simulation production(current_settings,states[t]);
+                #pragma omp critical
+                Log() << production.GetLog();
+                production.SetStream(&Log());
+                production.RunParallel();
+            }
+            Log() << "Chunk " << chunk << "/" << chunks << ": finished\n";
+        }
+        Log() << "Scanning finished\n";
+    }
+
     ~PRE79Scanning(){
         //delete simulation;
     }
