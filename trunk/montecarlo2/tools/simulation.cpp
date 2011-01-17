@@ -36,7 +36,10 @@ int main(int argc, char** argv)
             PRE79Scanning scanning(setup);
             scanning.SetStream(&std::cout);
             if(setup.scanning.threaded)
-                scanning.RunParallel();
+                if(setup.scanning.threaded_production)
+                    scanning.RunParallelParallel();
+                else
+                    scanning.RunParallel();
             else
                 scanning.RunNonParallel();
         }
