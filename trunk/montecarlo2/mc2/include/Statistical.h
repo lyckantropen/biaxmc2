@@ -177,6 +177,7 @@ Value BootstrapMean(const std::valarray<value_type> & v, const int start=0, cons
 extern Value CalculateFluctuation(const vect & variable,const int & acc_idx=0);
 
 
+
 template  Value Mean<Value>(const std::valarray<Value> & v,const int, const int, const int);
 template  Value Mean<double>(const std::valarray<double> & v, const int, const int, const int);
 template  std::valarray<double> MeanVector<double>(const std::vector<vect> & v, const int start, const int limit);
