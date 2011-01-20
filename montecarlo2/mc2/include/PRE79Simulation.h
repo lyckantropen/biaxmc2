@@ -59,7 +59,7 @@ public:
             }
             //---
             //--- poprawa promienia błądzenia przypadkowego <-- czyżby źródło błędów???
-            if(k%settings.simulation.radius_adjustment_frequency==0 && settings.simulation.adjust_radius)
+            if(k%settings.simulation.radius_adjustment_frequency==0)
                 metro->AdjustRadius(lattice);
             //---
 
@@ -275,7 +275,7 @@ public:
                 Log() << "Progress: " << (double(tcycle)/double(thermalization->GetNCycles()))*100.0 << "%\n";
             }
             //--- poprawa promienia błądzenia przypadkowego <-- czyżby źródło błędów???
-            if(tcycle%settings.simulation.radius_adjustment_frequency==0 && settings.simulation.adjust_radius_thermalization)
+            if(tcycle%settings.simulation.radius_adjustment_frequency==0)
                 metro->AdjustRadius(lattice);
             //---
             if(settings.simulation.measure_acceptance && tcycle%settings.simulation.measure_acceptance_frequency==0){
@@ -418,7 +418,7 @@ public:
             }
 
             //--- poprawa promienia błądzenia przypadkowego <-- czyżby źródło błędów???
-            if(k%settings.simulation.radius_adjustment_frequency==0 && settings.simulation.adjust_radius)
+            if(k%settings.simulation.radius_adjustment_frequency==0)
                 metro->AdjustRadius(lattice);
             //---
 
