@@ -27,7 +27,7 @@ class Metropolis:public MCProto,protected ILoggable {
     double  parity_prob;
     const Settings & settings;
 public:
-    Metropolis(const Settings & set, Hamiltonian * h=NULL,const double & r=1):settings(set),hamiltonian(h),radius(r),
+    Metropolis(const Settings & set, Hamiltonian * h=NULL,const double & r=1):settings(set),hamiltonian(h),radius(set.simulation.radius),
             acc_llimit(set.simulation.metropolis_lower_acceptance_limit),
             acc_ulimit(set.simulation.metropolis_higher_acceptance_limit),
             parity_prob(set.simulation.parity_flip_probability)
@@ -75,6 +75,8 @@ public:
 
     }
     void AdjustRadius(Lattice * lat, const double & decimation=0.02){
+        if(!settings.simulation.adjust_radius) return;
+
         if(lat==NULL) return ;
         double acc_fraction=0.0;
         double N=0.0;
