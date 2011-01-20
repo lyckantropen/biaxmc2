@@ -266,6 +266,7 @@ public:
     }
 
     const Lattice & Thermalize() {
+        Log() << "Thermalization cycles: " << thermalization->GetNCycles() << std::endl;
         int tcycle=0;
         while(thermalization->Iterate()){
             if(tcycle%100==0)
@@ -295,7 +296,6 @@ public:
     ///jednowątkowa termalizacja i wielowątkowa produkcja
     Lattice RunParallel(){
         //--- termalizacja
-        Log() << "Thermalization cycles: " << thermalization->GetNCycles() << std::endl;
         Log() << "Adjusting radius\n";
         metro->AdjustRadius(lattice);
         if(settings.simulation.calculate_time){
@@ -371,7 +371,6 @@ public:
 
     ///Symulacja. Zwraca końcowy stan sieci.
     const Lattice & Run(){
-        Log() << "Thermalization cycles: " << thermalization->GetNCycles() << std::endl;
         Log() << "Production cycles: " << simulation->GetNCycles() << std::endl;
         Log() << "Adjusting radius\n";
         metro->AdjustRadius(lattice);
