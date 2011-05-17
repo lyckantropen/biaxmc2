@@ -230,6 +230,7 @@ namespace boostbase {
             return results;
         }
 
+
         /**
          * @brief podejmowanie obiektów z bazy na podstawie zapytania
          * @param betweens lista warunków typu WHERE a BETWEEN b AND c
@@ -263,7 +264,7 @@ namespace boostbase {
          * @param betweens lista warunków typu WHERE a BETWEEN b AND c
          * @return wektor obiektów spełniających zapytanie
          *
-         * Funkcja działa jak logiczna suma funkcji jednoargumentowych get.
+         * Funkcja działa jak iloczyn logiczny funkcji jednoargumentowych get.
          */
         template<class item_t>
         std::vector<item_t> get(const std::vector<pair_t> & wheres, const std::vector<tween_t> & betweens){
@@ -288,7 +289,112 @@ namespace boostbase {
             results = eval_get<item_t>(s.str());
             return results;
         }
+        
+        /**
+         * @brief podejmowanie metadanych zgodnie z podanymi kolumnami i kryteriami
+         * @param columns kolumny
+         * @param wheres patrz get
+         * @return tablica zwracanych metadanych w kolejności jak w parametrze columns
+         */
+        
+        std::vector<std::vector<std::string> > get_metadata(const std::vector<std::string> & columns, const std::vector<pair_t> & wheres){
+            std::stringstream s;
+            s << "SELECT ";
+            for(int i=0;i<columns.size();i++) {
+                const std::string & c = columns[i];
+                s << c ;
+                if(i!=columns.size()-1)
+                   s << ",";
+            }
+            s << " from objects\nWHERE ";
+            
+            foreach(pair_t p, wheres) {
+                std::vector<std::string> typeandvalue;
+                boost::split(typeandvalue,p.second,boost::is_any_of(":"));
 
+                s << p.first << "=\'" << typeandvalue[1] << "\'";
+                if (p != wheres.back())
+                    s << " AND ";
+            }
+            
+            return eval_select(s.str(),columns.size());
+        }
+        /**
+         * @brief podejmowanie metadanych zgodnie z podanymi kolumnami i kryteriami
+         * @param columns kolumny
+         * @param wheres patrz get
+         * @param betweens patrz get
+         * @return tablica zwracanych metadanych w kolejności jak w parametrze columns
+         */
+        
+        std::vector<std::vector<std::string> > get_metadata(const std::vector<std::string> & columns, const std::vector<pair_t> & wheres, const std::vector<tween_t> & betweens){
+            std::stringstream s;
+            s << "SELECT ";
+            for(int i=0;i<columns.size();i++) {
+                const std::string & c = columns[i];
+                s << c ;
+                if(i!=columns.size()-1)
+                   s << ",";
+            }
+            s << " from objects\nWHERE ";
+            
+            foreach(pair_t p, wheres) {
+                std::vector<std::string> typeandvalue;
+                boost::split(typeandvalue,p.second,boost::is_any_of(":"));
+
+                s << p.first << "=\'" << typeandvalue[1] << "\'";
+                if (p != wheres.back())
+                    s << " AND ";
+            }
+            if(betweens.size()!=0) s << " AND ";
+            foreach(tween_t p, betweens){
+                s << p.field << " BETWEEN \'" << p.begin << "\' AND \'" << p.end << "\'";
+                if(p != betweens.back())
+                    s << " AND ";
+            }
+            //std::cout << s.str() << std::endl;
+            return eval_select(s.str(),columns.size());
+        }
+        /**
+         * @brief podejmowanie metadanych zgodnie z podanymi kolumnami i kryteriami
+         * @param columns kolumny
+         * @param wheres patrz get
+         * @return tablica zwracanych metadanych w kolejności jak w parametrze columns
+         */
+        
+        std::vector<std::vector<std::string> > get_metadata(const std::vector<std::string> & columns,  const std::vector<tween_t> & betweens){
+            std::stringstream s;
+            s << "SELECT ";
+            for(int i=0;i<columns.size();i++) {
+                const std::string & c = columns[i];
+                s << c ;
+                if(i!=columns.size()-1)
+                   s << ",";
+            }
+            s << " from objects\nWHERE ";
+            
+            foreach(tween_t p, betweens){
+                s << p.field << " BETWEEN \'" << p.begin << "\' AND \'" << p.end << "\'";
+                if(p != betweens.back())
+                    s << " AND ";
+            }
+            
+            return eval_select(s.str(),columns.size());
+        }
+        
+        /**
+         * @brief lista kolumn w bazie
+         * @return lista kolumn w bazie
+         */
+        std::vector<std::string> columns() {
+            std::vector<std::vector<std::string> > qry = eval_select(std::string("pragma table_info(objects);"),3);
+            std::vector<std::string> res;
+            foreach(std::vector<std::string> v, qry){
+                res.push_back(v[1]);
+            }
+            return res;
+        }
+        
         /**
          * \brief zapisuje obiekt w bazie danych SQLite
          *
