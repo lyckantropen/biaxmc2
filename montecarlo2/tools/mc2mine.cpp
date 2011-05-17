@@ -16,6 +16,22 @@
  */
 typedef enum { table, mathematica, maple, count } output_t ;
 
+std::vector<std::string> test_in(std::vector<std::string> src, std::vector<std::string> dst){
+    std::vector<std::string> res;
+    for(std::vector<std::string>::iterator i = src.begin();i!=src.end();i++){
+        if(std::find(dst.begin(),dst.end(),*i)!=dst.end())
+            res.push_back(*i);
+    }
+    return res;
+}
+
+int index(const std::vector<std::string> & s, const std::string & find) {
+    for(int i=0;i<s.size();i++)
+        if(s[i]==find) return i;
+    return -1;
+}
+
+
 void    do_count(const std::string & data_type,const std::vector<std::string> & columns,boostbase::base & db,const boostbase::tween_t_proxy & betweens,const boostbase::pair_t_proxy & wheres){
 	if(data_type=="final_properties" || data_type=="properties")
 		std::cout << db.get<PRE79MeanProperties>(wheres,betweens).size() << std::endl;
@@ -97,7 +113,19 @@ void    table_output(const std::string & data_type,const std::vector<std::string
 			whatwegot[i]=PRE79MeanProperties(wwg2[i],H);
 		}
 	}
-
+        /**** wczytywanie metadanych ***/
+        std::vector<std::string> m_columns = test_in(columns,db.columns());
+        std::vector<std::vector<std::string> > metadata;
+        if(m_columns.size())
+                metadata = db.get_metadata(m_columns,wheres,betweens);
+        
+        foreach(std::vector<std::string> & m, metadata){
+            foreach(std::string & a, m){
+                std::cout << a << ",";
+            }
+            std::cout << std::endl;
+        }
+        
         std::cout << "## some of the columns may imply an additional column with error values\n";
         std::cout << "# ";
         foreach(const std::string & col,columns){
@@ -105,12 +133,13 @@ void    table_output(const std::string & data_type,const std::vector<std::string
         }
         std::cout << std::endl;
 
+        int count = 0;
         foreach(PRE79MeanProperties & prop,whatwegot){
             //std::cout << prop << std::endl;
             prop.CalculateMeanTensors();
             foreach(const std::string & column,columns){
-                if(column=="temperature")
-                    std::cout << prop.Temperature() << "\t";
+                //if(column=="temperature")
+                //    std::cout << prop.Temperature() << "\t";
                 if(column=="specific_heat")
                     std::cout << prop.SpecificHeat().TableForm() << "\t";
                 if(column=="energy")
@@ -151,14 +180,14 @@ void    table_output(const std::string & data_type,const std::vector<std::string
                     std::cout << prop.Delta322ByCorrelationSusceptibility().TableForm() << "\t";
                 if(column=="parity_from_correlation_sus")
                     std::cout << prop.ParityByCorrelationSusceptibility().TableForm() << "\t";
-                if(column=="tau")
+                /*if(column=="tau")
                     std::cout << prop.Tau() << "\t";
                 if(column=="lambda")
                     std::cout << prop.Lambda() << "\t";
                 //to pole nie może nazywać się h ani H, ponieważ zachodzi kolizja z wysokością siatki H
                 if(column=="field")
                     std::cout << prop.Field() << "\t";
-
+                 */
                 if(column=="mean_d200corz")
                     std::cout << prop.Delta200ZMeanCorrelation() << "\t";
                 if(column=="mean_d222corz")
@@ -223,10 +252,17 @@ void    table_output(const std::string & data_type,const std::vector<std::string
                     std::cout << prop.Delta322MeanCorrelation() << "\t";
                 if(column=="parity_correlation")
                     std::cout << prop.ParityMeanCorrelation() << "\t";
+                
+                //metadane
+                if(index(m_columns,column)!=-1){
+                    std::cout << metadata[count][index(m_columns,column)] << "\t";
+                }
 
             }
             std::cout << std::endl;
+            count++;
         }
+        
     }
     if(data_type=="lattice" || data_type=="final_lattice") {
         std::vector<Lattice> whatwegot= db.get<Lattice>(wheres,betweens);
@@ -556,6 +592,7 @@ int main(int argc, char** argv)
 
     //readonly 
     boostbase::base db(dbfile,dbdir,true);
+   
 
     switch(output_type){
         case table:
