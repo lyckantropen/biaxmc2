@@ -39,8 +39,8 @@ OBJECTFILES= \
 	${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Contractions.o \
 	${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/valarray_external.o \
 	${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/4DSphereRW.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/mc2/src/FIFOInterface.o \
-	${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Random.o
+	${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Random.o \
+	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/mc2/src/FIFOInterface.o
 
 # C Compiler Flags
 CFLAGS=-std=c99 -fopenmp
@@ -108,15 +108,15 @@ ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/4DSphe
 	${RM} $@.d
 	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/4DSphereRW.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/4DSphereRW.cpp
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/mc2/src/FIFOInterface.o: nbproject/Makefile-${CND_CONF}.mk ../../montecarlo2/mc2/src/FIFOInterface.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/mc2/src
-	${RM} $@.d
-	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/mc2/src/FIFOInterface.o ../../montecarlo2/mc2/src/FIFOInterface.cpp
-
 ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Random.o: nbproject/Makefile-${CND_CONF}.mk /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Random.cpp 
 	${MKDIR} -p ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src
 	${RM} $@.d
 	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Random.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Random.cpp
+
+${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/mc2/src/FIFOInterface.o: nbproject/Makefile-${CND_CONF}.mk ../../montecarlo2/mc2/src/FIFOInterface.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/mc2/src
+	${RM} $@.d
+	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/mc2/src/FIFOInterface.o ../../montecarlo2/mc2/src/FIFOInterface.cpp
 
 # Subprojects
 .build-subprojects:

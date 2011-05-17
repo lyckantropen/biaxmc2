@@ -25,6 +25,7 @@
       <itemPath>../../montecarlo2/mc2/include/SimulationDBFind.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/SpatialCorrelationEvolution.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/Statistical.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/WydroRNG.h</itemPath>
       <itemPath>../../montecarlo2/mc2/include/eig3.h</itemPath>
       <itemPath>../../montecarlo2/mc2/include/evsort.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/quantity_iterator.h</itemPath>

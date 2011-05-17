@@ -11,6 +11,7 @@
 #include "std.h"
 #include "singleton.h"
 #include "valarray_external.h"
+#include "WydroRNG.h"
 
 /*
  * Generator random01 jest głównym generatorem liczb losowych, ale zastrzegamy, żeby istniała osobna instancja
@@ -42,7 +43,21 @@ public:
     }
 };
 
+class rangen_wd {
+public:
+    rangen_wd(){
+        initializeRNG(seed1);
+    }
+    double Gen01(){
+        return drandom(seed2);
+    }
+    double operator()(){
+        return Gen01();
+    }
+};
+
 ///ten generator będzie osobny dla każdego wątku (dyrektywa threadprivate)
+//extern rangen_wd random01;
 extern rangen random01;
 
 //extern double random01();
