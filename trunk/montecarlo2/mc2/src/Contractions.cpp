@@ -2,7 +2,7 @@
 
 double  Rank2Contraction(const vect & a, const vect & b){
         vect coeff(6);
-        coeff[0]=coeff[5]=1.0;
+        coeff[0]=coeff[3]=coeff[5]=1.0;
         coeff[1]=coeff[2]=coeff[4]=2.0;
         coeff*=a*b;
         return coeff.sum();

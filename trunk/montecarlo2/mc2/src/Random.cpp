@@ -9,6 +9,7 @@
 
 
 boost::rand48   rng2;
+//rangen_wd random01;
 rangen random01;
 //rangen * rg = NULL;
 
@@ -71,5 +72,71 @@ vect    RandomPointOn4DSphereOld(const double & r){
 	x[3]=x[3]/r1*r;
 	return x;
 }
+
+long int seed1 = 46723;			// seed for random long integer generator
+long int seed2 = 2593459;		// seed for shuffling algorithm
+
+long int jj =89343;
+double denom=(1.0/(m-1));
+const int NR=64;
+
+long int y;			// random int mixed into shuffling array.
+long int j[NR];		// vector of random integers that are shuffled
+					// Both y and j[] are seeded by making the singl
+
+long int random_int(long int& j)
+{
+	long int l;
+	l = j/q;				// Parameter "j" is recursively defined to produce a
+							// a sequence of random numbers.
+	j = a*(j - q*l) -r*l;	// This iteration step is actually a mod 2^31
+							// operation as described by Schrage.  Here, first term =
+							// j mod q and second term is (int divide(j/q) )*r.
+							// See Barkema, page 388.
+	if (j<0) j += m;		// This shift bring the number back into the interval
+							// [1, m - 1].
+	return (j-1);	// j - 1 is a random integer in interval [0, m - 2]
+}	//end program to return random long integer
+
+double drandom(long int& seed2)
+{
+	long int l;
+	long int k;
+
+	l = seed2/q;
+	seed2 = a*(seed2 - q*l) - r*l;	//	Selects "seed2" to be a random integer in
+							// [1, 2^31 - 2 ] and updates "seed2" as reference variable.
+							//	This ensures that a series of calls will produce a
+							//	a series of random long ints "seed2".
+	if (seed2 < 0)			//ensures that seed2 is random int in [1, m - 1]
+		{
+			seed2 = seed2 + m;
+		}
+	k = (y/m)*NR;		//Selects an integer in [0, NR]
+
+	y = j[k];			// Sets y = integer of k-th component of j[].
+						// Side effect: global variable y is updated for
+						// next call of drandom.
+	j[k] = seed2;		// Side effect: global variable j[k] is updated
+						// for next call of drandom.
+
+	return denom*(y - 1);	// Returns randomly shuffled double float in [0, 1).
+}	//end Shuffler program
+
+void initializeRNG(long int& seed1)
+{
+	int s;
+	for(s = 0; s< NR ; s++)	//loop iteratively seeds each component of j[].
+		{
+			j[s] = random_int(seed1); //seeds component "s" of shuffler vector j[].
+			//	std::cout << "j[" << s << "] = " << j[s] << '\n';
+			//	The above line is used as a test to insure that j[] is a random array
+			//	That is, to print out array j[] to check random initialization
+		}
+	y = random_int(seed1);	// seeds variable j
+	//	std::cout << "yy = " << yy<< '\n';
+	//	That is, to print out yy to check random initialization
+}	//end program to initialize Shuffler program
+
 
 //template<> rangen * Singleton<rangen>::instance=NULL;
