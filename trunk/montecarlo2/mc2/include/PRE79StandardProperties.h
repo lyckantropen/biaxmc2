@@ -17,7 +17,7 @@
 #include "PRE79SpatialCorrelations.h"
 
 #include "serializer.h"
-#include "eig3.h"
+//#include "eig3.h"
 #include "evsort.h"
 
 
@@ -1142,8 +1142,8 @@ public:
 	//Jacobi_Cyclic_Method((double*)t20evalm,(double*)t20evectm,(double*)t20mat,3);
 	//Jacobi_Cyclic_Method((double*)t22evalm,(double*)t22evectm,(double*)t22mat,3);
       
-	eigen_decomposition(t20mat,t20evectm,t20evalm);
-        eigen_decomposition(t22mat,t22evectm,t22evalm);
+	//eigen_decomposition(t20mat,t20evectm,t20evalm);
+  //eigen_decomposition(t22mat,t22evectm,t22evalm);
 	
 	
 	std::vector<evs> t20es;
