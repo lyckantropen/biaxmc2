@@ -118,13 +118,15 @@ void    table_output(const std::string & data_type,const std::vector<std::string
         std::vector<std::vector<std::string> > metadata;
         if(m_columns.size())
                 metadata = db.get_metadata(m_columns,wheres,betweens);
-        
+       
+        /*	
         foreach(std::vector<std::string> & m, metadata){
             foreach(std::string & a, m){
                 std::cout << a << ",";
             }
             std::cout << std::endl;
         }
+	*/
         
         std::cout << "## some of the columns may imply an additional column with error values\n";
         std::cout << "# ";
