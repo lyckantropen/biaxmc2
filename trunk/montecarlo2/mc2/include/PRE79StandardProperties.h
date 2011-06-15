@@ -977,18 +977,18 @@ public:
 
         T20T20x=s.T20T20x;
         T20T20y=s.T20T20y;
-        T20T20x=s.T20T20z;
+        T20T20z=s.T20T20z;
         T22T22x=s.T22T22x;
         T22T22y=s.T22T22y;
-        T22T22x=s.T22T22z;
+        T22T22z=s.T22T22z;
         T32T32=s.T32T32;
 
         T20T20x_sus=s.T20T20x_sus;
         T20T20y_sus=s.T20T20y_sus;
-        T20T20x_sus=s.T20T20z_sus;
+        T20T20z_sus=s.T20T20z_sus;
         T22T22x_sus=s.T22T22x_sus;
         T22T22y_sus=s.T22T22y_sus;
-        T22T22x_sus=s.T22T22z_sus;
+        T22T22z_sus=s.T22T22z_sus;
         T32T32_sus=s.T32T32_sus;
 
         temperature=s.temperature;
@@ -1061,18 +1061,18 @@ public:
 
         T20T20x=s.T20T20x;
         T20T20y=s.T20T20y;
-        T20T20x=s.T20T20z;
+        T20T20z=s.T20T20z;
         T22T22x=s.T22T22x;
         T22T22y=s.T22T22y;
-        T22T22x=s.T22T22z;
+        T22T22z=s.T22T22z;
         T32T32=s.T32T32;
 
         T20T20x_sus=s.T20T20x_sus;
         T20T20y_sus=s.T20T20y_sus;
-        T20T20x_sus=s.T20T20z_sus;
+        T20T20z_sus=s.T20T20z_sus;
         T22T22x_sus=s.T22T22x_sus;
         T22T22y_sus=s.T22T22y_sus;
-        T22T22x_sus=s.T22T22z_sus;
+        T22T22z_sus=s.T22T22z_sus;
         T32T32_sus=s.T32T32_sus;
 
         temperature=s.temperature;
