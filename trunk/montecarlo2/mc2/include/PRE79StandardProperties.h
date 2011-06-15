@@ -116,28 +116,33 @@ private:
         vect t20z(0.0,6);
         vect t22z(0.0,6);
 
-        t20z = std::sqrt(3./2.)*(mqz-Identity(3))/double(lat->GetN());
-        t22z = std::sqrt(1./2.)*(mqx-mqy)/double(lat->GetN());
+        mqz/=double(lat->GetN());
+        mqx/=double(lat->GetN());
+        mqy/=double(lat->GetN());
+        mt/=double(lat->GetN());
+        
+        t20z = std::sqrt(3./2.)*(mqz-Identity(3));
+        t22z = std::sqrt(1./2.)*(mqx-mqy);
         T20T20z[acc_idx]=MatrixDotProduct(t20z,t20z);
         T22T22z[acc_idx]=MatrixDotProduct(t22z,t22z);
 
         vect t20x(0.0,6);
         vect t22x(0.0,6);
 
-        t20x = std::sqrt(3./2.)*(mqx-Identity(3))/double(lat->GetN());
-        t22x = std::sqrt(1./2.)*(mqy-mqz)/double(lat->GetN());
+        t20x = std::sqrt(3./2.)*(mqx-Identity(3));
+        t22x = std::sqrt(1./2.)*(mqy-mqz);
         T20T20x[acc_idx]=MatrixDotProduct(t20x,t20x);
         T22T22x[acc_idx]=MatrixDotProduct(t22x,t22x);
 
         vect t20y(0.0,6);
         vect t22y(0.0,6);
 
-        t20y = std::sqrt(3./2.)*(mqy-Identity(3))/double(lat->GetN());
-        t22y = std::sqrt(1./2.)*(mqz-mqx)/double(lat->GetN());
+        t20y = std::sqrt(3./2.)*(mqy-Identity(3));
+        t22y = std::sqrt(1./2.)*(mqz-mqx);
         T20T20y[acc_idx]=MatrixDotProduct(t20y,t20y);
         T22T22y[acc_idx]=MatrixDotProduct(t22y,t22y);
 
-	T32T32[acc_idx]=Rank3Contraction(mt,mt)/double(lat->GetN());
+	T32T32[acc_idx]=Rank3Contraction(mt,mt);
     }
 
 public:
