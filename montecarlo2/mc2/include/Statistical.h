@@ -104,7 +104,7 @@ Value MeanSub(const std::valarray<value_type> & v){
  */
 
 template<class value_type>
-Value Mean(const std::valarray<value_type> & v,const int start=0, const int limit=0, const int slices=10){
+Value Mean(const std::valarray<value_type> & v,const int start=0, const int limit=0, const int slices=100){
     int lim;
     if(limit==0)
         lim=v.size();
