@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="62">
-  <logicalFolder name="root" displayName="root" projectFiles="true">
+<configurationDescriptor version="79">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
@@ -11,6 +11,7 @@
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/ILoggable.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/Lattice.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/MCProto.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/MarsagliaRNG.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/Metropolis.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/PRE79Scanning.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/PRE79Simulation.h</itemPath>
@@ -26,10 +27,10 @@
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/SpatialCorrelationEvolution.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/Statistical.h</itemPath>
       <itemPath>../../montecarlo2/mc2/include/WydroRNG.h</itemPath>
-      <itemPath>../../montecarlo2/mc2/include/eig3.h</itemPath>
       <itemPath>../../montecarlo2/mc2/include/evsort.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/quantity_iterator.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/random01.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/randomc.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/singleton.h</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/valarray_external.h</itemPath>
     </logicalFolder>
@@ -44,11 +45,12 @@
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Contractions.cpp</itemPath>
       <itemPath>../../montecarlo2/mc2/src/FIFOInterface.cpp</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Lattice.cpp</itemPath>
+      <itemPath>../../montecarlo2/mc2/src/MarsagliaRNG.cpp</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Particle.cpp</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Random.cpp</itemPath>
       <itemPath>../../montecarlo2/mc2/src/RuntimePropertiesServer.cpp</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Statistical.cpp</itemPath>
-      <itemPath>../../montecarlo2/mc2/src/eig3.cpp</itemPath>
+      <itemPath>../../montecarlo2/mc2/src/mother.cpp</itemPath>
       <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/valarray_external.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -65,9 +67,8 @@
   <confs>
     <conf name="Debug" type="3">
       <toolsSet>
-        <developmentServer>localhost</developmentServer>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>GNU|GNU</compilerSet>
-        <platform>2</platform>
       </toolsSet>
       <compileType>
         <cTool>
@@ -99,9 +100,8 @@
     </conf>
     <conf name="Release" type="3">
       <toolsSet>
-        <developmentServer>localhost</developmentServer>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>GNU|GNU</compilerSet>
-        <platform>2</platform>
       </toolsSet>
       <compileType>
         <cTool>

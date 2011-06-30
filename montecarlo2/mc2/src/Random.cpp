@@ -10,7 +10,9 @@
 
 boost::rand48   rng2;
 //rangen_wd random01;
-rangen random01;
+//rangen random01;
+//MarsagliaRNG random01;
+rangen_mwc random01;
 //rangen * rg = NULL;
 
 /*

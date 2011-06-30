@@ -1,68 +1,30 @@
 /* 
- * File:   random01.h
+ * File:   MarsagliaRNG.h
  * Author: karol
  *
- * Created on 17 listopad 2009, 12:50
+ * Created on 30 czerwiec 2011, 13:40
  */
 
-#ifndef _RANDOM01_H
-#define	_RANDOM01_H
-#include "boost.h"
-#include "std.h"
-#include "singleton.h"
-#include "valarray_external.h"
-#include "WydroRNG.h"
-#include "MarsagliaRNG.h"
-#include "randomc.h"
-
-/*
- * Generator random01 jest głównym generatorem liczb losowych, ale zastrzegamy, żeby istniała osobna instancja
- * dla każdego wątku. Każda instancja jest inicjalizowana z generatora, który jest wspólny dla wszystkich wątków.
- */
-
-//class rangen;
-//extern rangen * rg;
-//#pragma omp threadprivate(rg)
-///ten generator jest wspólny dla każdego wątku i służy tylko do inicjalizacji instancji generatora rg (dyrektywa shared)
-extern boost::rand48   rng2;
+#ifndef MARSAGLIARNG_H
+#define	MARSAGLIARNG_H
+#include <omp.h>
+#include <iostream>
 
 
-class rangen {
-    boost::mt19937  rng;
-    boost::uniform_01<boost::mt19937>   uni01;
-    //boost::minstd_rand   rng;
-    //boost::uniform_01<boost::minstd_rand>    uni01;
-    //friend class Singleton<rangen>;
-public:
-    rangen():rng(rng2()),uni01(rng){}
-    rangen(const rangen & r):rng(rng2()),uni01(rng){
-    }
-    double Gen01(){
-        return uni01();
-    }
-    double operator()(){
-        return uni01();
-    }
-};
-
-class rangen_wd {
-public:
-    rangen_wd(){
-        initializeRNG(seed1);
-    }
-    double Gen01(){
-        return drandom(seed2);
-    }
-    double operator()(){
-        return Gen01();
-    }
-};
-
-class rangen_mwc {
-    CRandomMother gen;
+class MarsagliaRNG {
     unsigned long lsp[128][3];
+    unsigned long seed;
+    unsigned long mult;
+    double Mother(unsigned long *pSeed,const unsigned long & pMult);
+    short mother1[10];
+    short mother2[10];
+    short mStart;
+
 public:
-    rangen_mwc(){
+    MarsagliaRNG(){
+        mStart = 1;
+        mother1 = { 0,0,0,0,0, 0,0,0,0,0 };
+        mother2 = { 0,0,0,0,0, 0,0,0,0,0 };
         lsp[0]={489UL, 2100239007743UL, 1050119503871UL};
         lsp[1]={1170UL, 5025111736319UL, 2512555868159UL};
         lsp[2]={1245UL, 5347234283519UL, 2673617141759UL};
@@ -191,28 +153,22 @@ public:
         lsp[125]={45585UL, 195786084188159UL, 97893042094079UL};
         lsp[126]={45720UL, 196365904773119UL, 98182952386559UL};
         lsp[127]={45729UL, 196404559478783UL, 98202279739391UL};
-        unsigned long seed = lsp[omp_get_thread_num()][2];
-        unsigned long mult = lsp[omp_get_thread_num()][0];
         
-        gen.RandomInit(seed,mult);
-        //std::cout << omp_get_thread_num() << ", seed: " << seed << ", mult: " << mult << std::endl;
+        seed = lsp[omp_get_thread_num()][2];
+        mult = lsp[omp_get_thread_num()][0];
+        
+        std::cout << omp_get_thread_num() << ": Seed: " << seed << ", Mult: " << mult << std::endl;
+        std::cout << "sizeof(unsigned long): " << sizeof(unsigned long) << std::endl;
     }
+    
     double operator()(){
-        return gen.Random();
+        return Mother(&seed,mult);
+    } 
+    double Gen01(){
+        return Mother(&seed,mult);
     }
+
 };
 
-///ten generator będzie osobny dla każdego wątku (dyrektywa threadprivate)
-//extern rangen_wd random01;
-//extern rangen random01;
-//extern MarsagliaRNG random01;
-extern rangen_mwc random01;
-
-//extern double random01();
-extern int plusminusone();
-extern vect    RandomPointOn4DSphereMarsaglia(const double & r);
-extern vect    RandomPointOn4DSphereOld(const double & r);
-
-
-#endif	/* _RANDOM01_H */
+#endif	/* MARSAGLIARNG_H */
 
