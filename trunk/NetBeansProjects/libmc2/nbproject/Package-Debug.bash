@@ -9,7 +9,8 @@ TOP=`pwd`
 CND_PLATFORM=GNU-Linux-x86
 CND_CONF=Debug
 CND_DISTDIR=dist
-TMPDIR=build/${CND_CONF}/${CND_PLATFORM}/tmp-packaging
+CND_BUILDDIR=build
+NBTMPDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}/tmp-packaging
 TMPDIRNAME=tmp-packaging
 OUTPUT_PATH=${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/liblibmc2.a
 OUTPUT_BASENAME=liblibmc2.a
@@ -53,22 +54,22 @@ function copyFileToTmpDir
 # Setup
 cd "${TOP}"
 mkdir -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package
-rm -rf ${TMPDIR}
-mkdir -p ${TMPDIR}
+rm -rf ${NBTMPDIR}
+mkdir -p ${NBTMPDIR}
 
 # Copy files and create directories and links
 cd "${TOP}"
-makeDirectory ${TMPDIR}/libmc2/lib
-copyFileToTmpDir "${OUTPUT_PATH}" "${TMPDIR}/${PACKAGE_TOP_DIR}lib/${OUTPUT_BASENAME}" 0644
+makeDirectory "${NBTMPDIR}/libmc2/lib"
+copyFileToTmpDir "${OUTPUT_PATH}" "${NBTMPDIR}/${PACKAGE_TOP_DIR}lib/${OUTPUT_BASENAME}" 0644
 
 
 # Generate tar file
 cd "${TOP}"
 rm -f ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package/libmc2.tar
-cd ${TMPDIR}
+cd ${NBTMPDIR}
 tar -vcf ../../../../${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/package/libmc2.tar *
 checkReturnCode
 
 # Cleanup
 cd "${TOP}"
-rm -rf ${TMPDIR}
+rm -rf ${NBTMPDIR}

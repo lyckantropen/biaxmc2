@@ -10,37 +10,42 @@
 # Environment
 MKDIR=mkdir
 CP=cp
+GREP=grep
+NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
 CC=gcc
 CCC=g++
 CXX=g++
-FC=
+FC=gfortran
 AS=as
 
 # Macros
 CND_PLATFORM=GNU-Linux-x86
 CND_CONF=Debug
 CND_DISTDIR=dist
+CND_BUILDDIR=build
 
 # Include project Makefile
 include Makefile
 
 # Object Directory
-OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
+OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Lattice.o \
-	${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Statistical.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/mc2/src/RuntimePropertiesServer.o \
-	${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Particle.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/mc2/src/eig3.o \
-	${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Contractions.o \
-	${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/valarray_external.o \
-	${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/4DSphereRW.o \
-	${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Random.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/mc2/src/FIFOInterface.o
+	${OBJECTDIR}/_ext/382267761/Lattice.o \
+	${OBJECTDIR}/_ext/382267761/Random.o \
+	${OBJECTDIR}/_ext/652521094/mother.o \
+	${OBJECTDIR}/_ext/652521094/RuntimePropertiesServer.o \
+	${OBJECTDIR}/_ext/382267761/4DSphereRW.o \
+	${OBJECTDIR}/_ext/382267761/Contractions.o \
+	${OBJECTDIR}/_ext/382267761/Particle.o \
+	${OBJECTDIR}/_ext/382267761/valarray_external.o \
+	${OBJECTDIR}/_ext/652521094/FIFOInterface.o \
+	${OBJECTDIR}/_ext/652521094/MarsagliaRNG.o \
+	${OBJECTDIR}/_ext/382267761/Statistical.o
+
 
 # C Compiler Flags
 CFLAGS=-std=c99 -fopenmp
@@ -60,63 +65,68 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	${MAKE}  -f nbproject/Makefile-Debug.mk dist/Debug/GNU-Linux-x86/liblibmc2.a
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/liblibmc2.a
 
-dist/Debug/GNU-Linux-x86/liblibmc2.a: ${OBJECTFILES}
-	${MKDIR} -p dist/Debug/GNU-Linux-x86
-	${RM} dist/Debug/GNU-Linux-x86/liblibmc2.a
-	${AR} rv ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/liblibmc2.a ${OBJECTFILES} 
-	$(RANLIB) dist/Debug/GNU-Linux-x86/liblibmc2.a
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/liblibmc2.a: ${OBJECTFILES}
+	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/liblibmc2.a
+	${AR} -rv ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/liblibmc2.a ${OBJECTFILES} 
+	$(RANLIB) ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/liblibmc2.a
 
-${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Lattice.o: nbproject/Makefile-${CND_CONF}.mk /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Lattice.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src
+${OBJECTDIR}/_ext/382267761/Lattice.o: /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Lattice.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/382267761
 	${RM} $@.d
-	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Lattice.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Lattice.cpp
+	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/382267761/Lattice.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Lattice.cpp
 
-${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Statistical.o: nbproject/Makefile-${CND_CONF}.mk /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Statistical.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src
+${OBJECTDIR}/_ext/382267761/Random.o: /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Random.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/382267761
 	${RM} $@.d
-	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Statistical.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Statistical.cpp
+	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/382267761/Random.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Random.cpp
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/mc2/src/RuntimePropertiesServer.o: nbproject/Makefile-${CND_CONF}.mk ../../montecarlo2/mc2/src/RuntimePropertiesServer.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/mc2/src
+${OBJECTDIR}/_ext/652521094/mother.o: ../../montecarlo2/mc2/src/mother.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/652521094
 	${RM} $@.d
-	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/mc2/src/RuntimePropertiesServer.o ../../montecarlo2/mc2/src/RuntimePropertiesServer.cpp
+	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/652521094/mother.o ../../montecarlo2/mc2/src/mother.cpp
 
-${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Particle.o: nbproject/Makefile-${CND_CONF}.mk /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Particle.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src
+${OBJECTDIR}/_ext/652521094/RuntimePropertiesServer.o: ../../montecarlo2/mc2/src/RuntimePropertiesServer.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/652521094
 	${RM} $@.d
-	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Particle.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Particle.cpp
+	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/652521094/RuntimePropertiesServer.o ../../montecarlo2/mc2/src/RuntimePropertiesServer.cpp
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/mc2/src/eig3.o: nbproject/Makefile-${CND_CONF}.mk ../../montecarlo2/mc2/src/eig3.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/mc2/src
+${OBJECTDIR}/_ext/382267761/4DSphereRW.o: /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/4DSphereRW.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/382267761
 	${RM} $@.d
-	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/mc2/src/eig3.o ../../montecarlo2/mc2/src/eig3.cpp
+	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/382267761/4DSphereRW.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/4DSphereRW.cpp
 
-${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Contractions.o: nbproject/Makefile-${CND_CONF}.mk /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Contractions.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src
+${OBJECTDIR}/_ext/382267761/Contractions.o: /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Contractions.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/382267761
 	${RM} $@.d
-	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Contractions.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Contractions.cpp
+	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/382267761/Contractions.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Contractions.cpp
 
-${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/valarray_external.o: nbproject/Makefile-${CND_CONF}.mk /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/valarray_external.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src
+${OBJECTDIR}/_ext/382267761/Particle.o: /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Particle.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/382267761
 	${RM} $@.d
-	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/valarray_external.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/valarray_external.cpp
+	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/382267761/Particle.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Particle.cpp
 
-${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/4DSphereRW.o: nbproject/Makefile-${CND_CONF}.mk /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/4DSphereRW.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src
+${OBJECTDIR}/_ext/382267761/valarray_external.o: /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/valarray_external.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/382267761
 	${RM} $@.d
-	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/4DSphereRW.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/4DSphereRW.cpp
+	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/382267761/valarray_external.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/valarray_external.cpp
 
-${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Random.o: nbproject/Makefile-${CND_CONF}.mk /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Random.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src
+${OBJECTDIR}/_ext/652521094/FIFOInterface.o: ../../montecarlo2/mc2/src/FIFOInterface.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/652521094
 	${RM} $@.d
-	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Random.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Random.cpp
+	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/652521094/FIFOInterface.o ../../montecarlo2/mc2/src/FIFOInterface.cpp
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/mc2/src/FIFOInterface.o: nbproject/Makefile-${CND_CONF}.mk ../../montecarlo2/mc2/src/FIFOInterface.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/mc2/src
+${OBJECTDIR}/_ext/652521094/MarsagliaRNG.o: ../../montecarlo2/mc2/src/MarsagliaRNG.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/652521094
 	${RM} $@.d
-	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/mc2/src/FIFOInterface.o ../../montecarlo2/mc2/src/FIFOInterface.cpp
+	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/652521094/MarsagliaRNG.o ../../montecarlo2/mc2/src/MarsagliaRNG.cpp
+
+${OBJECTDIR}/_ext/382267761/Statistical.o: /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Statistical.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/382267761
+	${RM} $@.d
+	$(COMPILE.cc) -g -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/382267761/Statistical.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Statistical.cpp
 
 # Subprojects
 .build-subprojects:
@@ -124,8 +134,8 @@ ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/mc2/src/FIFOInterface.o: nbproject
 
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
-	${RM} -r build/Debug
-	${RM} dist/Debug/GNU-Linux-x86/liblibmc2.a
+	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/liblibmc2.a
 
 # Subprojects
 .clean-subprojects:
