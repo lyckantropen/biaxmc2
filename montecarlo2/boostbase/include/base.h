@@ -395,6 +395,25 @@ namespace boostbase {
             return res;
         }
         
+        void remove(const std::vector<pair_t> & wheres, const std::vector<tween_t> & betweens){
+            std::stringstream s;
+            s << "DELETE from objects\nWHERE ";
+            foreach(pair_t p, wheres) {
+                std::vector<std::string> typeandvalue;
+                boost::split(typeandvalue,p.second,boost::is_any_of(":"));
+
+                s << p.first << "=\'" << typeandvalue[1] << "\'";
+                if (p != wheres.back())
+                    s << " AND ";
+            }
+            if(betweens.size()!=0) s << " AND ";
+            foreach(tween_t p, betweens){
+                s << p.field << " BETWEEN \'" << p.begin << "\' AND \'" << p.end << "\'";
+                if(p != betweens.back())
+                    s << " AND ";
+            }
+            command(s.str());
+        }
         /**
          * \brief zapisuje obiekt w bazie danych SQLite
          *
