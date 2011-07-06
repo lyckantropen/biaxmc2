@@ -94,6 +94,12 @@ void    table_output(const std::string & data_type,const std::vector<std::string
     }
 
     if(data_type=="final_properties" || data_type=="properties") {
+        /**** wczytywanie metadanych ***/
+        std::vector<std::string> m_columns = test_in(columns,db.columns());
+        std::vector<std::vector<std::string> > metadata;
+        if(m_columns.size())
+                metadata = db.get_metadata(m_columns,wheres,betweens);
+        
         std::vector<PRE79MeanProperties> whatwegot;
 	if(!recalculate)
 		whatwegot = db.get<PRE79MeanProperties>(wheres,betweens);
@@ -101,23 +107,38 @@ void    table_output(const std::string & data_type,const std::vector<std::string
         	boostbase::pair_t_proxy nwheres = wheres;
 	        nwheres.pop();
 		nwheres(std::string("data_type"),std::string("properties_evolution"));
-		std::vector<PRE79MeanProperties> wwg = db.get<PRE79MeanProperties>(wheres,betweens);
-		std::vector<PRE79StandardProperties> wwg2 = db.get<PRE79StandardProperties>(nwheres,betweens);
-		if(wwg2.size()<wwg.size()) std::cout << "#WARINING: insufficient data to recalculate. output may not be very satisfying\n";
+                
+                std::vector<std::string> names;
+                names.push_back("temperature");
+                names.push_back("lambda");
+                names.push_back("tau");
+                names.push_back("field");
+                
+                std::vector<std::string> h_columns = test_in(names,db.columns());
+                std::vector<std::vector<std::string> > h_data = db.get_metadata(h_columns,nwheres,betweens);
+                
+		//std::vector<PRE79MeanProperties> wwg = db.get<PRE79MeanProperties>(wheres,betweens);
+		
+                std::vector<PRE79StandardProperties> wwg2 = db.get<PRE79StandardProperties>(nwheres,betweens);
+		//if(wwg2.size()<wwg.size()) std::cout << "#WARINING: insufficient data to recalculate. output may not be very satisfying\n";
                 int size = wwg2.size();
                 whatwegot.resize(size);
 
                 #pragma omp parallel for ordered
 		for(int i=0;i<size;i++){
-			PRE79StandardHamiltonian H(wwg[i].Temperature(),wwg[i].Lambda(),wwg[i].Tau(),wwg[i].Field());
+                    
+                        double t = std::atof(h_data[i][index(h_columns,"temperature")].c_str());
+                        double l = std::atof(h_data[i][index(h_columns,"lambda")].c_str());
+                        double tau = std::atof(h_data[i][index(h_columns,"tau")].c_str());
+                        double h = std::atof(h_data[i][index(h_columns,"field")].c_str());
+                        
+			//PRE79StandardHamiltonian H(wwg[i].Temperature(),wwg[i].Lambda(),wwg[i].Tau(),wwg[i].Field());
+			
+                        PRE79StandardHamiltonian H(t,l,tau,h);
 			whatwegot[i]=PRE79MeanProperties(wwg2[i],H);
 		}
 	}
-        /**** wczytywanie metadanych ***/
-        std::vector<std::string> m_columns = test_in(columns,db.columns());
-        std::vector<std::vector<std::string> > metadata;
-        if(m_columns.size())
-                metadata = db.get_metadata(m_columns,wheres,betweens);
+
        
         /*	
         foreach(std::vector<std::string> & m, metadata){
