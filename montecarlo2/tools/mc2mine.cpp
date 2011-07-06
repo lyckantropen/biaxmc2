@@ -533,6 +533,7 @@ int main(int argc, char** argv)
     bool sqlite_debug=false;
     bool recalculate=false;
     bool commit=false;
+    bool remove=false;
     output_t output_type = table;
 
     for(int i=1;i<argc;i++){
@@ -612,6 +613,9 @@ int main(int argc, char** argv)
             commit=true;
             commit_file = argv[i+1];
         }
+        if(std::string(argv[i])=="--remove"){
+            remove=true;
+        }
 
     }
     if(dbfile=="" || dbdir==""){
@@ -624,14 +628,22 @@ int main(int argc, char** argv)
     std::cout << std::setprecision(12) << std::fixed ;
 
     //readonly 
-    boostbase::base db(dbfile,dbdir,!commit);
+    boostbase::base db(dbfile,dbdir,!(commit || remove) );
    
     if(commit){
         std::cout << "Committing to database, no output will be generated\n";
         do_recalculate(db,betweens,wheres,true,commit_file);
-        return(EXIT_SUCCESS);
+        goto endthis;
+        //return(EXIT_SUCCESS);
     }
 
+    if(remove){
+        std::cout << "Removing entries\n";
+        db.remove(wheres,betweens);
+        goto endthis;
+        //return(EXIT_SUCCESS);
+    }
+    
     switch(output_type){
         case table:
             table_output(data_type,columns,db,betweens,wheres,recalculate);
@@ -643,7 +655,7 @@ int main(int argc, char** argv)
 	    do_count(data_type,columns,db,betweens,wheres);
 	    break;
     }
-
+endthis:
     if(sqlite_debug)
         std::cout << std::endl << db.log().str() << std::endl;
 
