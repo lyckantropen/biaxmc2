@@ -132,7 +132,7 @@ void    table_output(const std::string & data_type,const std::vector<std::string
                         double tau = std::atof(h_data[i][index(h_columns,"tau")].c_str());
                         double h = std::atof(h_data[i][index(h_columns,"field")].c_str());
                         
-                        std::cout << "t: " << t << ", l: " << ", tau: " << tau << ", h:" << h << std::endl;
+                        std::cout << "t: " << t << ", l: " << l << ", tau: " << tau << ", h:" << h << std::endl;
                         
 			//PRE79StandardHamiltonian H(wwg[i].Temperature(),wwg[i].Lambda(),wwg[i].Tau(),wwg[i].Field());
 			
