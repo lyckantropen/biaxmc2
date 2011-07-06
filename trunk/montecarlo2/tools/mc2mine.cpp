@@ -31,6 +31,57 @@ int index(const std::vector<std::string> & s, const std::string & find) {
     return -1;
 }
 
+std::vector<PRE79MeanProperties> do_recalculate(boostbase::base & db,const boostbase::tween_t_proxy & betweens,const boostbase::pair_t_proxy & wheres,const bool & commit = false, const std::string & commit_file = ""){
+    std::vector<PRE79MeanProperties> whatwegot;
+    
+    boostbase::pair_t_proxy nwheres = wheres;
+    nwheres.pop();
+    nwheres(std::string("data_type"),std::string("properties_evolution"));
+
+    std::vector<std::string> names;
+    names.push_back("temperature");
+    names.push_back("lambda");
+    names.push_back("tau");
+    names.push_back("field");
+
+    std::vector<std::string> h_columns = test_in(names,db.columns());
+    std::vector<std::vector<std::string> > h_data = db.get_metadata(h_columns,nwheres,betweens);
+
+    //std::vector<PRE79MeanProperties> wwg = db.get<PRE79MeanProperties>(wheres,betweens);
+
+    std::vector<PRE79StandardProperties> wwg2 = db.get<PRE79StandardProperties>(nwheres,betweens);
+    //if(wwg2.size()<wwg.size()) std::cout << "#WARINING: insufficient data to recalculate. output may not be very satisfying\n";
+    int size = wwg2.size();
+    whatwegot.resize(size);
+
+    #pragma omp parallel for ordered
+    for(int i=0;i<size;i++){
+
+            double t = std::atof(h_data[i][index(h_columns,"temperature")].c_str());
+            double l = std::atof(h_data[i][index(h_columns,"lambda")].c_str());
+            double tau = std::atof(h_data[i][index(h_columns,"tau")].c_str());
+            double h = std::atof(h_data[i][index(h_columns,"field")].c_str());
+
+            std::cout << "t: " << t << ", l: " << l << ", tau: " << tau << ", h:" << h << std::endl;
+
+            //PRE79StandardHamiltonian H(wwg[i].Temperature(),wwg[i].Lambda(),wwg[i].Tau(),wwg[i].Field());
+
+            PRE79StandardHamiltonian H(t,l,tau,h);
+            whatwegot[i]=PRE79MeanProperties(wwg2[i],H);
+            if(commit){
+                Settings s(commit_file);
+                s.hamiltonian.temperature=t;
+                s.hamiltonian.lambda=l;
+                s.hamiltonian.tau=tau;
+                s.hamiltonian.h=h;
+                SimulationDB sdb(s);
+                sdb.StoreFinalProperties(s,whatwegot[i]);
+            }    
+            
+    }
+    return whatwegot;
+}
+
 
 void    do_count(const std::string & data_type,const std::vector<std::string> & columns,boostbase::base & db,const boostbase::tween_t_proxy & betweens,const boostbase::pair_t_proxy & wheres){
 	if(data_type=="final_properties" || data_type=="properties")
@@ -103,43 +154,7 @@ void    table_output(const std::string & data_type,const std::vector<std::string
         std::vector<PRE79MeanProperties> whatwegot;
 	if(!recalculate)
 		whatwegot = db.get<PRE79MeanProperties>(wheres,betweens);
-	else {
-        	boostbase::pair_t_proxy nwheres = wheres;
-	        nwheres.pop();
-		nwheres(std::string("data_type"),std::string("properties_evolution"));
-                
-                std::vector<std::string> names;
-                names.push_back("temperature");
-                names.push_back("lambda");
-                names.push_back("tau");
-                names.push_back("field");
-                
-                std::vector<std::string> h_columns = test_in(names,db.columns());
-                std::vector<std::vector<std::string> > h_data = db.get_metadata(h_columns,nwheres,betweens);
-                
-		//std::vector<PRE79MeanProperties> wwg = db.get<PRE79MeanProperties>(wheres,betweens);
-		
-                std::vector<PRE79StandardProperties> wwg2 = db.get<PRE79StandardProperties>(nwheres,betweens);
-		//if(wwg2.size()<wwg.size()) std::cout << "#WARINING: insufficient data to recalculate. output may not be very satisfying\n";
-                int size = wwg2.size();
-                whatwegot.resize(size);
-
-                #pragma omp parallel for ordered
-		for(int i=0;i<size;i++){
-                    
-                        double t = std::atof(h_data[i][index(h_columns,"temperature")].c_str());
-                        double l = std::atof(h_data[i][index(h_columns,"lambda")].c_str());
-                        double tau = std::atof(h_data[i][index(h_columns,"tau")].c_str());
-                        double h = std::atof(h_data[i][index(h_columns,"field")].c_str());
-                        
-                        std::cout << "t: " << t << ", l: " << l << ", tau: " << tau << ", h:" << h << std::endl;
-                        
-			//PRE79StandardHamiltonian H(wwg[i].Temperature(),wwg[i].Lambda(),wwg[i].Tau(),wwg[i].Field());
-			
-                        PRE79StandardHamiltonian H(t,l,tau,h);
-			whatwegot[i]=PRE79MeanProperties(wwg2[i],H);
-		}
-	}
+        else whatwegot = do_recalculate(db,betweens,wheres);
 
        
         /*	
@@ -392,22 +407,8 @@ void mathematica_output(const std::string & data_type,const std::vector<std::str
         std::vector<PRE79MeanProperties> whatwegot;
 	if(!recalculate)
 		whatwegot = db.get<PRE79MeanProperties>(wheres,betweens);
-	else {
-        	boostbase::pair_t_proxy nwheres = wheres;
-	        nwheres.pop();
-		nwheres(std::string("data_type"),std::string("properties_evolution"));
-		std::vector<PRE79MeanProperties> wwg = db.get<PRE79MeanProperties>(wheres,betweens);
-		std::vector<PRE79StandardProperties> wwg2 = db.get<PRE79StandardProperties>(nwheres,betweens);
-		if(wwg2.size()<wwg.size()) std::cout << "#WARINING: insufficient data to recalculate. output may not be very satisfying\n";
-                int size = wwg2.size();
-                whatwegot.resize(size);
-
-                #pragma omp parallel for ordered
-		for(int i=0;i<size;i++){
-			PRE79StandardHamiltonian H(wwg[i].Temperature(),wwg[i].Lambda(),wwg[i].Tau(),wwg[i].Field());
-			whatwegot[i]=PRE79MeanProperties(wwg2[i],H);
-		}
-	}
+        else whatwegot = do_recalculate(db,betweens,wheres);
+        
         vect temperature(0.0,whatwegot.size());
         //foreach(PRE79MeanProperties & prop,whatwegot){
         for(int i=0;i<whatwegot.size();i++){
@@ -525,11 +526,13 @@ int main(int argc, char** argv)
     std::string                 data_type="final_properties";
     std::string dbfile="";
     std::string dbdir="";
+    std::string commit_file="";
     boostbase::tween_t_proxy    betweens;
     boostbase::pair_t_proxy     wheres;
     std::vector<std::string>    columns;
     bool sqlite_debug=false;
     bool recalculate=false;
+    bool commit=false;
     output_t output_type = table;
 
     for(int i=1;i<argc;i++){
@@ -605,19 +608,29 @@ int main(int argc, char** argv)
 	    output_type=count;
 	if(std::string(argv[i])=="--recalculate")
 	    recalculate=true;
+        if(std::string(argv[i])=="--recalculate-and-commit"){
+            commit=true;
+            commit_file = argv[i+1];
+        }
 
     }
     if(dbfile=="" || dbdir==""){
         std::cout << "please specify database file and directory with --db\n";
         std::exit(1);
     }
+    
 
     wheres(std::string("data_type"),data_type);
     std::cout << std::setprecision(12) << std::fixed ;
 
     //readonly 
-    boostbase::base db(dbfile,dbdir,true);
+    boostbase::base db(dbfile,dbdir,!commit);
    
+    if(commit){
+        std::cout << "Committing to database, no output will be generated\n";
+        do_recalculate(db,betweens,wheres,true,commit_file);
+        return(EXIT_SUCCESS);
+    }
 
     switch(output_type){
         case table:
