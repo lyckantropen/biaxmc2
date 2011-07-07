@@ -16,10 +16,21 @@
  */
 typedef enum { table, mathematica, maple, count } output_t ;
 
-std::vector<std::string> test_in(std::vector<std::string> src, std::vector<std::string> dst){
-    std::vector<std::string> res;
-    for(std::vector<std::string>::iterator i = src.begin();i!=src.end();i++){
+template<class v_type>
+std::vector<v_type> test_in(std::vector<v_type> src, std::vector<v_type> dst){
+    std::vector<v_type> res;
+    for(typename std::vector<v_type>::iterator i = src.begin();i!=src.end();i++){
         if(std::find(dst.begin(),dst.end(),*i)!=dst.end())
+            res.push_back(*i);
+    }
+    return res;
+}
+
+template<class v_type>
+std::vector<v_type> untest_in(std::vector<v_type> src, std::vector<v_type> dst){
+    std::vector<v_type> res;
+    for(typename std::vector<v_type>::iterator i = src.begin();i!=src.end();i++){
+        if(std::find(dst.begin(),dst.end(),*i)==dst.end())
             res.push_back(*i);
     }
     return res;
@@ -54,7 +65,7 @@ std::vector<PRE79MeanProperties> do_recalculate(boostbase::base & db,const boost
     int size = wwg2.size();
     whatwegot.resize(size);
 
-    #pragma omp parallel for ordered
+    //#pragma omp parallel for ordered
     for(int i=0;i<size;i++){
 
             double t = std::atof(h_data[i][index(h_columns,"temperature")].c_str());
@@ -146,7 +157,7 @@ void    table_output(const std::string & data_type,const std::vector<std::string
 
     if(data_type=="final_properties" || data_type=="properties") {
         /**** wczytywanie metadanych ***/
-        std::vector<std::string> m_columns = test_in(columns,db.columns());
+        std::vector<std::string> m_columns = test_in<std::string>(columns,db.columns());
         std::vector<std::vector<std::string> > metadata;
         if(m_columns.size())
                 metadata = db.get_metadata(m_columns,wheres,betweens);
@@ -624,15 +635,53 @@ int main(int argc, char** argv)
     }
     
 
-    wheres(std::string("data_type"),data_type);
-    std::cout << std::setprecision(12) << std::fixed ;
-
     //readonly 
     boostbase::base db(dbfile,dbdir,!(commit || remove) );
    
     if(commit){
         std::cout << "Committing to database, no output will be generated\n";
-        do_recalculate(db,betweens,wheres,true,commit_file);
+        boostbase::pair_t_proxy m_wheres=wheres;
+        boostbase::pair_t_proxy p_wheres=wheres;
+        
+        m_wheres(std::string("data_type"),std::string("final_properties"));
+        p_wheres(std::string("data_type"),std::string("properties_evolution"));
+        
+        
+        std::vector<std::string> columns;
+        columns.push_back("temperature"); //= test_in(std::vector<std::string>("temperature"),db.columns());
+        std::vector<std::vector<std::string> > m_tempd;
+        std::vector<std::vector<std::string> > p_tempd;
+        if(columns.size()){
+                m_tempd = db.get_metadata(columns,m_wheres,betweens);
+                p_tempd = db.get_metadata(columns,p_wheres,betweens);
+        }
+        std::vector<std::string> m_temp;
+        std::vector<std::string> p_temp;
+        
+        for(int i=0;i<m_tempd.size();i++)
+            m_temp.push_back(m_tempd[i][index(columns,"temperature")]);
+        for(int i=0;i<p_tempd.size();i++)
+            p_temp.push_back(p_tempd[i][index(columns,"temperature")]);
+        
+        foreach(std::string & v,m_temp){
+                std::cout<< v << std::endl;
+        }
+        std::cout << std::endl;
+        foreach(std::string & v,p_temp){
+                std::cout<< v << std::endl;
+        }
+        
+        
+        std::vector<std::string> tlist = untest_in(p_temp,m_temp);
+
+        
+        foreach(std::string & t, tlist){
+            std::cout << "rec for " << t << std::endl;
+            boostbase::pair_t_proxy realw = wheres;
+            realw(std::string("temperature"),t);
+            realw(std::string("placeholder"),std::string("placeholder")); //because do_recalculate will pop the list
+            do_recalculate(db,betweens,realw,true,commit_file);
+        }
         goto endthis;
         //return(EXIT_SUCCESS);
     }
@@ -643,6 +692,10 @@ int main(int argc, char** argv)
         goto endthis;
         //return(EXIT_SUCCESS);
     }
+    
+    wheres(std::string("data_type"),data_type);
+    std::cout << std::setprecision(12) << std::fixed ;
+
     
     switch(output_type){
         case table:
