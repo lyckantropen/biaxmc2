@@ -662,7 +662,7 @@ int main(int argc, char** argv)
             m_temp.push_back(m_tempd[i][index(columns,"temperature")]);
         for(int i=0;i<p_tempd.size();i++)
             p_temp.push_back(p_tempd[i][index(columns,"temperature")]);
-        
+        /*
         foreach(std::string & v,m_temp){
                 std::cout<< v << std::endl;
         }
@@ -670,10 +670,14 @@ int main(int argc, char** argv)
         foreach(std::string & v,p_temp){
                 std::cout<< v << std::endl;
         }
-        
+        */
         
         std::vector<std::string> tlist = untest_in(p_temp,m_temp);
-
+        std::cout << "Selected temperatures: ";
+        foreach(std::string & t, tlist){
+            std::cout << t << ", "; 
+        }
+        std::cout << std::endl;
         
         foreach(std::string & t, tlist){
             std::cout << "rec for " << t << std::endl;
