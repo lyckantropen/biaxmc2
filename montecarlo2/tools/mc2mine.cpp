@@ -545,6 +545,7 @@ int main(int argc, char** argv)
     bool recalculate=false;
     bool commit=false;
     bool remove=false;
+    bool force_recalculate=false;
     output_t output_type = table;
 
     for(int i=1;i<argc;i++){
@@ -627,6 +628,9 @@ int main(int argc, char** argv)
         if(std::string(argv[i])=="--remove"){
             remove=true;
         }
+        if(std::string(argv[i])=="--force-recalculate"){
+            force_recalculate=true;
+        }
 
     }
     if(dbfile=="" || dbdir==""){
@@ -672,7 +676,11 @@ int main(int argc, char** argv)
         }
         */
         
-        std::vector<std::string> tlist = untest_in(p_temp,m_temp);
+        std::vector<std::string> tlist ;
+        if(!force_recalculate)
+            tlist = untest_in(p_temp,m_temp);
+        else tlist = p_temp;
+        
         std::cout << "Selected temperatures: ";
         foreach(std::string & t, tlist){
             std::cout << t << ", "; 
