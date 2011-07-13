@@ -458,50 +458,50 @@ public:
         return sqrt(d200corz.Limit());
     }
     Value Delta200ZByCorrelationSusceptibility() const {
-        return CalculateFluctuation(std::sqrt(d200corz.LimitHistory()));
+        return CalculateFluctuation(std::sqrt(std::abs(d200corz.LimitHistory())));
     }
     Value Delta222ZByCorrelation() const {
         return sqrt(d222corz.Limit());
     }
     Value Delta222ZByCorrelationSusceptibility() const {
-        return CalculateFluctuation(std::sqrt(d222corz.LimitHistory()));
+        return CalculateFluctuation(std::sqrt(std::abs(d222corz.LimitHistory())));
     }
     Value Delta200XByCorrelation() const {
         return sqrt(d200corx.Limit());
     }
     Value Delta200XByCorrelationSusceptibility() const {
-        return CalculateFluctuation(std::sqrt(d200corx.LimitHistory()));
+        return CalculateFluctuation(std::sqrt(std::abs(d200corx.LimitHistory())));
     }
     Value Delta222XByCorrelation() const {
         return sqrt(d222corx.Limit());
     }
     Value Delta222XByCorrelationSusceptibility() const {
-        return CalculateFluctuation(std::sqrt(d222corx.LimitHistory()));
+        return CalculateFluctuation(std::sqrt(std::abs(d222corx.LimitHistory())));
     }
     Value Delta200YByCorrelation() const {
         return sqrt(d200cory.Limit());
     }
     Value Delta200YByCorrelationSusceptibility() const {
-        return CalculateFluctuation(std::sqrt(d200cory.LimitHistory()));
+        return CalculateFluctuation(std::sqrt(std::abs(d200cory.LimitHistory())));
     }
     Value Delta222YByCorrelation() const {
         return sqrt(d222cory.Limit());
     }
     Value Delta222YByCorrelationSusceptibility() const {
-        return CalculateFluctuation(std::sqrt(d222cory.LimitHistory()));
+        return CalculateFluctuation(std::sqrt(std::abs(d222cory.LimitHistory())));
     }
 
     Value Delta322ByCorrelation() const {
         return sqrt(d322cor.Limit());
     }
     Value Delta322ByCorrelationSusceptibility() const {
-        return CalculateFluctuation(std::sqrt(d322cor.LimitHistory()));
+        return CalculateFluctuation(std::sqrt(std::abs(d322cor.LimitHistory())));
     }
     Value ParityByCorrelation() const {
         return sqrt(paritycor.Limit());
     }
     Value ParityByCorrelationSusceptibility() const {
-        return CalculateFluctuation(std::sqrt(paritycor.LimitHistory()));
+        return CalculateFluctuation(std::sqrt(std::abs(paritycor.LimitHistory())));
     }
 
     Value MeanT20T20Z() const {
