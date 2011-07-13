@@ -86,6 +86,7 @@ std::vector<PRE79MeanProperties> do_recalculate(boostbase::base & db,const boost
                 s.hamiltonian.tau=tau;
                 s.hamiltonian.h=h;
                 SimulationDB sdb(s);
+                #pragma omp critical
                 sdb.StoreFinalProperties(s,whatwegot[i]);
             }    
             
@@ -687,7 +688,12 @@ int main(int argc, char** argv)
         }
         std::cout << std::endl;
         
-        foreach(std::string & t, tlist){
+        //foreach(std::string & t, tlist){
+        
+        #pragma omp parallel for
+        for(int i=0;i<tlist.size();i++){
+            std::string & t = tlist[i];    
+            
             std::cout << "rec for " << t << std::endl;
             boostbase::pair_t_proxy realw = wheres;
             realw(std::string("temperature"),t);
