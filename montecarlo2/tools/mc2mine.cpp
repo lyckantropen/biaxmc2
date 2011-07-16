@@ -299,7 +299,10 @@ void    table_output(const std::string & data_type,const std::vector<std::string
                     std::cout << prop.MeanT22T22Y().TableForm() << "\t";
                 if(column=="T22T22y_sus")
                     std::cout << prop.MeanT22T22YSusceptibility().TableForm() << "\t";
-
+                if(column=="T32T32")
+                    std::cout << prop.MeanT32T32().TableForm() << "\t";
+                if(column=="TT32T32_sus")
+                    std::cout << prop.MeanT32T32Susceptibility().TableForm() << "\t";
                 if(column=="tetrahedral_correlation" || column=="mean_d322cor")
                     std::cout << prop.Delta322MeanCorrelation() << "\t";
                 if(column=="parity_correlation")
