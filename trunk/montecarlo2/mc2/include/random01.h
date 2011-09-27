@@ -14,6 +14,7 @@
 #include "WydroRNG.h"
 #include "MarsagliaRNG.h"
 #include "randomc.h"
+#include "mwc.h"
 
 /*
  * Generator random01 jest głównym generatorem liczb losowych, ale zastrzegamy, żeby istniała osobna instancja
@@ -593,7 +594,8 @@ public:
 //extern rangen_wd random01;
 //extern rangen random01;
 //extern MarsagliaRNG random01;
-extern rangen_mwc random01;
+//extern rangen_mwc random01;
+extern mwc random01;
 
 //extern double random01();
 extern int plusminusone();

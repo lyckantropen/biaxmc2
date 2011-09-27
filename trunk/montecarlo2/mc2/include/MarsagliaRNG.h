@@ -21,7 +21,7 @@ class MarsagliaRNG {
     short mStart;
 
 public:
-    MarsagliaRNG(){
+    MarsagliaRNG(const int & offset = 0){
         mStart = 1;
 	for(int k=0;k<10;k++)
 		mother1[k]=mother2[k]=0;
@@ -540,11 +540,11 @@ public:
 	lsp[127][1]=196404559478783UL;
 	lsp[127][2]=98202279739391UL;
 
-        seed = lsp[omp_get_thread_num()][2];
-        mult = lsp[omp_get_thread_num()][0];
+        seed = lsp[omp_get_thread_num()+offset][2];
+        mult = lsp[omp_get_thread_num()+offset][0];
         
         std::cout << omp_get_thread_num() << ": Seed: " << seed << ", Mult: " << mult << std::endl;
-        std::cout << "sizeof(unsigned long): " << sizeof(unsigned long) << std::endl;
+        //std::cout << "sizeof(unsigned long): " << sizeof(unsigned long) << std::endl;
     }
     
     double operator()(){
