@@ -4,35 +4,37 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/4DSphereRW.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/Contractions.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/4DSphereRW.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/AutoCorrelationTimeCalculator.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/Contractions.h</itemPath>
       <itemPath>../../montecarlo2/mc2/include/FIFOInterface.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/Hamiltonian.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/ILoggable.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/Lattice.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/MCProto.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/Hamiltonian.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/ILoggable.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/Lattice.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/MCProto.h</itemPath>
       <itemPath>../../montecarlo2/mc2/include/MarsagliaRNG.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/Metropolis.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/PRE79Scanning.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/PRE79Simulation.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/PRE79SpatialCorrelations.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/PRE79StandardHamiltonian.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/PRE79StandardProperties.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/Particle.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/Metropolis.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/PRE79Scanning.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/PRE79Simulation.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/PRE79SpatialCorrelations.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/PRE79StandardHamiltonian.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/PRE79StandardProperties.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/Particle.h</itemPath>
       <itemPath>../../montecarlo2/mc2/include/RuntimePropertiesServer.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/Settings.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/Simulation.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/SimulationDB.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/Settings.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/Simulation.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/SimulationDB.h</itemPath>
       <itemPath>../../montecarlo2/mc2/include/SimulationDBFind.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/SpatialCorrelationEvolution.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/Statistical.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/SpatialCorrelationEvolution.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/Statistical.h</itemPath>
       <itemPath>../../montecarlo2/mc2/include/WydroRNG.h</itemPath>
       <itemPath>../../montecarlo2/mc2/include/evsort.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/quantity_iterator.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/random01.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/mwc.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/quantity_iterator.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/random01.h</itemPath>
       <itemPath>../../montecarlo2/mc2/include/randomc.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/singleton.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/include/valarray_external.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/singleton.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/valarray_external.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -41,17 +43,17 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/4DSphereRW.cpp</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Contractions.cpp</itemPath>
+      <itemPath>../../montecarlo2/mc2/src/4DSphereRW.cpp</itemPath>
+      <itemPath>../../montecarlo2/mc2/src/Contractions.cpp</itemPath>
       <itemPath>../../montecarlo2/mc2/src/FIFOInterface.cpp</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Lattice.cpp</itemPath>
+      <itemPath>../../montecarlo2/mc2/src/Lattice.cpp</itemPath>
       <itemPath>../../montecarlo2/mc2/src/MarsagliaRNG.cpp</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Particle.cpp</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Random.cpp</itemPath>
+      <itemPath>../../montecarlo2/mc2/src/Particle.cpp</itemPath>
+      <itemPath>../../montecarlo2/mc2/src/Random.cpp</itemPath>
       <itemPath>../../montecarlo2/mc2/src/RuntimePropertiesServer.cpp</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/Statistical.cpp</itemPath>
+      <itemPath>../../montecarlo2/mc2/src/Statistical.cpp</itemPath>
       <itemPath>../../montecarlo2/mc2/src/mother.cpp</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/mc2/src/valarray_external.cpp</itemPath>
+      <itemPath>../../montecarlo2/mc2/src/valarray_external.cpp</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
                    displayName="Important Files"
@@ -72,7 +74,7 @@
       </toolsSet>
       <compileType>
         <cTool>
-          <commandLine>-std=c99 -fopenmp</commandLine>
+          <commandLine>-std=c99 -fopenmp -O3</commandLine>
         </cTool>
         <ccTool>
           <incDir>
@@ -80,7 +82,7 @@
             <pElem>../../montecarlo2/boostbase/include</pElem>
             <pElem>../../montecarlo2/boostbase/include/hashlib</pElem>
           </incDir>
-          <commandLine>-fopenmp</commandLine>
+          <commandLine>-fopenmp -O3</commandLine>
         </ccTool>
         <archiverTool>
         </archiverTool>

@@ -93,5 +93,5 @@ double MarsagliaRNG::Mother(unsigned long *pSeed, const unsigned long & pMult)
         *pSeed=(((long)mother1[1])<<16)+(long)mother2[1];
 
                 /* Return a double value between 0 and 1 */
-        return ((double)*pSeed)/m32Double;
+        return ((double)*pSeed)/m32Double/m32Double;
 }

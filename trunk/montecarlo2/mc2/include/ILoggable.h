@@ -9,6 +9,9 @@
 #define	_ILOGGABLE_H
 
 #include "std.h"
+#include "sys/types.h"
+#include "unistd.h"
+#include "omp.h"
 
 class ILoggable {
 protected:
@@ -52,7 +55,12 @@ public:
         if(os!=NULL)
             stream = os;
         else
-            stream = &log;
+            stream = &log;d
+    }
+    virtual void SetFile(const std::string & f){
+        std::stringstream s;
+        s << getpid() << "_" << omp_get_thread_num() << "_" << f;
+        stream = new std::ofstream(s.str().c_str());
     }
 };
 

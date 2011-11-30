@@ -65,12 +65,14 @@ public:
         long thermalization_cycles;
         long supplementary_thermalization_cycles;
         int radius_adjustment_frequency;
+        int autocorrelation_length;
+        int autocorrelation_frequency;
         _simulation():
         production_cycles(1000),
-        measure_frequency(10),
+        measure_frequency(15),
         thermalization_cycles(1000),
         supplementary_thermalization_cycles(0),
-        radius_adjustment_frequency(100),
+        radius_adjustment_frequency(1000000),
         v_adjust_radius("no"),
         v_find_thermalized("yes"),
         find_thermalized_temperature_tolerance(0.0),
@@ -82,7 +84,9 @@ public:
         parity_flip_probability(0.5),
         radius(0.1),
         metropolis_lower_acceptance_limit(0.3),
-        metropolis_higher_acceptance_limit(0.4)
+        metropolis_higher_acceptance_limit(0.4),
+        autocorrelation_length(20),
+        autocorrelation_frequency(100)
         {}
     } simulation;
     struct _sqlite {
@@ -189,6 +193,8 @@ private:
         ("simulation.parity_flip_probability",po::value<double>(&simulation.parity_flip_probability),"Probability of parity flip")
         ("simulation.metropolis_lower_acceptance_limit",po::value<double>(&simulation.metropolis_lower_acceptance_limit),"Metropolis lower acc level")
         ("simulation.metropolis_higher_acceptance_limit",po::value<double>(&simulation.metropolis_higher_acceptance_limit),"Metropolis higher acc level")
+        ("simulation.autocorrelation_length",po::value<int>(&simulation.autocorrelation_length),"The maximum span of the autocorrelation of energy function")
+        ("simulation.autocorrelation_frequency",po::value<int>(&simulation.autocorrelation_frequency),"Number of skips before every calculation of autocorrelation")
         ("sqlite.file",po::value<std::string>(&sqlite.file),"Database file")
         ("sqlite.dir",po::value<std::string>(&sqlite.dir),"Database directory")
         ("output.save_configuration_evolution",po::value<std::string>(&output.v_save_configuration_evolution),"(yes/no) Save entire configuration evolution in production cycle (large db entry)")
@@ -248,6 +254,8 @@ private:
     }
 public:
     Settings(const fs::path & file){
+        //SetFile("settings");
+        
         if(!fs::exists(file))   throw FileNotFound();
         SetupDescription();
         std::ifstream f(file.string().c_str());
@@ -271,7 +279,7 @@ public:
 
         }
         catch(po::unknown_option &e){
-            Log() << "Unrecognized option found" << std::endl;
+            Log() << "Unrecognized option found: " << e.get_option_name() << std::endl;
         }
         f.close();
     }
