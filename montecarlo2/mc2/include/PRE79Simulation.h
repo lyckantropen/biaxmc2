@@ -12,6 +12,7 @@
 #include "serializer.h"
 #include "ILoggable.h"
 #include "SimulationDBFind.h"
+#include "AutoCorrelationTimeCalculator.h"
 #include <omp.h>
 
 ///Podstawowa symulacja (produkcja) do produkcji równoległej
@@ -50,15 +51,28 @@ public:
         int remaining_interval = simulation->GetNCycles()/5;
 	if(settings.simulation.calculate_time)
         	Log() << "Remaining time will be reported every " << remaining_interval << " cycles\n";
-
+        
+        AutoCorrelationTimeCalculator ac(lattice,settings.simulation.autocorrelation_frequency,settings.simulation.autocorrelation_length);
+        
         long k=0;
         while(simulation->Iterate()){
+            ac.Update();
             //--- pomiary
             if(k%settings.simulation.measure_frequency==0){
                 prop->Update(k,H);
             }
             //---
+            
+            //--- sprawozdanie z postępu symulacji
+            if(k%1000==0 && settings.output.report_progress){
+                Log() << "E = " << prop->EnergyEvolution()[k/1001] << std::endl;
+                Log() << "Progress: " << (double(k)/double(simulation->GetNCycles()))*100.0 << "%\n";
+            }
+            //---
+            
+            
             //--- poprawa promienia błądzenia przypadkowego <-- czyżby źródło błędów???
+            // Swendson (2011) częstość zmiany kroku Monte Carlo nie powinna być niższa, niż (liczba kroków MC)^(1/2)
             if(k%settings.simulation.radius_adjustment_frequency==0)
                 metro->AdjustRadius(lattice);
             //---
@@ -266,9 +280,11 @@ public:
     }
 
     const Lattice & Thermalize() {
+        AutoCorrelationTimeCalculator ac(lattice,settings.simulation.autocorrelation_frequency,settings.simulation.autocorrelation_length);
         Log() << "Thermalization cycles: " << thermalization->GetNCycles() << std::endl;
         int tcycle=0;
         while(thermalization->Iterate()){
+            ac.Update();
             if(tcycle%100==0)
                 thermalprops->Update(tcycle,H);
             if(tcycle%1000==0 && settings.output.report_progress){
@@ -396,13 +412,24 @@ public:
         int remaining_interval = simulation->GetNCycles()/20+1;
 	if(settings.simulation.calculate_time)
 	    Log() << "Remaining time will be reported every " << remaining_interval << " cycles\n";
+        
+        AutoCorrelationTimeCalculator ac(lattice,settings.simulation.autocorrelation_frequency,settings.simulation.autocorrelation_length);
+        
         while(simulation->Iterate()){
+            ac.Update();
             //--- pomiary
             if(k%settings.simulation.measure_frequency==0){
                 prop->Update(k,H);
                 if(settings.output.save_configuration_evolution){
                     database.StoreLattice(settings,*lattice,k);
                 }
+            }
+            //---
+            
+            //--- sprawozdanie z postępu symulacji
+            if(k%1000==0 && settings.output.report_progress){
+                Log() << "E = " << prop->EnergyEvolution()[k/1001] << std::endl;
+                Log() << "Progress: " << (double(k)/double(simulation->GetNCycles()))*100.0 << "%\n";
             }
             //---
 
@@ -417,6 +444,7 @@ public:
             }
 
             //--- poprawa promienia błądzenia przypadkowego <-- czyżby źródło błędów???
+            // Swendson (2011) częstość zmiany kroku Monte Carlo nie powinna być niższa, niż (liczba kroków MC)^(1/2)
             if(k%settings.simulation.radius_adjustment_frequency==0)
                 metro->AdjustRadius(lattice);
             //---

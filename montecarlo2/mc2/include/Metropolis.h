@@ -74,7 +74,7 @@ public:
         return double(acc_moves)/(N*tries);
 
     }
-    void AdjustRadius(Lattice * lat, const double & decimation=0.02){
+    void AdjustRadius(Lattice * lat, const double & decimation=0.01){
         if(!settings.simulation.adjust_radius) return;
 
         if(lat==NULL) return ;
@@ -115,7 +115,7 @@ public:
             }
             
         }
-        //Log() << acc_fraction << " (" << acc_moves << "/" << N << ") accepted, radius " << radius << std::endl;
+        Log() << acc_fraction << " (" << acc_moves << "/" << N << ") accepted, radius " << radius << std::endl;
     }
     /*
      * to nie ma sensu! zawsze zaakceptowanych jest parity_prob*N ruchów!

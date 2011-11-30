@@ -14,7 +14,7 @@
 #include "WydroRNG.h"
 #include "MarsagliaRNG.h"
 #include "randomc.h"
-#include "mwc.h"
+//#include "mwc.h"
 
 /*
  * Generator random01 jest głównym generatorem liczb losowych, ale zastrzegamy, żeby istniała osobna instancja
