@@ -15,6 +15,7 @@
 #include "Metropolis.h"
 #include "SimulationDB.h"
 #include "PRE79Scanning.h"
+#include "ParallelTempering.h"
 #include "cstdlib"
 //#include <omp.h>
 
@@ -27,12 +28,19 @@ int main(int argc, char** argv)
     if(argc>1)
         cfg=argv[1];
     Settings setup(cfg);
+    setup.SetStream(&std::cout);
 
     if(argc>2)
         mode=argv[2];
 
     if(mode=="run"){
+            
         if(setup.scanning.enabled){
+            if(setup.scanning.parallel_tempering){
+                ParallelTempering par(setup);
+                par.Run();
+            }
+            else {
             PRE79Scanning scanning(setup);
             scanning.SetStream(&std::cout);
             if(setup.scanning.threaded)
@@ -42,6 +50,7 @@ int main(int argc, char** argv)
                     scanning.RunParallel();
             else
                 scanning.RunNonParallel();
+            }
         }
         else {
             PRE79Simulation simulation(setup);
@@ -68,7 +77,7 @@ int main(int argc, char** argv)
         if(setup.pbs.queue=="mp24")
             cput="1200:00:00";
 
-
+        
         pt      << "#!/bin/bash\n"
                 << "#PBS -N "<< setup.project.name << std::endl
                 << "#PBS -l cput=" << cput <<std::endl
