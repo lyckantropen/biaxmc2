@@ -307,6 +307,8 @@ void    table_output(const std::string & data_type,const std::vector<std::string
                     std::cout << prop.Delta322MeanCorrelation() << "\t";
                 if(column=="parity_correlation")
                     std::cout << prop.ParityMeanCorrelation() << "\t";
+                if(column=="mean_autocorrelation_time")
+                    std::cout << prop.MeanAutocorrelationTime() << "\t";
                 
                 //metadane
                 if(index(m_columns,column)!=-1){
@@ -405,6 +407,9 @@ void    table_output(const std::string & data_type,const std::vector<std::string
 
                     if(column=="paritycor")
                         std::cout << prop.ParityCorrelationEvolution()[t] << "\t";
+                    
+                    if(column=="autocorrelation_time")
+                        std::cout << prop.GetAutocorrelationTimeHistory()[t] << "\t";
                 }
                 std::cout << std::endl;
             }
@@ -495,6 +500,8 @@ void mathematica_output(const std::string & data_type,const std::vector<std::str
             std::cout << "MeanQxTensor" << coord.str() << "=" << MathematicaForm(prop.MeanQxTensor()) << ";\n";
             std::cout << "MeanQyTensor" << coord.str() << "=" << MathematicaForm(prop.MeanQyTensor()) << ";\n";
             std::cout << "MeanQzTensor" << coord.str() << "=" << MathematicaForm(prop.MeanQzTensor()) << ";\n";
+            
+            std::cout << "MeanAutocorrelationTime" << coord.str() << "=" << prop.MeanAutocorrelationTime().MathematicaForm() << ";\n";
 
 
         }
