@@ -10,28 +10,32 @@
 # Environment
 MKDIR=mkdir
 CP=cp
+GREP=grep
+NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
 CC=gcc
 CCC=g++
 CXX=g++
-FC=
+FC=gfortran
 AS=as
 
 # Macros
 CND_PLATFORM=GNU-Linux-x86
 CND_CONF=Debug
 CND_DISTDIR=dist
+CND_BUILDDIR=build
 
 # Include project Makefile
 include Makefile
 
 # Object Directory
-OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
+OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/tools/mc2mine.o
+	${OBJECTDIR}/_ext/551454436/mc2mine.o
+
 
 # C Compiler Flags
 CFLAGS=
@@ -51,20 +55,20 @@ LDLIBSOPTIONS=../libboostbase/dist/Debug/GNU-Linux-x86/liblibboostbase.a ../libm
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	${MAKE}  -f nbproject/Makefile-Debug.mk dist/Debug/GNU-Linux-x86/dbmine
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dbmine
 
-dist/Debug/GNU-Linux-x86/dbmine: ../libboostbase/dist/Debug/GNU-Linux-x86/liblibboostbase.a
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dbmine: ../libboostbase/dist/Debug/GNU-Linux-x86/liblibboostbase.a
 
-dist/Debug/GNU-Linux-x86/dbmine: ../libmc2/dist/Debug/GNU-Linux-x86/liblibmc2.a
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dbmine: ../libmc2/dist/Debug/GNU-Linux-x86/liblibmc2.a
 
-dist/Debug/GNU-Linux-x86/dbmine: ${OBJECTFILES}
-	${MKDIR} -p dist/Debug/GNU-Linux-x86
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dbmine: ${OBJECTFILES}
+	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dbmine ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/tools/mc2mine.o: nbproject/Makefile-${CND_CONF}.mk ../../montecarlo2/tools/mc2mine.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/tools
+${OBJECTDIR}/_ext/551454436/mc2mine.o: ../../montecarlo2/tools/mc2mine.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/551454436
 	${RM} $@.d
-	$(COMPILE.cc) -g -DSQLITE_TEMP_STORE=3 -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/tools/mc2mine.o ../../montecarlo2/tools/mc2mine.cpp
+	$(COMPILE.cc) -g -DSQLITE_TEMP_STORE=3 -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/551454436/mc2mine.o ../../montecarlo2/tools/mc2mine.cpp
 
 # Subprojects
 .build-subprojects:
@@ -75,8 +79,8 @@ ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/tools/mc2mine.o: nbproject/Makefil
 
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
-	${RM} -r build/Debug
-	${RM} dist/Debug/GNU-Linux-x86/dbmine
+	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/dbmine
 
 # Subprojects
 .clean-subprojects:
