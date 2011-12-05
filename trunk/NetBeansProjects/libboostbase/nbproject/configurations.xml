@@ -1,25 +1,27 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<configurationDescriptor version="62">
-  <logicalFolder name="root" displayName="root" projectFiles="true">
+<configurationDescriptor version="79">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
       <logicalFolder name="hashlib" displayName="hashlib" projectFiles="true">
-        <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/hashlib/hl_exception.h</itemPath>
-        <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/hashlib/hl_hashwrapper.h</itemPath>
-        <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/hashlib/hl_md5.h</itemPath>
-        <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/hashlib/hl_md5wrapper.h</itemPath>
-        <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/hashlib/hl_types.h</itemPath>
+        <itemPath>../../montecarlo2/boostbase/include/hashlib/hl_exception.h</itemPath>
+        <itemPath>../../montecarlo2/boostbase/include/hashlib/hl_hashwrapper.h</itemPath>
+        <itemPath>../../montecarlo2/boostbase/include/hashlib/hl_md5.h</itemPath>
+        <itemPath>../../montecarlo2/boostbase/include/hashlib/hl_md5wrapper.h</itemPath>
+        <itemPath>../../montecarlo2/boostbase/include/hashlib/hl_types.h</itemPath>
       </logicalFolder>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/base.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/boost.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/exceptions.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/proxies.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/serialhash.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/serializer.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/serialsaveload.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/std.h</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/include/stringsaveload.h</itemPath>
+      <itemPath>../../montecarlo2/boostbase/include/base.h</itemPath>
+      <itemPath>../../montecarlo2/boostbase/include/boost.h</itemPath>
+      <itemPath>../../montecarlo2/boostbase/include/exceptions.h</itemPath>
+      <itemPath>../../montecarlo2/boostbase/include/proxies.h</itemPath>
+      <itemPath>../../montecarlo2/boostbase/include/serialhash.h</itemPath>
+      <itemPath>../../montecarlo2/boostbase/include/serializer.h</itemPath>
+      <itemPath>../../montecarlo2/boostbase/include/serialsaveload.h</itemPath>
+      <itemPath>../../montecarlo2/boostbase/include/sqlite3.h</itemPath>
+      <itemPath>../../montecarlo2/boostbase/include/sqlite3ext.h</itemPath>
+      <itemPath>../../montecarlo2/boostbase/include/std.h</itemPath>
+      <itemPath>../../montecarlo2/boostbase/include/stringsaveload.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
                    displayName="Resource Files"
@@ -28,9 +30,9 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/hl_md5.cpp</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/hl_md5wrapper.cpp</itemPath>
-      <itemPath>/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/serialhash.cpp</itemPath>
+      <itemPath>../../montecarlo2/boostbase/src/hl_md5.cpp</itemPath>
+      <itemPath>../../montecarlo2/boostbase/src/hl_md5wrapper.cpp</itemPath>
+      <itemPath>../../montecarlo2/boostbase/src/serialhash.cpp</itemPath>
       <itemPath>../../montecarlo2/boostbase/src/sqlite3.c</itemPath>
     </logicalFolder>
     <logicalFolder name="ExternalFiles"
@@ -47,12 +49,12 @@
   <confs>
     <conf name="Debug" type="3">
       <toolsSet>
-        <developmentServer>localhost</developmentServer>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>GNU|GNU</compilerSet>
-        <platform>2</platform>
       </toolsSet>
       <compileType>
         <cTool>
+          <commandLine>-O3</commandLine>
           <preprocessorList>
             <Elem>SQLITE_TEMP_STORE=3</Elem>
           </preprocessorList>
@@ -62,7 +64,7 @@
             <pElem>../../montecarlo2/boostbase/include</pElem>
             <pElem>../../montecarlo2/boostbase/include/hashlib</pElem>
           </incDir>
-          <commandLine>-fopenmp</commandLine>
+          <commandLine>-fopenmp -O3</commandLine>
           <preprocessorList>
             <Elem>SQLITE_TEMP_STORE=3</Elem>
           </preprocessorList>
@@ -73,9 +75,8 @@
     </conf>
     <conf name="Release" type="1">
       <toolsSet>
-        <developmentServer>localhost</developmentServer>
+        <remote-sources-mode>LOCAL_SOURCES</remote-sources-mode>
         <compilerSet>GNU|GNU</compilerSet>
-        <platform>2</platform>
       </toolsSet>
       <compileType>
         <cTool>
@@ -87,10 +88,6 @@
         <fortranCompilerTool>
           <developmentMode>5</developmentMode>
         </fortranCompilerTool>
-        <linkerTool>
-          <linkerLibItems>
-          </linkerLibItems>
-        </linkerTool>
       </compileType>
     </conf>
   </confs>

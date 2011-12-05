@@ -10,31 +10,35 @@
 # Environment
 MKDIR=mkdir
 CP=cp
+GREP=grep
+NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
 CC=gcc
 CCC=g++
 CXX=g++
-FC=
+FC=gfortran
 AS=as
 
 # Macros
 CND_PLATFORM=GNU-Linux-x86
 CND_CONF=Release
 CND_DISTDIR=dist
+CND_BUILDDIR=build
 
 # Include project Makefile
 include Makefile
 
 # Object Directory
-OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
+OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/hl_md5wrapper.o \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/boostbase/src/sqlite3.o \
-	${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/serialhash.o \
-	${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/hl_md5.o
+	${OBJECTDIR}/_ext/1481557586/sqlite3.o \
+	${OBJECTDIR}/_ext/1481557586/hl_md5.o \
+	${OBJECTDIR}/_ext/1481557586/hl_md5wrapper.o \
+	${OBJECTDIR}/_ext/1481557586/serialhash.o
+
 
 # C Compiler Flags
 CFLAGS=
@@ -54,39 +58,39 @@ LDLIBSOPTIONS=
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	${MAKE}  -f nbproject/Makefile-Release.mk dist/Release/GNU-Linux-x86/libboostbase
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libboostbase
 
-dist/Release/GNU-Linux-x86/libboostbase: ${OBJECTFILES}
-	${MKDIR} -p dist/Release/GNU-Linux-x86
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libboostbase: ${OBJECTFILES}
+	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libboostbase ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
-${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/hl_md5wrapper.o: nbproject/Makefile-${CND_CONF}.mk /home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/hl_md5wrapper.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src
+${OBJECTDIR}/_ext/1481557586/sqlite3.o: ../../montecarlo2/boostbase/src/sqlite3.c 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1481557586
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/hl_md5wrapper.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/hl_md5wrapper.cpp
+	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1481557586/sqlite3.o ../../montecarlo2/boostbase/src/sqlite3.c
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/boostbase/src/sqlite3.o: nbproject/Makefile-${CND_CONF}.mk ../../montecarlo2/boostbase/src/sqlite3.c 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/boostbase/src
+${OBJECTDIR}/_ext/1481557586/hl_md5.o: ../../montecarlo2/boostbase/src/hl_md5.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1481557586
 	${RM} $@.d
-	$(COMPILE.c) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/boostbase/src/sqlite3.o ../../montecarlo2/boostbase/src/sqlite3.c
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1481557586/hl_md5.o ../../montecarlo2/boostbase/src/hl_md5.cpp
 
-${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/serialhash.o: nbproject/Makefile-${CND_CONF}.mk /home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/serialhash.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src
+${OBJECTDIR}/_ext/1481557586/hl_md5wrapper.o: ../../montecarlo2/boostbase/src/hl_md5wrapper.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1481557586
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/serialhash.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/serialhash.cpp
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1481557586/hl_md5wrapper.o ../../montecarlo2/boostbase/src/hl_md5wrapper.cpp
 
-${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/hl_md5.o: nbproject/Makefile-${CND_CONF}.mk /home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/hl_md5.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src
+${OBJECTDIR}/_ext/1481557586/serialhash.o: ../../montecarlo2/boostbase/src/serialhash.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/1481557586
 	${RM} $@.d
-	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/hl_md5.o /home/karol/NetBeansProjects/biaxmc2/montecarlo2/boostbase/src/hl_md5.cpp
+	$(COMPILE.cc) -O2 -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/1481557586/serialhash.o ../../montecarlo2/boostbase/src/serialhash.cpp
 
 # Subprojects
 .build-subprojects:
 
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
-	${RM} -r build/Release
-	${RM} dist/Release/GNU-Linux-x86/libboostbase
+	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/libboostbase
 
 # Subprojects
 .clean-subprojects:
