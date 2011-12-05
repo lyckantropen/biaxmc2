@@ -62,6 +62,10 @@ public:
         return - v1*xx*xx - v2*yy*yy - v3*zz*zz - vt*Rank3Contraction(a.GetT(),b.GetT());
  
     }
+    
+    void SetTemperature(const double & t) {
+        temperature = t;
+    }
 
     //Accessors
     const double & GetTemperature() const {

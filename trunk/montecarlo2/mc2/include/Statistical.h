@@ -104,12 +104,17 @@ Value MeanSub(const std::valarray<value_type> & v){
  */
 
 template<class value_type>
-Value Mean(const std::valarray<value_type> & v,const int start=0, const int limit=0, const int slices=100){
+Value Mean(const std::valarray<value_type> & v,const int start=0, const int limit=0, const int _slices=100){
     int lim;
+    int slices=_slices;
     if(limit==0)
         lim=v.size();
     else
         lim=limit;
+    if(slices>v.size()) {
+        slices=v.size();
+    //    std::cout << v.size() << ", but slices: " << _slices << ". Decimated to " << slices << std::endl;
+    }
     /*
     std::valarray<value_type> relevant = v[std::slice(start,lim-start,1)];
     value_type mean = relevant.sum()/value_type(relevant.size());
@@ -124,7 +129,7 @@ Value Mean(const std::valarray<value_type> & v,const int start=0, const int limi
     }
     value_type mean = means.sum()/value_type(slices);
     std::valarray<value_type> dev = std::pow(means-mean,2);
-    return Value(mean,std::sqrt(dev.sum()/value_type(slices-1)));
+    return Value(mean,std::sqrt(dev.sum()/value_type(slices)));
 }
 
 template<class value_type>

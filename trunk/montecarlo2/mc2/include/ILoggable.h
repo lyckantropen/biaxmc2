@@ -55,7 +55,7 @@ public:
         if(os!=NULL)
             stream = os;
         else
-            stream = &log;d
+            stream = &log;
     }
     virtual void SetFile(const std::string & f){
         std::stringstream s;
