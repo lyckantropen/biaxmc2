@@ -10,35 +10,39 @@
 # Environment
 MKDIR=mkdir
 CP=cp
+GREP=grep
+NM=nm
 CCADMIN=CCadmin
 RANLIB=ranlib
 CC=gcc
 CCC=g++
 CXX=g++
-FC=
+FC=gfortran
 AS=as
 
 # Macros
 CND_PLATFORM=GNU-Linux-x86
 CND_CONF=Debug
 CND_DISTDIR=dist
+CND_BUILDDIR=build
 
 # Include project Makefile
 include Makefile
 
 # Object Directory
-OBJECTDIR=build/${CND_CONF}/${CND_PLATFORM}
+OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/tools/simulation.o
+	${OBJECTDIR}/_ext/551454436/simulation.o
+
 
 # C Compiler Flags
 CFLAGS=
 
 # CC Compiler Flags
-CCFLAGS=-fopenmp
-CXXFLAGS=-fopenmp
+CCFLAGS=-fopenmp -O3
+CXXFLAGS=-fopenmp -O3
 
 # Fortran Compiler Flags
 FFLAGS=
@@ -51,20 +55,20 @@ LDLIBSOPTIONS=../libboostbase/dist/Debug/GNU-Linux-x86/liblibboostbase.a ../libm
 
 # Build Targets
 .build-conf: ${BUILD_SUBPROJECTS}
-	${MAKE}  -f nbproject/Makefile-Debug.mk dist/Debug/GNU-Linux-x86/simulation
+	"${MAKE}"  -f nbproject/Makefile-${CND_CONF}.mk ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/simulation
 
-dist/Debug/GNU-Linux-x86/simulation: ../libboostbase/dist/Debug/GNU-Linux-x86/liblibboostbase.a
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/simulation: ../libboostbase/dist/Debug/GNU-Linux-x86/liblibboostbase.a
 
-dist/Debug/GNU-Linux-x86/simulation: ../libmc2/dist/Debug/GNU-Linux-x86/liblibmc2.a
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/simulation: ../libmc2/dist/Debug/GNU-Linux-x86/liblibmc2.a
 
-dist/Debug/GNU-Linux-x86/simulation: ${OBJECTFILES}
-	${MKDIR} -p dist/Debug/GNU-Linux-x86
+${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/simulation: ${OBJECTFILES}
+	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.cc} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/simulation ${OBJECTFILES} ${LDLIBSOPTIONS} 
 
-${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/tools/simulation.o: nbproject/Makefile-${CND_CONF}.mk ../../montecarlo2/tools/simulation.cpp 
-	${MKDIR} -p ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/tools
+${OBJECTDIR}/_ext/551454436/simulation.o: ../../montecarlo2/tools/simulation.cpp 
+	${MKDIR} -p ${OBJECTDIR}/_ext/551454436
 	${RM} $@.d
-	$(COMPILE.cc) -g -DSQLITE_TEMP_STORE=3 -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/tools/simulation.o ../../montecarlo2/tools/simulation.cpp
+	$(COMPILE.cc) -g -DSQLITE_TEMP_STORE=3 -I../../montecarlo2/mc2/include -I../../montecarlo2/boostbase/include -I../../montecarlo2/boostbase/include/hashlib -MMD -MP -MF $@.d -o ${OBJECTDIR}/_ext/551454436/simulation.o ../../montecarlo2/tools/simulation.cpp
 
 # Subprojects
 .build-subprojects:
@@ -75,8 +79,8 @@ ${OBJECTDIR}/_ext/_DOTDOT/_DOTDOT/montecarlo2/tools/simulation.o: nbproject/Make
 
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
-	${RM} -r build/Debug
-	${RM} dist/Debug/GNU-Linux-x86/simulation
+	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
+	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/simulation
 
 # Subprojects
 .clean-subprojects:
