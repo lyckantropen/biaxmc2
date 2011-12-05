@@ -59,7 +59,7 @@ public:
             ac.Update();
             //--- pomiary
             if(k%settings.simulation.measure_frequency==0){
-                prop->Update(k,H);
+                prop->Update(k,H,&ac);
             }
             //---
             
@@ -216,7 +216,7 @@ class PRE79Simulation:public ILoggable {
         simulation = new LatticeSimulation(H,lattice,metro,cycle_advantage,found_cycle);
         Log() << "Creating Properties\n";
         prop = new PRE79StandardProperties(lattice,settings.simulation.production_cycles/settings.simulation.measure_frequency);
-        thermalprops = new PRE79StandardProperties(lattice,thermalization->GetNCycles()/100);
+        thermalprops = new PRE79StandardProperties(lattice,thermalization->GetNCycles()/10);
 
     }
 
@@ -285,8 +285,8 @@ public:
         int tcycle=0;
         while(thermalization->Iterate()){
             ac.Update();
-            if(tcycle%100==0)
-                thermalprops->Update(tcycle,H);
+            if(tcycle%10==0)
+                thermalprops->Update(tcycle,H,&ac);
             if(tcycle%1000==0 && settings.output.report_progress){
                 Log() << "E = " << thermalprops->EnergyEvolution()[tcycle/1001] << std::endl;
                 Log() << "Progress: " << (double(tcycle)/double(thermalization->GetNCycles()))*100.0 << "%\n";
@@ -303,8 +303,11 @@ public:
             tcycle++;
         }
         //-- zapisywanie historii termalizacji
-	Log() << "Saving thermalization history\n";
-        database.StoreThermalizationHistory(settings,*thermalprops);
+        
+        if(settings.output.save_thermalization_properties){
+            Log() << "Saving thermalization history\n";
+            database.StoreThermalizationHistory(settings,*thermalprops);
+        }
 
         return *lattice;
     }
@@ -419,7 +422,7 @@ public:
             ac.Update();
             //--- pomiary
             if(k%settings.simulation.measure_frequency==0){
-                prop->Update(k,H);
+                prop->Update(k,H,&ac);
                 if(settings.output.save_configuration_evolution){
                     database.StoreLattice(settings,*lattice,k);
                 }
@@ -491,6 +494,20 @@ public:
         ILoggable::Log() << "Thread: " << omp_get_thread_num() << "/" << omp_get_num_threads() << ": ";
 	return ILoggable::Log();
     }
+    /*
+    
+    ///for parallel tempering
+    double SwapTemperature(const double & t) {
+        double oldT = H->GetTemperature();
+        double oldL = H->GetLambda();
+        double oldTau = H->GetTau();
+        double oldH = H->GetH();
+        
+        delete H;
+        H = new PRE79StandardHamiltonian(t,oldL,oldTau,oldH);
+        return oldT;
+    }
+    */
     ~PRE79Simulation(){
         delete metro;
         delete lattice;

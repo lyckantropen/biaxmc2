@@ -23,6 +23,8 @@ class AutoCorrelationTimeCalculator:public ILoggable {
     int acc_idx;
     vect ec;
     vect R;
+    int t;
+    
     
     Value CalculateMeanEnergy(){
         vect e(0.0,lattice->GetN());
@@ -32,11 +34,12 @@ class AutoCorrelationTimeCalculator:public ILoggable {
         return Mean(e,0,0,e.size());
     }
 public:
-    AutoCorrelationTimeCalculator(Lattice * l, int _nc, int _nh):lattice(l),ncycles(_nc){
+    AutoCorrelationTimeCalculator(Lattice * l, int _nc, int _nh):lattice(l),ncycles(_nc),t(_nh/2){
         ec.resize(_nc,0.0);
         R.resize(_nh,0.0);
         acc_idx=0;
-        SetFile("autocorrelation");
+        //SetFile("autocorrelation");
+        //SetStream(&std::cout);
     }
     void Update() {
         ec[acc_idx]=double(CalculateMeanEnergy());
@@ -45,8 +48,8 @@ public:
             Log() << "Autocorrelation function:\n" ;
 
             const int N = (ncycles-R.size()+1);
-            double em = Mean(ec,0,0,ec.size());
-            double emv = std::pow(Mean(ec,0,0,ec.size()).Error(),2);
+            double em = Mean(ec);
+            double emv = std::pow(Mean(ec,0,0,10).Error(),2);
             for(int k=0;k<R.size();k++){
                 double q1=0,q2=0,q3=0;
                 for(int i=0;i<N;i++){
@@ -55,15 +58,30 @@ public:
                     q3+=(ec[i]-em)*(ec[i+k]-em)/N;
                 }
                 R[k]=q3/emv;
+                R/=R[0];
                 //std::cout << q1 << ", " << q2 << ", " << q3 << std::endl;
                 Log() << R[k] << std::endl;
             }
+            t=R.size();
+            for(int i=0;i<R.size();i++){
+                if(std::abs(R[i])<0.5){
+                    t=i;
+                    break;
+                }
+            }
             
-     
+            Log() << "Autocorrelation time: " << t << std::endl;
+            
             acc_idx=0;
             return;
         }
         acc_idx++;
+    }
+    const int & GetT() const {
+        return t;
+    }
+    const vect & GetR() const {
+        return R;
     }
         
 };

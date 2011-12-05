@@ -10,7 +10,7 @@
 
 //#include "PRE79Simulation.h"
 #include "Settings.h"
-#include "ILoggable.h"
+//#include "ILoggable.h"
 #include "RuntimePropertiesServer.h"
 #include <omp.h>
 
@@ -61,12 +61,21 @@ public:
 
 
         Log() << "Non-parallel version\n";
-        Log() << "Scanning " << variable << " from " << start << " to " << end << " with interval " << delta << std::endl; 
+        if(settings.scanning.separate_values)
+            Log() << "Scanning values: " << settings.scanning.values << std::endl;
+        else
+            Log() << "Scanning " << variable << " from " << start << " to " << end << " with interval " << delta << std::endl; 
         
+        
+      
         // wersja bez paralelizacji, bo mamy ładowanie poprzedniego stanu
         pt::ptime start_t = pt::second_clock::local_time();
         for(int i=0;i<nscans;i++){
-            double value = start + double(i)*delta;
+            double value = 0.0;
+            if(settings.scanning.separate_values)
+                value = settings.scanning.values[i];
+            else
+                value = start + double(i)*delta;
             Log() << "Value: " << value << std::endl;
 
             if(variable=="hamiltonian.tau")
@@ -140,7 +149,10 @@ public:
      */
     void RunParallel(){
         Log() << "Parallel OpenMP version\n";
-        Log() << "Scanning " << variable << " from " << start << " to " << end << " with interval " << delta << std::endl;
+        if(settings.scanning.separate_values)
+            Log() << "Scanning values: " << settings.scanning.values << std::endl;
+        else
+            Log() << "Scanning " << variable << " from " << start << " to " << end << " with interval " << delta << std::endl;
         Log() << "Trying to set the number of concurrent simulations to " << settings.openmp.number_of_threads << std::endl;
 
         if(settings.openmp.dynamic)
@@ -151,7 +163,11 @@ public:
         #pragma omp parallel for schedule(runtime) shared(rng2) private(random01)
         for(int i=0;i<nscans;i++){
 
-            double value = start + double(i)*delta;
+            double value = 0.0;
+            if(settings.scanning.separate_values)
+                value = settings.scanning.values[i];
+            else
+                value = start + double(i)*delta;
             #pragma omp critical
             Log() << "Thread: "<< omp_get_thread_num() << "/" << omp_get_num_threads() << ", Value: " << value << std::endl;
 
@@ -199,7 +215,10 @@ public:
      */
     void RunParallelParallel() {
         Log() << "Parallel thermalization with parallel productions\n";
-        Log() << "Scanning " << variable << " from " << start << " to " << end << " with interval " << delta << std::endl;
+        if(settings.scanning.separate_values)
+            Log() << "Scanning values: " << settings.scanning.values << std::endl;
+        else
+            Log() << "Scanning " << variable << " from " << start << " to " << end << " with interval " << delta << std::endl;
         Log() << "Trying to set the number of concurrent simulations to " << settings.openmp.number_of_threads << std::endl;
 
         if(settings.openmp.dynamic)
@@ -230,7 +249,11 @@ public:
             //-- termalizacja
             #pragma omp parallel for schedule(runtime) shared(rng2) private(random01)
             for(int t=0;t<current_nscans;t++){
-                double value = start + double((chunk-1)*incr+t)*delta;
+                double value = 0.0;
+                if(settings.scanning.separate_values)
+                    value = settings.scanning.values[t];
+                else
+                    value = start + double(t)*delta;
                 #pragma omp critical
                 Log() << "Thread: "<< omp_get_thread_num() << "/" << omp_get_num_threads() << ", Value: " << value << std::endl;
 
@@ -248,7 +271,18 @@ public:
                 //current_settings.scanning.enabled=false;
                 //current_settings.scanning.threaded=false;
                 //current_settings.scanning.threaded_production=false;
+                
+                
+                bool found = false;
+                int cycle = 0;
+                states[t] = FindLastStateTemperatureTolerant(current_settings,found,cycle);
 
+                if(found){
+                    #pragma omp critical
+                    Log() << "Thread: " << omp_get_thread_num() << "/" << omp_get_num_threads() << ", Thermalized state found for value " << value << std::endl;
+                    continue;
+                }
+                
                 PRE79Simulation termo(current_settings);
                 #pragma omp critical
                 Log() << termo.GetLog();
@@ -262,7 +296,11 @@ public:
             //-- produkcja
             //#//pragma omp parallel for schedule(runtime) shared(rng2) private(random01)
             for(int t=0;t<current_nscans;t++){
-                double value = start + double((chunk-1)*incr+t)*delta;
+                double value = 0.0;
+                if(settings.scanning.separate_values)
+                    value = settings.scanning.values[t];
+                else
+                    value = start + double(t)*delta;
                 #pragma omp critical
                 Log() << "Thread: "<< omp_get_thread_num() << "/" << omp_get_num_threads() << ", Value: " << value << std::endl;
 

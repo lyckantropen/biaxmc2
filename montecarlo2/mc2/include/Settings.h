@@ -10,6 +10,7 @@
 
 #include "boost.h"
 #include "std.h"
+#include "valarray_external.h"
 #include "ILoggable.h"
 
 
@@ -102,6 +103,7 @@ public:
         bool save_final_properties;         std::string v_save_final_properties;
         bool save_properties_evolution;     std::string v_save_properties_evolution;
         bool save_intermediate_states;      std::string v_save_intermediate_states;
+        bool save_thermalization_properties;std::string v_save_thermalization_properties;
         bool start_service;                 std::string v_start_service;
         bool report_progress;               std::string v_report_progress;
         int intermediate_states;
@@ -111,6 +113,7 @@ public:
         v_save_final_properties("yes"),
         v_save_properties_evolution("yes"),
         v_save_intermediate_states("yes"),
+        v_save_thermalization_properties("yes"),
         v_start_service("no"),
         v_report_progress("yes"),
         intermediate_states(10)
@@ -139,6 +142,11 @@ public:
         bool threaded; std::string v_threaded;
         bool threaded_production; std::string v_threaded_production;
         bool continue_if_results_exist; std::string v_continue_if_results_exist;
+        bool parallel_tempering; std::string v_parallel_tempering;
+        int parallel_tempering_swapfq;
+        std::string v_values;
+        vect values;
+        bool separate_values;
         
         _scanning():
         v_reuse_thermalized("yes"),
@@ -146,7 +154,11 @@ public:
         v_enabled("no"),
         v_threaded("no"),
         v_threaded_production("no"),
-        v_continue_if_results_exist("yes")
+        v_continue_if_results_exist("yes"),
+        v_parallel_tempering("yes"),
+        parallel_tempering_swapfq(10),
+        v_values(""),
+        separate_values(false)
         
         {}
     } scanning ;
@@ -204,6 +216,7 @@ private:
         ("output.save_intermediate_states",po::value<std::string>(&output.v_save_intermediate_states),"(yes/no) Save intermediate states for recovery")
         ("output.start_service",po::value<std::string>(&output.v_start_service),"(yes/no) Start convenience service for remote inference at runtime")
         ("output.report_progress",po::value<std::string>(&output.v_report_progress),"(yes/no) Report progress")
+        ("output.save_thermalization_properties",po::value<std::string>(&output.v_save_thermalization_properties),"(yes/no) Save thermalization final properties")
         ("output.intermediate_states",po::value<int>(&output.intermediate_states),"Number of intermediate states to save")
         ("initial.biaxial",po::value<std::string>(&initial.v_biaxial),"(yes/no) Initial state is biaxial")
         ("initial.biaxial_alt",po::value<std::string>(&initial.v_biaxial_alt),"(yes/no) Initial state is biaxial with b||z")
@@ -215,12 +228,15 @@ private:
         ("scanning.end",po::value<double>(&scanning.end),"End value")
         ("scanning.delta",po::value<double>(&scanning.delta),"Interval")
         ("scanning.reuse_thermalized",po::value<std::string>(&scanning.v_reuse_thermalized),"DEPRECATED use scanning.pass_on")
+        ("scanning.values",po::value<std::string>(&scanning.v_values),"Isolated temperature values")
 
         ("scanning.pass_on",po::value<std::string>(&scanning.v_pass_on),"(yes/no) When scanning with replica parallelization, pass the final state as the next initial state")
 
         ("scanning.threaded",po::value<std::string>(&scanning.v_threaded),"(yes/no) Threaded scanning")
         ("scanning.threaded_production",po::value<std::string>(&scanning.v_threaded_production),"(yes/no) Threaded production")
         ("scanning.continue_if_results_exist",po::value<std::string>(&scanning.v_continue_if_results_exist),"(yes/no) Skip already performed simulations and pick up last saved state")
+        ("scanning.parallel_tempering",po::value<std::string>(&scanning.v_parallel_tempering),"(yes/no) Parallel tempering")
+        ("scanning.parallel_tempering_swapfq",po::value<int>(&scanning.parallel_tempering_swapfq),"Swap frequency")
         ("openmp.number_of_threads",po::value<int>(&openmp.number_of_threads),"Number of threads in threaded scanning")
         ("openmp.dynamic",po::value<std::string>(&openmp.v_dynamic),"(yes/no) Should the number of threads be assigned dynamically")
         ("project.name_format",po::value<std::string>(&project.name_format),"Formatted name")
@@ -233,6 +249,7 @@ private:
         output.save_final_properties = TextBool(output.v_save_final_properties);
         output.save_properties_evolution = TextBool(output.v_save_properties_evolution);
 	output.save_intermediate_states = TextBool(output.v_save_intermediate_states);
+        output.save_thermalization_properties = TextBool(output.v_save_thermalization_properties);
         output.start_service = TextBool(output.v_start_service);
         output.report_progress = TextBool(output.v_report_progress);
         initial.biaxial = TextBool(initial.v_biaxial);
@@ -245,12 +262,21 @@ private:
         scanning.threaded = TextBool(scanning.v_threaded);
         scanning.threaded_production = TextBool(scanning.v_threaded_production);
         scanning.continue_if_results_exist = TextBool(scanning.v_continue_if_results_exist);
+        scanning.parallel_tempering = TextBool(scanning.v_parallel_tempering);
         openmp.dynamic = TextBool(openmp.v_dynamic);
         simulation.find_thermalized = TextBool(simulation.v_find_thermalized);
         simulation.pick_up_aborted = TextBool(simulation.v_pick_up_aborted);
         simulation.adjust_radius = TextBool(simulation.v_adjust_radius);
         simulation.measure_acceptance = TextBool(simulation.v_measure_acceptance);
         simulation.calculate_time = TextBool(simulation.v_calculate_time);
+        scanning.separate_values = bool(scanning.v_values.size());
+    }
+    void LoadScanningValues(){
+        std::vector<std::string> names;
+        boost::split(names,scanning.v_values,boost::is_any_of(","));
+        scanning.values.resize(names.size(),0.0);
+        for(int i=0;i<names.size();i++)
+            scanning.values[i]=std::atof(names[i].c_str());
     }
 public:
     Settings(const fs::path & file){
@@ -264,6 +290,7 @@ public:
             po::store(basic_options,vm);
             po::notify(vm);
             LoadBooleans();
+            LoadScanningValues();
             Log() << "Parsed file " << file.string() << ". Options are:\n";
             foreach(po::basic_option<char> & o, basic_options.options){
                 Log() << o.string_key << " = " << o.value[0] << std::endl;

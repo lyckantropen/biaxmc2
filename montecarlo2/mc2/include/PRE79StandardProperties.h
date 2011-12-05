@@ -11,6 +11,7 @@
 //#include "SpatialCorrelation.h"
 #include "SpatialCorrelationEvolution.h"
 #include "PRE79StandardHamiltonian.h"
+#include "AutoCorrelationTimeCalculator.h"
 #include "Lattice.h"
 #include "Statistical.h"
 #include "Contractions.h"
@@ -44,6 +45,8 @@ class PRE79StandardProperties {
     vect    T20T20y;         ///<moduł T20^2 w funkcji czasu
     vect    T22T22y;         ///<moduł T22^2 w funkcji czasu
     vect    T32T32;
+    
+    vect        autocorrelation_time;
 
     //    vect    D200;
 //    vect    D220;
@@ -189,6 +192,8 @@ public:
             MeanQyTensor[i].resize(6,0.0);
             MeanQzTensor[i].resize(6,0.0);
         }
+        
+        autocorrelation_time.resize(ncycles,0.0);
         //specific_heat.resize(ncycles);
     }
 
@@ -220,6 +225,10 @@ public:
 
 	T32T32.resize(p.T32T32.size());
 	T32T32 = p.T32T32;
+        
+        autocorrelation_time.resize(p.autocorrelation_time.size());
+        autocorrelation_time = p.autocorrelation_time;
+
 
         lat=p.lat;
         readonly=p.readonly;
@@ -271,6 +280,10 @@ public:
 
 	T32T32.resize(p.T32T32.size());
 	T32T32 = p.T32T32;
+        
+        autocorrelation_time.resize(p.autocorrelation_time.size());
+        autocorrelation_time = p.autocorrelation_time;
+
 	
 	lat=p.lat;
         readonly=p.readonly;
@@ -297,11 +310,14 @@ public:
     }
 
     ///obliczenie kontrakcji
-    void Update(int idx,const PRE79StandardHamiltonian * H){
+    void Update(int idx,const PRE79StandardHamiltonian * H, const AutoCorrelationTimeCalculator * ac = NULL){
         if(readonly) return;
         if((acc_idx+1)>=ncycles) return;
         index=idx;
         acc_idx++;
+        
+        if(ac!=NULL)
+                autocorrelation_time[acc_idx]=ac->GetT();
 
         d200corz.Update();
         d220corz.Update();
@@ -357,6 +373,8 @@ public:
         vect tmpt20t20y(0.0,ncycles);
         vect tmpt22t22y(0.0,ncycles);
 	vect tmpt32t32(0.0,ncycles);
+        
+        vect tmpactime(0.0,ncycles);
         /*
         vect tmpD200(0.0,ncycles);
         vect tmpD220(0.0,ncycles);
@@ -375,6 +393,8 @@ public:
             tmpt20t20y[i]=T20T20y[i];
             tmpt22t22y[i]=T22T22y[i];
 	    tmpt32t32[i]=T32T32[i];
+            
+            tmpactime[i]=autocorrelation_time[i];
             /*
             tmpD200[i]=D200[i];
             tmpD220[i]=D220[i];
@@ -393,6 +413,7 @@ public:
             tmpt20t20z[i]=p.T20T20z[i-oldsize];
             tmpt22t22z[i]=p.T22T22z[i-oldsize];
 	    tmpt32t32[i]=p.T32T32[i-oldsize];
+            tmpactime[i]=p.autocorrelation_time[i-oldsize];
             /*
             tmpD200[i]=p.D200[i-oldsize];
             tmpD220[i]=p.D220[i-oldsize];
@@ -409,6 +430,7 @@ public:
         T20T20y.resize(ncycles,0.0);
         T22T22y.resize(ncycles,0.0);
 	T32T32.resize(ncycles,0.0);
+        autocorrelation_time.resize(ncycles,0.0);
         //D200.resize(ncycles,0.0);
         //D220.resize(ncycles,0.0);
         //D202.resize(ncycles,0.0);
@@ -422,6 +444,7 @@ public:
         T20T20y=tmpt20t20y;
         T22T22y=tmpt22t22y;
 	T32T32=tmpt32t32;
+        autocorrelation_time=tmpactime;
         //D200=tmpD200;
         //D220=tmpD220;
         //D202=tmpD202;
@@ -549,6 +572,10 @@ public:
     }
     Value MeanT32T32Susceptibility() const {
         return CalculateFluctuation(std::sqrt(T32T32));
+    }
+    
+    Value MeanAutocorrelationTime() const {
+        return Mean(autocorrelation_time,0,acc_idx+1);
     }
 
 
@@ -701,6 +728,9 @@ public:
         //return specific_heat;
         return fluctuation;
     }
+    const vect & GetAutocorrelationTimeHistory() const {
+        return autocorrelation_time;
+    }
  
     const Value & Fluctuation() const {
         return fluctuation;
@@ -758,6 +788,8 @@ void operator|(serializer_t & s, PRE79StandardProperties & prop){
     s|prop.T20T20y;
     s|prop.T22T22y;
     s|prop.T32T32;
+    
+    s|prop.autocorrelation_time;
 }
 
 /**
@@ -827,6 +859,8 @@ class PRE79MeanProperties {
     double tau;
     double lambda;
     double h;
+    
+    Value mean_autocorrelation_time;
 
 
 
@@ -921,6 +955,7 @@ public:
         T32T32 = prop.MeanT32T32();
         T32T32_sus = prop.MeanT32T32Susceptibility();
 
+        mean_autocorrelation_time = prop.MeanAutocorrelationTime();
         //mean_d200 = prop.MeanDelta200();
         //mean_d220 = prop.MeanDelta220();
         //mean_d202 = prop.MeanDelta202();
@@ -990,6 +1025,8 @@ public:
         T22T22y_sus=s.T22T22y_sus;
         T22T22z_sus=s.T22T22z_sus;
         T32T32_sus=s.T32T32_sus;
+        
+        mean_autocorrelation_time=s.mean_autocorrelation_time;
 
         temperature=s.temperature;
         tau=s.tau;
@@ -1066,6 +1103,8 @@ public:
         T22T22y=s.T22T22y;
         T22T22z=s.T22T22z;
         T32T32=s.T32T32;
+        
+        mean_autocorrelation_time=s.mean_autocorrelation_time;
 
         T20T20x_sus=s.T20T20x_sus;
         T20T20y_sus=s.T20T20y_sus;
@@ -1415,6 +1454,10 @@ public:
     const double & Field() const {
         return h;
     }
+    
+    const Value & MeanAutocorrelationTime() const {
+        return mean_autocorrelation_time;
+    }
 };
 
 
@@ -1489,6 +1532,8 @@ void operator|(serializer_t & s, PRE79MeanProperties & p){
 
     s|p.T32T32;
     s|p.T32T32_sus;
+    
+    s|p.mean_autocorrelation_time;
 }
 
 #endif	/* _STANDARDPROPERTIES_H */

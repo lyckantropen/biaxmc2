@@ -19,6 +19,7 @@
       <itemPath>../../montecarlo2/mc2/include/PRE79SpatialCorrelations.h</itemPath>
       <itemPath>../../montecarlo2/mc2/include/PRE79StandardHamiltonian.h</itemPath>
       <itemPath>../../montecarlo2/mc2/include/PRE79StandardProperties.h</itemPath>
+      <itemPath>../../montecarlo2/mc2/include/ParallelTempering.h</itemPath>
       <itemPath>../../montecarlo2/mc2/include/Particle.h</itemPath>
       <itemPath>../../montecarlo2/mc2/include/RuntimePropertiesServer.h</itemPath>
       <itemPath>../../montecarlo2/mc2/include/Settings.h</itemPath>
