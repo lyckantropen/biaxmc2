@@ -62,7 +62,7 @@ public:
             else
                 beta[i]=1./settings.scanning.end+i*delta;
         }
-        //SetStream(&std::cout);
+        SetStream(&std::cout);
         Log() << "Betas: " << beta << std::endl;
     }
     void Run() {
@@ -72,29 +72,79 @@ public:
         
         int swapfq = settings.scanning.parallel_tempering_swapfq;
         
-        #pragma omp parallel for schedule(static) private(random01)
-        for(int i=0;i<n;i++){
+        //#pragma omp parallel for schedule(static) private(random01) ordered
+        #pragma omp parallel private(random01)
+        //for(int i=0;i<n;i++)
+        {
+            int i = omp_get_thread_num();
+            #pragma omp critical
+            Log() << "Thread: " << i << std::endl;
             PRE79StandardHamiltonian H(1./beta[i],settings.hamiltonian.lambda,settings.hamiltonian.tau,settings.hamiltonian.h);
             AutoCorrelationTimeCalculator ac(&lattices[i],settings.simulation.autocorrelation_frequency,settings.simulation.autocorrelation_length);
-            PRE79StandardProperties prop(&lattices[i],nc/swapfq);
+            PRE79StandardProperties prop(&lattices[i],nc/20);
+            PRE79StandardProperties ptprop(&lattices[i],nc/swapfq);
             Metropolis m(settings,&H);
             m.AdjustRadius(&lattices[i]);
             LatticeSimulation simulation(&H,&lattices[i],&m,nc);
             
             //ac.SetStream(&std::cout);
             for(int k=0;k<nc;k++){
+                //H.SetTemperature(1./beta[index[i]]);
+                H.SetTemperature(1./beta[i]);
+                simulation.SetLattice(&lattices[index[i]]);
+                prop.SetLattice(&lattices[index[i]]);
                 
                 simulation.Iterate();
                 ac.Update();
-                
-                if(k%swapfq==0 && i<(n-1)){
-                   prop.Update(k/swapfq,&H,&ac);
-                   E[index[i]]=prop.EnergyEvolution()[prop.GetAccIdx()];
-                   Swap(i+1,i,k/swapfq);
-                   H.SetTemperature(1./beta[index[i]]);
-                   Log() << "New indices: " << index << std::endl;
-                   Log() << "Simulation " << i << " has Beta " << beta[index[i]] << std::endl;
+                if(k%20==0){
+                        prop.Update(k/20,&H,&ac);
+                        //E[i]=prop.EnergyEvolution()[prop.GetAccIdx()];
                 }
+                
+                if(k>0 && k%swapfq==0 && i<(n-1))
+                {
+                   
+                
+                   ptprop.Update(k/swapfq,&H,&ac);
+                   E[i]=ptprop.EnergyEvolution()[ptprop.GetAccIdx()];
+                    
+                   //E[index[i]]=prop.EnergyEvolution()[prop.GetAccIdx()];
+                   
+                   #pragma omp critical
+                   Swap(i+1,i,k/swapfq);
+                   
+                   Log() << "New indices: " << index << std::endl;
+                   Log() << "Simulation " << i << " has Beta " << /*beta[index[i]]*/ beta[i] << " but index " << index[i] << std::endl;
+                   Log() << "No of accepted swaps: " << acc << std::endl;
+                   
+                }
+                //#pragma omp barrier
+                /*
+                #pragma omp master
+                if(k>2*swapfq && k%swapfq==0 && i==(n-1))
+                {
+                    //#pragma omp barrier
+                
+                    double aptm=0.0;
+                                      
+                    for(int i=1;i<n;i++)
+                        aptm+=acc[i-1]*(beta[i]-beta[i-1]);
+                    
+                    double lambda = (beta[n-1]-beta[0])/aptm;
+                    
+                    Log() << "lambda = " << lambda << std::endl;
+                    
+                    vect oldbeta = beta;
+                    for(int i=1;i<n;i++){
+                        beta[i]=beta[i-1]+lambda*acc[i-1]*(oldbeta[i]-oldbeta[i-1]);
+                        if(beta[i]==beta[i-1]){
+                            beta[i-1]*=0.95;
+                            beta[i]*=1.05;
+                        }
+                    }
+                    Log() << "New betas: " << beta << std::endl;
+                }*/
+                 
                 /*
                 if(k%swapfq==0){
                     prop.Update(k/swapfq,&H,&ac);
@@ -113,19 +163,21 @@ public:
                     
                     Log() << std::endl;
                     Log() << "New indices: " << index << std::endl;
-                    Log() << "No of accepted swaps: " << acc << std::endl;
                 }}
                  */
                 
             }
-            H.SetTemperature(1./beta[index[i]]);
+            //H.SetTemperature(1./beta[index[i]]);
+            H.SetTemperature(1./beta[i]);
             //dotermalizowanie
+            
+            Log() << "Supplementary thermalization of " << settings.simulation.supplementary_thermalization_cycles << " cycles.\n";
             for(int k=0;k<settings.simulation.supplementary_thermalization_cycles;k++)
                 simulation.Iterate();
             
             PRE79MeanProperties mprop(prop,H);
             Settings cur = settings;
-            cur.hamiltonian.temperature = 1./beta[index[i]];
+            cur.hamiltonian.temperature = H.GetTemperature();//1./beta[index[i]];
             database.StoreFinalLattice(cur,lattices[i]);
             database.StoreThermalizationHistory(cur,prop);
             database.StoreProperties(cur,mprop,nc-1);
@@ -133,27 +185,30 @@ public:
         }
     }
     void Swap(const int & u1, const int & u2,const int &k) {
-        double dB = beta[u1]-beta[u2];
+        double dB = beta[u2]-beta[u1];
         double dE = E[u1] - E[u2];
         double frac = std::exp(-dB*dE);
+        if(frac>=1.0) frac=1.0;
+        
         double delta = frac - acc[u2];
         acc[u2]+=delta/(k+1);
+        //acc[u2]=frac;
         
-        std::cout << "dB=" << dB << " dE=" << dE << ", exp(-dBdE)=" << frac << std::endl;
-        acc[u2]+=frac;
+        //std::cout << "dB=" << dB << " dE=" << dE << ", exp(-dBdE)=" << frac << std::endl;
+        //acc[u2]+=frac;
         //delete simulations[index[k]];
-        if(frac>=1.0){
+        if(frac>=1.0 or random01()<frac){
             int ii = index[u1];
             index[u1]=index[u2];
             index[u2]=ii;
             //acc[u2]+=1.;
-        }
+        }/*
         else if(random01()<frac){
             int ii = index[u1];
             index[u1]=index[u2];
             index[u2]=ii;
             //acc[u2]+=1.;
-        }      
+        }*/      
     }
     /*
     void Run() {

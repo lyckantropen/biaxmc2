@@ -748,7 +748,9 @@ public:
         //return lat->GetL()/2+1;
         return paritycor.GetMax()+1;
     }
-
+    void SetLattice(Lattice * l){
+        lat=l;
+    }
 };
 
 template<class serializer_t>
@@ -1458,6 +1460,7 @@ public:
     const Value & MeanAutocorrelationTime() const {
         return mean_autocorrelation_time;
     }
+
 };
 
 
