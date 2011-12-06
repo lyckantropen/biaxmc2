@@ -89,6 +89,9 @@ public:
     const double & GetMeanAcceptanceP() const {
         return Mean(acfp,0,GetAccIdx()+1);
     }
+    void SetLattice(Lattice * l){
+        lat=l;
+    }
 };
 
 #endif	/* _SIMULATION_H */
