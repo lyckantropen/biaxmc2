@@ -168,7 +168,7 @@ public:
                     
                     ////////////////////////
             
-            if(settings.simulation.production_cycles>0)
+            if(settings.simulation.production_cycles>0)t
             {
             int nc = settings.simulation.production_cycles;
             Log() << "Production with " << settings.simulation.production_cycles << " cycles\n";
