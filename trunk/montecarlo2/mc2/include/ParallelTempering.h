@@ -66,22 +66,26 @@ public:
         Log() << "Betas: " << beta << std::endl;
     }
     void Run() {
-        int nc = settings.simulation.thermalization_cycles;
+        
         omp_set_dynamic(0);
         omp_set_num_threads(n);
         
         int swapfq = settings.scanning.parallel_tempering_swapfq;
+        //int accfq = 10*swapfq;
         
         //#pragma omp parallel for schedule(static) private(random01) ordered
         #pragma omp parallel private(random01)
         //for(int i=0;i<n;i++)
         {
             int i = omp_get_thread_num();
-            #pragma omp critical
-            Log() << "Thread: " << i << std::endl;
+            {
+            int nc = settings.simulation.thermalization_cycles;
+            
+            //#pragma omp critical
+            //Log() << "Thread: " << i << std::endl;
             PRE79StandardHamiltonian H(1./beta[i],settings.hamiltonian.lambda,settings.hamiltonian.tau,settings.hamiltonian.h);
             AutoCorrelationTimeCalculator ac(&lattices[i],settings.simulation.autocorrelation_frequency,settings.simulation.autocorrelation_length);
-            PRE79StandardProperties prop(&lattices[i],nc/20);
+            PRE79StandardProperties prop(&lattices[i],nc/settings.simulation.measure_frequency);
             PRE79StandardProperties ptprop(&lattices[i],nc/swapfq);
             Metropolis m(settings,&H);
             m.AdjustRadius(&lattices[i]);
@@ -97,19 +101,14 @@ public:
                 simulation.Iterate();
                 ac.Update();
                 if(k%20==0){
-                        prop.Update(k/20,&H,&ac);
+                        prop.Update(k/settings.simulation.measure_frequency,&H,&ac);
                         //E[i]=prop.EnergyEvolution()[prop.GetAccIdx()];
                 }
-                
                 if(k>0 && k%swapfq==0 && i<(n-1))
-                {
-                   
-                
+                {          
                    ptprop.Update(k/swapfq,&H,&ac);
                    E[i]=ptprop.EnergyEvolution()[ptprop.GetAccIdx()];
-                    
-                   //E[index[i]]=prop.EnergyEvolution()[prop.GetAccIdx()];
-                   
+
                    #pragma omp critical
                    Swap(i+1,i,k/swapfq);
                    
@@ -118,6 +117,7 @@ public:
                    Log() << "No of accepted swaps: " << acc << std::endl;
                    
                 }
+              
                 //#pragma omp barrier
                 /*
                 #pragma omp master
@@ -145,26 +145,7 @@ public:
                     Log() << "New betas: " << beta << std::endl;
                 }*/
                  
-                /*
-                if(k%swapfq==0){
-                    prop.Update(k/swapfq,&H,&ac);
-                    E[index[i]]=prop.EnergyEvolution()[prop.GetAccIdx()];
-                //#//pragma omp barrier
-                if(omp_get_thread_num()==n-1){
-                    Log() << "Swapping at " << k << std::endl;
-                    Log() << "Energies: " << E << std::endl;
-
-                    for(int u=0;u<n-1;u++){
-                        int U=random01()*(n-1);
-                        Swap(U+1,U,k/swapfq);
-                    }
-                    //for(int u=n-1;u>0;u--)
-                    //    Swap(u-1,u);
-                    
-                    Log() << std::endl;
-                    Log() << "New indices: " << index << std::endl;
-                }}
-                 */
+               
                 
             }
             //H.SetTemperature(1./beta[index[i]]);
@@ -181,6 +162,94 @@ public:
             database.StoreFinalLattice(cur,lattices[i]);
             database.StoreThermalizationHistory(cur,prop);
             database.StoreProperties(cur,mprop,nc-1);
+            }
+            
+                    ////////////////////////
+                    
+                    ////////////////////////
+            
+            if(settings.simulation.production_cycles>0)
+            {
+            int nc = settings.simulation.production_cycles;
+            Log() << "Production with " << settings.simulation.production_cycles << " cycles\n";
+            //#pragma omp critical
+            //Log() << "Thread: " << i << std::endl;
+            PRE79StandardHamiltonian H(1./beta[i],settings.hamiltonian.lambda,settings.hamiltonian.tau,settings.hamiltonian.h);
+            AutoCorrelationTimeCalculator ac(&lattices[i],settings.simulation.autocorrelation_frequency,settings.simulation.autocorrelation_length);
+            PRE79StandardProperties prop(&lattices[i],nc/settings.simulation.measure_frequency);
+            PRE79StandardProperties ptprop(&lattices[i],nc/swapfq);
+            Metropolis m(settings,&H);
+            m.AdjustRadius(&lattices[i]);
+            LatticeSimulation simulation(&H,&lattices[i],&m,nc);
+            
+            //ac.SetStream(&std::cout);
+            for(int k=0;k<nc;k++){
+                //H.SetTemperature(1./beta[index[i]]);
+                H.SetTemperature(1./beta[i]);
+                simulation.SetLattice(&lattices[index[i]]);
+                prop.SetLattice(&lattices[index[i]]);
+                
+                simulation.Iterate();
+                ac.Update();
+                if(k%20==0){
+                        prop.Update(k/settings.simulation.measure_frequency,&H,&ac);
+                        //E[i]=prop.EnergyEvolution()[prop.GetAccIdx()];
+                }
+                if(k>0 && k%swapfq==0 && i<(n-1))
+                {          
+                   ptprop.Update(k/swapfq,&H,&ac);
+                   E[i]=ptprop.EnergyEvolution()[ptprop.GetAccIdx()];
+
+                   #pragma omp critical
+                   Swap(i+1,i,k/swapfq);
+                   
+                   Log() << "New indices: " << index << std::endl;
+                   Log() << "Simulation " << i << " has Beta " << /*beta[index[i]]*/ beta[i] << " but index " << index[i] << std::endl;
+                   Log() << "No of accepted swaps: " << acc << std::endl;
+                   
+                }
+              
+                //#pragma omp barrier
+                /*
+                #pragma omp master
+                if(k>2*swapfq && k%swapfq==0 && i==(n-1))
+                {
+                    //#pragma omp barrier
+                
+                    double aptm=0.0;
+                                      
+                    for(int i=1;i<n;i++)
+                        aptm+=acc[i-1]*(beta[i]-beta[i-1]);
+                    
+                    double lambda = (beta[n-1]-beta[0])/aptm;
+                    
+                    Log() << "lambda = " << lambda << std::endl;
+                    
+                    vect oldbeta = beta;
+                    for(int i=1;i<n;i++){
+                        beta[i]=beta[i-1]+lambda*acc[i-1]*(oldbeta[i]-oldbeta[i-1]);
+                        if(beta[i]==beta[i-1]){
+                            beta[i-1]*=0.95;
+                            beta[i]*=1.05;
+                        }
+                    }
+                    Log() << "New betas: " << beta << std::endl;
+                }*/
+                 
+               
+                
+            }
+            //H.SetTemperature(1./beta[index[i]]);
+            H.SetTemperature(1./beta[i]);
+            
+            Log() << "Saving final properties for beta " << beta[i] << std::endl;
+            PRE79MeanProperties mprop(prop,H);
+            Settings cur = settings;
+            cur.hamiltonian.temperature = H.GetTemperature();//1./beta[index[i]];
+            database.StoreFinalLattice(cur,lattices[i]);
+            database.StorePropertiesEvolution(cur,prop);
+            database.StoreFinalProperties(cur,mprop);
+            }
             
         }
     }
