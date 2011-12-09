@@ -227,6 +227,7 @@ public:
             omp_set_dynamic(0);
         omp_set_num_threads(settings.openmp.number_of_threads);
 
+        int nscans = PRE79Scanning::nscans;
         if(settings.scanning.separate_values)
             nscans = settings.scanning.values.size();
 
