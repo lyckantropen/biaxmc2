@@ -54,6 +54,7 @@ public:
             
             
         double delta = (1./settings.scanning.start - 1./settings.scanning.end)/n;
+        Log() << "Beta distance: " << delta << std::endl;
 
         for(int i=0;i<n;i++){
             index[i]=i;
@@ -168,7 +169,7 @@ public:
                     
                     ////////////////////////
             
-            if(settings.simulation.production_cycles>0)t
+            if(settings.simulation.production_cycles>0)
             {
             int nc = settings.simulation.production_cycles;
             Log() << "Production with " << settings.simulation.production_cycles << " cycles\n";

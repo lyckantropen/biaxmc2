@@ -227,6 +227,8 @@ public:
             omp_set_dynamic(0);
         omp_set_num_threads(settings.openmp.number_of_threads);
 
+        if(settings.scanning.separate_values)
+            nscans = settings.scanning.values.size();
 
         //-- niesparalelizowana pętla, jedziemy kawałkami rozmiaru liczby dostępnych wątków
         int incr=settings.openmp.number_of_threads;
