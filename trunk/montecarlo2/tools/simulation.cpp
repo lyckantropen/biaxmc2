@@ -30,6 +30,8 @@ int main(int argc, char** argv)
     Settings setup(cfg);
     setup.SetStream(&std::cout);
 
+    randtype::setup(setup.openmp.number_of_threads);
+    
     if(argc>2)
         mode=argv[2];
 
@@ -38,7 +40,7 @@ int main(int argc, char** argv)
         if(setup.scanning.enabled){
             if(setup.scanning.parallel_tempering){
                 ParallelTempering par(setup);
-                par.Run();
+                par.Run2();
             }
             else {
             PRE79Scanning scanning(setup);
