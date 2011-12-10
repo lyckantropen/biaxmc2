@@ -310,6 +310,31 @@ public:
         }
         f.close();
     }
+    Settings(const Settings & s){
+        lattice=s.lattice;
+        initial=s.initial;
+        openmp=s.openmp;
+        output=s.output;
+        pbs=s.pbs;
+        project=s.project;
+        scanning=s.scanning;
+        simulation=s.simulation;
+        sqlite=s.sqlite;
+        hamiltonian=s.hamiltonian;
+    }
+    const Settings & operator=(const Settings & s){
+        lattice=s.lattice;
+        initial=s.initial;
+        openmp=s.openmp;
+        output=s.output;
+        pbs=s.pbs;
+        project=s.project;
+        scanning=s.scanning;
+        simulation=s.simulation;
+        sqlite=s.sqlite;
+        hamiltonian=s.hamiltonian;
+        return *this;
+    }
 };
 
 

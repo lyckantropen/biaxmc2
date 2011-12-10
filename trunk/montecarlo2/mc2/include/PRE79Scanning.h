@@ -17,7 +17,7 @@
 //void call_run(Lattice & state, PRE79Simulation & sim) ;
 
 class PRE79Scanning:public ILoggable {
-    const Settings &        settings;       ///<globalne ustawienia
+    Settings &        settings;       ///<globalne ustawienia
     //PRE79Simulation         * simulation;   ///<bieżąca symulacja
     
     const double start;
@@ -26,7 +26,7 @@ class PRE79Scanning:public ILoggable {
     const int nscans;
     const std::string variable;
 public:
-    PRE79Scanning(const Settings & set):
+    PRE79Scanning(Settings & set):
     settings(set),
     start(set.scanning.start),
     end(set.scanning.end),
