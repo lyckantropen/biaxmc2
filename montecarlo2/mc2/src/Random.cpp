@@ -12,7 +12,9 @@ boost::rand48   rng2;
 //rangen_wd random01;
 //rangen random01;
 //MarsagliaRNG random01;
-rangen_mwc random01;
+//rangen_mwc random01;
+randtype random01;
+template<class rng> std::vector<rng> rng_wrap<rng>::rg;
 //rangen * rg = NULL;
 
 /*

@@ -25,7 +25,7 @@ class Metropolis:public MCProto,protected ILoggable {
     double              radius; ///<promień dający odpowiednią akceptację ruchów
     double  acc_llimit,acc_ulimit;
     double  parity_prob;
-    const Settings & settings;
+    Settings settings;
 public:
     Metropolis(const Settings & set, Hamiltonian * h=NULL,const double & r=1):settings(set),hamiltonian(h),radius(set.simulation.radius),
             acc_llimit(set.simulation.metropolis_lower_acceptance_limit),

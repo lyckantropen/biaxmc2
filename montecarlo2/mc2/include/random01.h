@@ -64,7 +64,9 @@ class rangen_mwc {
     unsigned long lsp[128][3];
 public:
     rangen_mwc(){
-        
+        setup(omp_get_thread_num());
+    }
+    void setup(int k){
 	lsp[0][0]=489UL;
 	lsp[0][1]=2100239007743UL;
 	lsp[0][2]=1050119503871UL;
@@ -450,8 +452,8 @@ public:
 	lsp[127][1]=196404559478783UL;
 	lsp[127][2]=98202279739391UL;
 
-	unsigned long seed = lsp[omp_get_thread_num()][2];
-        unsigned long mult = lsp[omp_get_thread_num()][0];
+	unsigned long seed = lsp[k][2];
+        unsigned long mult = lsp[k][0];
         
         gen.RandomInit(seed,mult);
         //std::cout << omp_get_thread_num() << ", seed: " << seed << ", mult: " << mult << std::endl;
@@ -460,12 +462,32 @@ public:
         return gen.Random();
     }
 };
+/**
+ * Wrapper na zbiór gneratorów, aby mieć pewność, że zawsze używamy dobrego seedu dla danego wątku. Na razie tylko rangen_mwc.
+ * 
+ */
+template<class rng>
+class rng_wrap {
 
-///ten generator będzie osobny dla każdego wątku (dyrektywa threadprivate)
+    static std::vector<rng> rg;
+public:
+    static void setup(int n){
+        rg.resize(n);
+        for(int i=0;i<n;i++)
+            rg[i].setup(i);
+    }
+    double operator()(){
+        //static std::vector<rng> rg(omp_get_num_threads());
+        return rg[omp_get_thread_num()]();
+    }
+};
+
 //extern rangen_wd random01;
 //extern rangen random01;
 //extern MarsagliaRNG random01;
-extern rangen_mwc random01;
+//extern rangen_mwc random01;
+typedef rng_wrap<rangen_mwc> randtype;
+extern randtype random01;
 //extern mwc random01;
 
 //extern double random01();

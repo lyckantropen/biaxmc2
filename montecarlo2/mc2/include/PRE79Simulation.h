@@ -22,11 +22,11 @@ class PRE79Production:public ILoggable {
     LatticeSimulation           *simulation;
     PRE79StandardProperties     *prop;
     Metropolis                  *metro;
-    const Settings  &   settings;
+    Settings  &   settings;
     long nprod;
     long ncycles;
 public:
-    PRE79Production(const Settings & set,long _nprod, const Lattice & start):
+    PRE79Production(Settings & set,long _nprod, const Lattice & start):
     nprod(_nprod),
     settings(set)
     {
@@ -131,7 +131,7 @@ class PRE79Simulation:public ILoggable {
     Metropolis                  *metro;
     std::vector<PRE79Production*>    productions;
     PRE79StandardProperties     *thermalprops;
-    const Settings  &   settings;
+    Settings  &   settings;
     SimulationDB        database;
     bool    restored;      ///<zaczynamy z wczytanego stanu sieci
 
@@ -221,7 +221,7 @@ class PRE79Simulation:public ILoggable {
     }
 
 public:
-    PRE79Simulation(const Settings & set):
+    PRE79Simulation(Settings & set):
     settings(set),
     database(set),
             thermalprops(NULL),thermalization(NULL),lattice(NULL)
@@ -250,7 +250,7 @@ public:
         restored=false;
         Init();
     }
-    PRE79Simulation(const Settings & set,const Lattice & saved):
+    PRE79Simulation(Settings & set,const Lattice & saved):
     settings(set),database(set)
     {
         //nie kopiujemy wskaźnika, kopiujemy obiekt
