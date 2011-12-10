@@ -464,7 +464,7 @@ public:
 };
 /**
  * Wrapper na zbiór gneratorów, aby mieć pewność, że zawsze używamy dobrego seedu dla danego wątku. Na razie tylko rangen_mwc.
- * 
+ * @todo: Nie jest wydajne wątkowo...
  */
 template<class rng>
 class rng_wrap {
@@ -486,7 +486,8 @@ public:
 //extern rangen random01;
 //extern MarsagliaRNG random01;
 //extern rangen_mwc random01;
-typedef rng_wrap<rangen_mwc> randtype;
+//typedef rng_wrap<rangen_mwc> randtype;
+typedef rangen_mwc randtype;
 extern randtype random01;
 //extern mwc random01;
 
