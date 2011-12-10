@@ -422,7 +422,7 @@ private:
         //replika, która teraz będzie odpowiadała za ustalanie beta
         int swaprep = 0;
         
-        #pragma omp parallel for
+        #pragma omp parallel for schedule(runtime)
         for(int rep=0;rep<n;rep++){
         
             m[rep]->AdjustRadius(lattices[rep]);
