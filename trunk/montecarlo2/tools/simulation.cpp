@@ -30,7 +30,7 @@ int main(int argc, char** argv)
     Settings setup(cfg);
     setup.SetStream(&std::cout);
 
-    randtype::setup(setup.openmp.number_of_threads);
+    //rng_wrap<rangen_mwc>::setup(setup.openmp.number_of_threads);
     
     if(argc>2)
         mode=argv[2];
