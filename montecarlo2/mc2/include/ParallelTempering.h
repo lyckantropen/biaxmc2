@@ -17,7 +17,7 @@
 
 class ParallelTempering: public ILoggable {
     std::vector<LatticeSimulation*>      simulations;
-    std::vector<Lattice*>                lattices;
+    std::vector<Lattice>                lattices;
     std::vector<PRE79StandardProperties*> prop;
     std::vector<PRE79StandardHamiltonian*> H;
     std::vector<Metropolis*>     m;
@@ -39,19 +39,19 @@ public:
         index.resize(n,0);
         if(settings.initial.isotropic && !settings.initial.righthanded)
         for(int i=0;i<n;i++)
-                lattices.push_back(new Lattice(settings.lattice.L,settings.lattice.W,settings.lattice.H,
+                lattices.push_back(Lattice(settings.lattice.L,settings.lattice.W,settings.lattice.H,
                         Lattice::Isotropic));
         else if(settings.initial.isotropic && settings.initial.righthanded)
         for(int i=0;i<n;i++)
-                lattices.push_back(new Lattice(settings.lattice.L,settings.lattice.W,settings.lattice.H,
+                lattices.push_back(Lattice(settings.lattice.L,settings.lattice.W,settings.lattice.H,
                         Lattice::IsotropicRighthanded));
         else if(settings.initial.biaxial && !settings.initial.righthanded)
         for(int i=0;i<n;i++)
-                lattices.push_back(new Lattice(settings.lattice.L,settings.lattice.W,settings.lattice.H,
+                lattices.push_back(Lattice(settings.lattice.L,settings.lattice.W,settings.lattice.H,
                         Lattice::Biaxial));
         else if(settings.initial.biaxial && settings.initial.righthanded)
         for(int i=0;i<n;i++)
-                lattices.push_back(new Lattice(settings.lattice.L,settings.lattice.W,settings.lattice.H,
+                lattices.push_back(Lattice(settings.lattice.L,settings.lattice.W,settings.lattice.H,
                         Lattice::BiaxialRighthanded));
         
             
@@ -82,9 +82,9 @@ public:
             
             H.push_back(new PRE79StandardHamiltonian(1./beta[i],settings.hamiltonian.lambda,settings.hamiltonian.tau,settings.hamiltonian.h));
             m.push_back(new Metropolis(settings,H.back()));
-            prop.push_back(new PRE79StandardProperties(lattices[i],nc/settings.simulation.measure_frequency));
-            simulations.push_back(new LatticeSimulation(H.back(),lattices[i],m.back(),nc));
-            ac.push_back(new AutoCorrelationTimeCalculator(lattices[i],settings.simulation.autocorrelation_frequency,settings.simulation.autocorrelation_length));
+            prop.push_back(new PRE79StandardProperties(&lattices[i],nc/settings.simulation.measure_frequency));
+            simulations.push_back(new LatticeSimulation(H.back(),&lattices[i],m.back(),nc));
+            ac.push_back(new AutoCorrelationTimeCalculator(&lattices[i],settings.simulation.autocorrelation_frequency,settings.simulation.autocorrelation_length));
         }
         Log() << "Thermalization\n";
         InnerLoop(nc);
@@ -97,7 +97,7 @@ public:
             PRE79MeanProperties mprop(*prop[rep],*H[rep]);
             Settings cur = settings;
             cur.hamiltonian.temperature = H[rep]->GetTemperature();//1./beta[index[i]];
-            database.StoreFinalLattice(cur,*lattices[rep]);
+            database.StoreFinalLattice(cur,lattices[rep]);
             database.StoreThermalizationHistory(cur,*prop[rep]);
             database.StoreProperties(cur,mprop,nc-1);
         }
@@ -110,9 +110,9 @@ public:
             simulations.pop_back();
         }
         for(int rep=0;rep<n;rep++){
-            prop.push_back(new PRE79StandardProperties(lattices[rep],nc/settings.simulation.measure_frequency));
-            ac.push_back(new AutoCorrelationTimeCalculator(lattices[rep],settings.simulation.autocorrelation_frequency,settings.simulation.autocorrelation_length)); 
-            simulations.push_back(new LatticeSimulation(H[rep],lattices[rep],m[rep],nc));
+            prop.push_back(new PRE79StandardProperties(&lattices[rep],nc/settings.simulation.measure_frequency));
+            ac.push_back(new AutoCorrelationTimeCalculator(&lattices[rep],settings.simulation.autocorrelation_frequency,settings.simulation.autocorrelation_length)); 
+            simulations.push_back(new LatticeSimulation(H[rep],&lattices[rep],m[rep],nc));
         }
         
         Log() << "Production\n";
@@ -125,7 +125,7 @@ public:
             PRE79MeanProperties mprop(*prop[rep],*H[rep]);
             Settings cur = settings;
             cur.hamiltonian.temperature = H[rep]->GetTemperature();//1./beta[index[i]];
-            database.StoreFinalLattice(cur,*lattices[rep]);
+            database.StoreFinalLattice(cur,lattices[rep]);
             database.StorePropertiesEvolution(cur,*prop[rep]);
             database.StoreFinalProperties(cur,mprop);
         }
@@ -148,9 +148,9 @@ public:
             
             H.push_back(new PRE79StandardHamiltonian(1./beta[i],settings.hamiltonian.lambda,settings.hamiltonian.tau,settings.hamiltonian.h));
             m.push_back(new Metropolis(settings,H.back()));
-            prop.push_back(new PRE79StandardProperties(lattices[i],nc/settings.simulation.measure_frequency));
-            simulations.push_back(new LatticeSimulation(H.back(),lattices[i],m.back(),nc));
-            ac.push_back(new AutoCorrelationTimeCalculator(lattices[i],settings.simulation.autocorrelation_frequency,settings.simulation.autocorrelation_length));
+            prop.push_back(new PRE79StandardProperties(&lattices[i],nc/settings.simulation.measure_frequency));
+            simulations.push_back(new LatticeSimulation(H.back(),&lattices[i],m.back(),nc));
+            ac.push_back(new AutoCorrelationTimeCalculator(&lattices[i],settings.simulation.autocorrelation_frequency,settings.simulation.autocorrelation_length));
         }
         
 
@@ -162,8 +162,8 @@ public:
             //for(int cycle=0;cycle<nc;cycle++){
                 ////MONTECARLO
                 H[rep]->SetTemperature(1./beta[rep]);
-                simulations[rep]->SetLattice(lattices[rep]);
-                prop[rep]->SetLattice(lattices[rep]);
+                simulations[rep]->SetLattice(&lattices[rep]);
+                prop[rep]->SetLattice(&lattices[rep]);
                 
                 simulations[rep]->Iterate();
                 ac[rep]->Update();
@@ -177,7 +177,7 @@ public:
                     PRE79MeanProperties mprop(*prop[rep],*H[rep]);
                     Settings cur = settings;
                     cur.hamiltonian.temperature = H[rep]->GetTemperature();//1./beta[index[i]];
-                    database.StoreFinalLattice(cur,*lattices[rep]);
+                    database.StoreFinalLattice(cur,lattices[rep]);
                     database.StoreThermalizationHistory(cur,*prop[rep]);
                     database.StoreProperties(cur,mprop,nc-1);
                 }
@@ -422,16 +422,16 @@ private:
         //replika, która teraz będzie odpowiadała za ustalanie beta
         int swaprep = 0;
         
-        #pragma omp parallel for schedule(runtime)
+        #pragma omp parallel for schedule(runtime) private(random01) default(shared)
         for(int rep=0;rep<n;rep++){
         
-            m[rep]->AdjustRadius(lattices[rep]);
+            m[rep]->AdjustRadius(&lattices[rep]);
             
             for(int cycle=0;cycle<nc;cycle++){
                 ////MONTECARLO
                 H[rep]->SetTemperature(1./beta[rep]);
-                simulations[rep]->SetLattice(lattices[rep]);
-                prop[rep]->SetLattice(lattices[rep]);
+                simulations[rep]->SetLattice(&lattices[rep]);
+                prop[rep]->SetLattice(&lattices[rep]);
                 
                 simulations[rep]->Iterate();
                 ac[rep]->Update();
@@ -508,10 +508,10 @@ private:
     
     void UpdateE(int i){
         vect e;
-        int N = lattices[i]->GetN();
+        int N = lattices[i].GetN();
         e.resize(N,0.0);
         for(int k=0;k<N;k++)
-            e[k]=lattices[i]->GetParticles()[k].GetEnergy();
+            e[k]=lattices[i].GetParticles()[k].GetEnergy();
         
         E[i]=e.sum()/N;
     }
@@ -536,9 +536,12 @@ private:
         std::cout << u1 << "->" << u2 << ", dB=" << dB << " dE=" << dE << ", exp(-dBdE)=" << frac << std::endl;
 
         if(random01()<frac){
-            Lattice * buf = lattices[u1];
+            Lattice buf = lattices[u1];
+            
             lattices[u1]=lattices[u2];
+            #pragma omp flush(lattices)
             lattices[u2]=buf;
+            #pragma omp flush(lattices)
             
             UpdateE(u1);
             UpdateE(u2);
