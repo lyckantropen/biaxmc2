@@ -466,29 +466,27 @@ public:
  * Wrapper na zbiór gneratorów, aby mieć pewność, że zawsze używamy dobrego seedu dla danego wątku. Na razie tylko rangen_mwc.
  * @todo: Nie jest wydajne wątkowo...
  */
-template<class rng>
-class rng_wrap {
 
-    static std::vector<rng> rg;
+class mwc_wrap {
 public:
+    static std::vector<rangen_mwc> rg;
+    //#pragma omp threadprivate(rg)
     static void setup(int n){
-        rg.resize(n);
-        for(int i=0;i<n;i++)
-            rg[i].setup(i);
-    }
-    double operator()(){
-        //static std::vector<rng> rg(omp_get_num_threads());
-        return rg[omp_get_thread_num()]();
-    }
+    rg.resize(n);
+    for(int i=0;i<n;i++)
+        rg[i].setup(i);
+}
+    double operator()();
+
 };
 
 //extern rangen_wd random01;
 //extern rangen random01;
 //extern MarsagliaRNG random01;
-//extern rangen_mwc random01;
-//typedef rng_wrap<rangen_mwc> randtype;
-typedef rangen_mwc randtype;
-extern randtype random01;
+extern rangen_mwc random01;
+
+//extern mwc_wrap random01;
+
 //extern mwc random01;
 
 //extern double random01();

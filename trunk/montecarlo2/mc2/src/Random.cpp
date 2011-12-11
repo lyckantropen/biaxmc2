@@ -13,10 +13,18 @@ boost::rand48   rng2;
 //rangen random01;
 //MarsagliaRNG random01;
 //rangen_mwc random01;
-randtype random01;
-template<class rng> std::vector<rng> rng_wrap<rng>::rg;
+
+rangen_mwc random01;
+std::vector<rangen_mwc> mwc_wrap::rg;
 //rangen * rg = NULL;
 
+
+
+
+double mwc_wrap::operator()(){
+    //static std::vector<rng> rg(omp_get_num_threads());
+    return rg[omp_get_thread_num()]();
+}
 /*
 double random01(){
     double retval = 0.0;
