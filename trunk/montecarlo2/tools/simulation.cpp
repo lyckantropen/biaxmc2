@@ -21,6 +21,7 @@
 
 int main(int argc, char** argv)
 {
+    //testowy komentarz
     setenv("OMP_SCHEDULE","static",0);
     std::string cfg("simulation.ini");
     std::string mode("submit");
