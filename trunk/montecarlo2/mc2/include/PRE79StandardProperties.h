@@ -8,7 +8,6 @@
 #ifndef _STANDARDPROPERTIES_H
 #define	_STANDARDPROPERTIES_H
 
-//#include "SpatialCorrelation.h"
 #include "SpatialCorrelationEvolution.h"
 #include "PRE79StandardHamiltonian.h"
 #include "AutoCorrelationTimeCalculator.h"
@@ -18,66 +17,68 @@
 #include "PRE79SpatialCorrelations.h"
 
 #include "serializer.h"
-//#include "eig3.h"
 #include "evsort.h"
 
 
-//extern "C" void Jacobi_Cyclic_Method(double *eigenvalues, double *eigenvectors, double *A, int n);
-
-
-///obliczanie właściwości układu i przechowywanie historii stanów
+/**
+ * @brief Measure physical quantities and store their history
+ * 
+ * This class:
+ * - collects the properties of the system during measurement
+ * - stores the entire history of properties in vectors
+ * - calculates some of the quantities (e.g. specific heat)
+ * 
+ */
 class PRE79StandardProperties {
+    ///Serializer operator
     template<class serializer_t>
     friend void operator|(serializer_t & s, PRE79StandardProperties & prop);
 
-    Lattice *   lat;        ///<wskaźnik do bieżącej siatki
-    bool    readonly;       ///<flaga sygnalizująca tryb tylko do odczytu
-    int index;              ///<oznaczenie właściwości - numer cyklu produkcyjnego MC
-    int acc_idx;            ///<numer chwili czasu
-    int ncycles;            ///<liczba cykli do średniej
+    shared_ptr<Lattice>   lat;        ///<pointer to the lattice we are operating on
+    bool    readonly;       ///<readonly flag
+    int index;              ///<unused
+    int acc_idx;            ///<number of the present measurement
+    int ncycles;            ///<total number of measurements
     
-    vect    energy;         ///<energia w funkcji czasu
-    vect    parity;         ///<średnia parzystość w funkcji czasu
-    vect    T20T20z;         ///<moduł T20^2 w funkcji czasu
-    vect    T22T22z;         ///<moduł T22^2 w funkcji czasu
-    vect    T20T20x;         ///<moduł T20^2 w funkcji czasu
-    vect    T22T22x;         ///<moduł T22^2 w funkcji czasu
-    vect    T20T20y;         ///<moduł T20^2 w funkcji czasu
-    vect    T22T22y;         ///<moduł T22^2 w funkcji czasu
-    vect    T32T32;
+    vect    energy;         ///<mean energy per molecule as a function of time
+    vect    parity;         ///<mean parity per molecule as a function 
+    vect    T20T20z;         ///<T20z*T20z as a function of time
+    vect    T22T22z;         ///<T22z*T22z as a function of time
+    vect    T20T20x;         ///<T20x*T20x as a function of time
+    vect    T22T22x;         ///<T22x*T22x as a function of time
+    vect    T20T20y;         ///<T20y*T20y as a function of time
+    vect    T22T22y;         ///<T22y*T22y as a function of time
+    vect    T32T32;          ///<T32*T32 as a function of time
     
-    vect        autocorrelation_time;
+    vect        autocorrelation_time;   ///<autocorrelation time as a function of time 
 
-    //    vect    D200;
-//    vect    D220;
-//    vect    D202;
-//    vect    D222;
-    //Value   specific_heat;  ///<ciepło właściwe w funkcji czasu (w praktyce obliczanie całej historii jest bardzo kosztowne, obliczamy dopiero na końcu)
-    Value   fluctuation;    ///<fluktuacje energii
+    Value   fluctuation;    ///<fluctuation of energy, calculated at the end
 
 
     //ewolucja średnich tensorów xx,yy,zz
-    std::vector<vect>  MeanQxTensor;
-    std::vector<vect>  MeanQyTensor;
-    std::vector<vect>  MeanQzTensor;
+    std::vector<vect>  MeanQxTensor;            ///<history of the mean tensor <X(x)X>
+    std::vector<vect>  MeanQyTensor;            ///<history of the mean tensor <Y(x)Y>
+    std::vector<vect>  MeanQzTensor;            ///<history of the mean tensor <Z(x)Z>
 
     //ewolucja funkcji korelacji dla różnych czasów
-    Delta200CorrelationZ d200corz;
-    Delta222CorrelationZ d222corz;
-    Delta220CorrelationZ d220corz;
+    Delta200CorrelationZ d200corz;      ///<correlation function history for T20z(0)*T20z(r)
+    Delta222CorrelationZ d222corz;      ///<correlation function history for T22z(0)*T22z(r)
+    Delta220CorrelationZ d220corz;      ///<correlation function history for T22z(0)*T20z(r)
 
-    Delta200CorrelationX d200corx;
-    Delta222CorrelationX d222corx;
-    Delta220CorrelationX d220corx;
+    Delta200CorrelationX d200corx;      ///<correlation function history for T20x(0)*T20x(r)
+    Delta222CorrelationX d222corx;      ///<correlation function history for T22x(0)*T22x(r)
+    Delta220CorrelationX d220corx;      ///<correlation function history for T22x(0)*T20x(r)
 
-    Delta200CorrelationY d200cory;
-    Delta222CorrelationY d222cory;
-    Delta220CorrelationY d220cory;
+    Delta200CorrelationY d200cory;      ///<correlation function history for T20y(0)*T20y(r)
+    Delta222CorrelationY d222cory;      ///<correlation function history for T22y(0)*T22y(r)
+    Delta220CorrelationY d220cory;      ///<correlation function history for T22y(0)*T20y(r)
 
-    Delta322Correlation d322cor;
-    ParityCorrelation paritycor;
+    Delta322Correlation d322cor; ///<correlation function history for T32(0)*T32(r)
+    ParityCorrelation paritycor; ///<correlation function history for p(0)*p(r)
 
-    ///obliczanie średniej energii (po siatce)
+    /**
+     * Calculate the instanteneous lattice mean energy and update the energy history vector.
+     */
     void CalculateMeanEnergy(){
         double E=0.0;
         for(int site=0;site<lat->GetN();site++){
@@ -86,7 +87,9 @@ class PRE79StandardProperties {
         E/=double(lat->GetN());
         energy[acc_idx]=E;
     }
-    ///obliczanie średniej parzystości
+    /**
+     * Calculate the instanteneous lattice mean parity and update the parity history vector
+     */
     void CalculateMeanParity(){
         double p=0.0;
         for(int site=0;site<lat->GetN();site++)
@@ -95,7 +98,10 @@ class PRE79StandardProperties {
         parity[acc_idx]=p;
     }
 public:
-    ///obliczanie ciepła właściwego metodą bootstrapu
+    /**
+     * Calculate the fluctuation of energy per molecule. To obtain specific heat,
+     * divide by T^2
+     */
     void CalculateSpecificHeat(){
         fluctuation=CalculateFluctuation(energy,acc_idx)*Value(lat->GetN());
     }
@@ -152,7 +158,7 @@ public:
     ///konstruktor serializacyjny
     PRE79StandardProperties():readonly(true),index(0),acc_idx(0) {}
     ///konstruktor tradycyjny
-    PRE79StandardProperties(Lattice * l, int _ncycles):
+    PRE79StandardProperties(shared_ptr<Lattice> l, int _ncycles):
     lat(l),readonly(false),ncycles(_ncycles),
     d200corz(l,_ncycles),
     d222corz(l,_ncycles),
@@ -310,13 +316,13 @@ public:
     }
 
     ///obliczenie kontrakcji
-    void Update(int idx,const PRE79StandardHamiltonian * H, const AutoCorrelationTimeCalculator * ac = NULL){
+    void Update(int idx,const shared_ptr<PRE79StandardHamiltonian> H, const shared_ptr<AutoCorrelationTimeCalculator> ac = shared_ptr<AutoCorrelationTimeCalculator>()){
         if(readonly) return;
         if((acc_idx+1)>=ncycles) return;
         index=idx;
         acc_idx++;
         
-        if(ac!=NULL)
+        if(ac!=shared_ptr<AutoCorrelationTimeCalculator>())
                 autocorrelation_time[acc_idx]=ac->GetT();
 
         d200corz.Update();
@@ -341,7 +347,8 @@ public:
     }
 
     ///dołożenie danych z innych właściwości, koniecznie po zakończeniu obliczeń
-    void Append(const PRE79StandardProperties & p){
+    void Append(shared_ptr<PRE79StandardProperties> _p){
+        PRE79StandardProperties & p = *_p;
         ncycles+=p.ncycles;
         acc_idx+=p.ncycles;
         index+=p.ncycles;
@@ -461,20 +468,6 @@ public:
     Value ParitySusceptibility() const {
         return CalculateFluctuation(parity,acc_idx);
     }
-    /*
-    Value MeanDelta200() const {
-        return BootstrapMean(D200,0,acc_idx+1);
-    }
-    Value MeanDelta220() const {
-        return BootstrapMean(D220,0,acc_idx+1);
-    }
-    Value MeanDelta202() const {
-        return BootstrapMean(D202,0,acc_idx+1);
-    }
-    Value MeanDelta222() const {
-        return BootstrapMean(D222,0,acc_idx+1);
-    }
-     */
 
     //korelacje dla różnych osi
     Value Delta200ZByCorrelation() const {
@@ -748,7 +741,7 @@ public:
         //return lat->GetL()/2+1;
         return paritycor.GetMax()+1;
     }
-    void SetLattice(Lattice * l){
+    void SetLattice(shared_ptr<Lattice> l){
         lat=l;
     }
 };
@@ -888,7 +881,9 @@ public:
         mean_paritycor.resize(size,0.0);
     }
     ///konstruktor tradycyjny
-    PRE79MeanProperties(PRE79StandardProperties & prop, PRE79StandardHamiltonian & H){
+    PRE79MeanProperties(shared_ptr<PRE79StandardProperties> _prop, shared_ptr<PRE79StandardHamiltonian> _H){
+        PRE79StandardProperties & prop = *_prop;
+        PRE79StandardHamiltonian & H = *_H;
         mean_d200corz.resize(prop.GetMaxCorrLen(),0.0);
         mean_d222corz.resize(prop.GetMaxCorrLen(),0.0);
         mean_d220corz.resize(prop.GetMaxCorrLen(),0.0);

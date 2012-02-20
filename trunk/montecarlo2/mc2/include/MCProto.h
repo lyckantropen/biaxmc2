@@ -14,12 +14,12 @@
 class MCProto {
 public:
     ///najbardziej ogólnie, krok nastepny zależy od poprzedniego stanu
-    virtual vect OrientationNudge(const vect & old)=0;
+    virtual vect OrientationNudge(const vect & old) const=0;
     ///ogólnie może zależeć od starej parzystości, ale zwykle tak nie jest
-    virtual short ParityNudge(const short & old)=0;
+    virtual short ParityNudge(const short & old) const=0;
     ///ogół decyzji prowadzących do zaakceptowania ruchu, na podstawie różnicy w energii
-    virtual bool Accept(const double & dE)=0;
-    virtual Hamiltonian * GetHamiltonian()=0;
+    virtual bool Accept(const double & dE)const=0;
+    virtual const shared_ptr<Hamiltonian> GetHamiltonian()const=0;
 };
 
 

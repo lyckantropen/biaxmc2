@@ -1,8 +1,12 @@
-/* 
- * File:   Settings.h
- * Author: karol
- *
- * Created on 1 grudzień 2009, 21:48
+/**
+ * @file Settings.h
+ * @brief Here the configuration file system sits
+ * 
+ * An interface for globally-available settings is created. It's based on the 
+ * program_options library from Boost, which can read configuration files written
+ * in the human-readable .ini format.
+ * 
+ * 
  */
 
 #ifndef _SETTINGS_H
@@ -14,10 +18,30 @@
 #include "ILoggable.h"
 
 
-
+/**
+ * @class Settings
+ * @brief The class holding the static settings data
+ * 
+ * This class first reads and interprets the settings data from a file, and then
+ * holds it in directly-applicable form. Generally, a class which needs some of
+ * the settings will contain a copy of an instance of #Settings. There is no need
+ * for more than one instance of Settings to exist in the entire program, so 
+ * generally this instance will be created in #main() and then passed on as a
+ * reference downward the hierarchy of subsequently created objects. This way a
+ * global variable is avoided. 
+ * 
+ * 
+ */
 class Settings:public ILoggable {
-    po::variables_map           vm;
-    po::options_description     desc;
+    po::variables_map           vm;             ///< I no longer remember how this works, program_options is difficult to set up
+    po::options_description     desc;           ///< see above
+    /**
+     * This function converts a string which holds a boolean value to it, 
+     * such as "yes", "true" or "off" and returns a bool value.
+     * 
+     * @param s A positive or negative word, such as "yes", "on", "no", "off", "true", "false"
+     * @return true or false. If the word is not recognized, false.
+     */
     bool TextBool(const std::string & s){
             if(boost::to_lower_copy(s)==std::string("yes"))
                     return true;
@@ -33,41 +57,67 @@ class Settings:public ILoggable {
                     return false;
             return false;
     }
+    
 public:
+    /**
+     * An exception which is raised when the settings file could not be found.
+     */
     struct FileNotFound:public std::exception {};
 public:
-    /*
-     * ustawienia
+    /**
+     * Lattice settings
      */
     struct _lattice {
-        int L,W,H;
+        int L; ///<lattice length
+        int W; ///<lattice width
+        int H; ///<lattice height
+        ///Constructor
         _lattice():L(0),W(0),H(0){}
     } lattice;
+    /**
+     * Parameters of the hamiltonian. If scanning applies, not all are in use.
+     * E.g. if there is scanning of temperature, the temperature parameter is not
+     * in use.
+     */
     struct _hamiltonian {
-        double lambda, tau, temperature, h;
+        double lambda;          ///<lambda constant, biaxiality parameter
+        double tau;             ///<strength of tetrahedratic coupling
+        double temperature;     ///<temperature
+        double h;               ///<field constant in second order coupling to the quadrupolar tensor
+        
+        ///Constructor
         _hamiltonian():
         lambda(0.0),tau(0.0),temperature(1.0),h(0.0) {}
     } hamiltonian ;
+    /**
+     * Technical parameters for the simulation. 
+     */
     struct _simulation {
-        bool find_thermalized;  std::string v_find_thermalized;
-        bool pick_up_aborted;   std::string v_pick_up_aborted;
-        bool adjust_radius;     std::string v_adjust_radius;
-        bool measure_acceptance;std::string v_measure_acceptance;
-        bool calculate_time;    std::string v_calculate_time;
-        double find_thermalized_temperature_tolerance;
-        double find_thermalized_h_tolerance;
-        double parity_flip_probability;
-        double metropolis_lower_acceptance_limit;
-        double metropolis_higher_acceptance_limit;
-        double radius;
-        long production_cycles;
-        int measure_frequency;
-        int measure_acceptance_frequency;
-        long thermalization_cycles;
-        long supplementary_thermalization_cycles;
-        int radius_adjustment_frequency;
-        int autocorrelation_length;
-        int autocorrelation_frequency;
+        bool find_thermalized;          ///<should the simulation search the database for a previously thermalized state and reuse it? 
+        std::string v_find_thermalized; ///<helper variable
+        bool pick_up_aborted;           ///<not in use. There were plans for a possibility to recover from an interrupted simulation.   
+        std::string v_pick_up_aborted;  ///<helper variable
+        bool adjust_radius;             ///<should the radius of the random-walk be adjusted at runtime? Careful!     
+        std::string v_adjust_radius;    ///<helper variable
+        bool measure_acceptance;        ///<should the acceptance ratio be measured at runtime?
+        std::string v_measure_acceptance;       ///<helper variable
+        bool calculate_time;            ///<should the remaining time be calculated at runtime? Slows down the simulation!
+        std::string v_calculate_time;   ///<helper variable
+        double find_thermalized_temperature_tolerance;  ///<there is a possibility to pick up a state for a slightly different temperature. The tolerance is given in units of scanning.delta.
+        double find_thermalized_h_tolerance;            ///<there is a possibility to pick up a state for a slightly different field. The tolerance is given in units of hamiltonian.h.
+        double parity_flip_probability;                 ///<if we wanted to, we can change the flip-probability to something else than 0.5. But doesn't it violate detailed balance?
+        double metropolis_lower_acceptance_limit;       ///<desired minimum acceptance ratio. E.g. 0.4
+        double metropolis_higher_acceptance_limit;      ///<desired maximum acceptance ratio. E.g. 0.5
+        double radius;          ///<the initial radius of the random-walk
+        long production_cycles;         ///<total number of production cycles
+        int measure_frequency;          ///<actually the inverse of frequency - number of cycles to skip after each measurement of system properties 
+        int measure_acceptance_frequency;       ///<actually the inverse of frequency - number of cycles to skip after measuting the acceptance rate
+        long thermalization_cycles;     ///<total number of initial thermalization cycles. If a previous state is recovered, this does nothing.
+        long supplementary_thermalization_cycles;       ///<total number of supplementary thermalization cycles. Applies only when the initial state is recovered from the database.
+        int radius_adjustment_frequency;        ///<actually the inverse of frequency - how many cycles should be skipped between every adjustment of the random-walk radius. Careful, can break detailed balance.
+        int autocorrelation_length;             ///<size of the window used to measure autocorrelation of energy
+        int autocorrelation_frequency;          ///<size of the window over which the average autocorrelation should be calculated
+        ///Constructor
         _simulation():
         production_cycles(1000),
         measure_frequency(15),
@@ -90,23 +140,39 @@ public:
         autocorrelation_frequency(100)
         {}
     } simulation;
+    /**
+     * Database settings
+     */
     struct _sqlite {
-        std::string file;
-        std::string dir;
+        std::string file; ///<where to place the database file
+        std::string dir;        ///<a directory where to store data
+        ///Constructor
         _sqlite():
         file("mc2.db"),
         dir("mc2") {}
     } sqlite;
+    /**
+     * Settings regarding how much results should be collected from the simulation.
+     */
     struct _output {
-        bool save_configuration_evolution;  std::string v_save_configuration_evolution;
-        bool save_final_configuration;      std::string v_save_final_configuration;
-        bool save_final_properties;         std::string v_save_final_properties;
-        bool save_properties_evolution;     std::string v_save_properties_evolution;
-        bool save_intermediate_states;      std::string v_save_intermediate_states;
-        bool save_thermalization_properties;std::string v_save_thermalization_properties;
-        bool start_service;                 std::string v_start_service;
-        bool report_progress;               std::string v_report_progress;
-        int intermediate_states;
+        bool save_configuration_evolution;              ///<should the entire configuration-history, i.e. the state of the lattice at each time step be saved? This is very disk-intensive and very slow. The data volume is measured in tens of gigabytes.
+        std::string v_save_configuration_evolution;     ///<helper variable
+        bool save_final_configuration;                  ///<should the state of the lattice be saved after the simulation has ended?
+        std::string v_save_final_configuration;         ///<helper variable
+        bool save_final_properties;                     ///<should the final results (i.e. the final mean values) be saved?         
+        std::string v_save_final_properties;            ///<helper variable
+        bool save_properties_evolution;                 ///<should the entire history of instanteneous system properties be saved? Could be several gigabytes in volume, but useful if some values need to be calculated again or the convergence needs to be inspected.
+        std::string v_save_properties_evolution;        ///<helper variable
+        bool save_intermediate_states;                  ///<should some intermediate lattice states be saved?
+        std::string v_save_intermediate_states;         ///<helper variable
+        bool save_thermalization_properties;            ///<should the entire history of instanteneous system properties throught the thermalization be saved? Useful when inspecting convergence.
+        std::string v_save_thermalization_properties;   ///<helper variable
+        bool start_service;                             ///<currently unused. There were plans to start a mechanism for inquiring runtime system properties when the simulation hasn't yet finished.
+        std::string v_start_service;                    ///<helper variable
+        bool report_progress;                           ///<should the progress of the simulation be reported in a percentage form?
+        std::string v_report_progress;                  ///<helper variable
+        int intermediate_states;                        ///<how many intermediate states should be saved?
+        ///Constructor
         _output():
         v_save_configuration_evolution("no"),
         v_save_final_configuration("yes"),
@@ -119,11 +185,20 @@ public:
         intermediate_states(10)
         {}
     } output ;
+    /**
+     * Settings regarding initial configuration of the lattice.
+     * They can be combined in a sensible way, such that they don't contradict.
+     */
     struct _initial {
-        bool biaxial;       std::string v_biaxial;
-	bool biaxial_alt;   std::string v_biaxial_alt;
-        bool righthanded;   std::string v_righthanded;
-        bool isotropic;     std::string v_isotropic;
+        bool biaxial;                   ///<biaxial initial configuration (with the (C) axis parallel to (Z))
+        std::string v_biaxial;          ///<helper variable
+	bool biaxial_alt;               ///<biaxial initial configuration (with the (A) axis parallel to (Z))
+        std::string v_biaxial_alt;      ///<helper variable
+        bool righthanded;               ///<righthanded configuration (parity is +1 for every particle)
+        std::string v_righthanded;      ///<helper variable
+        bool isotropic;                 ///<isotropic configuration
+        std::string v_isotropic;        ///<helper variable
+        ///Constructor
         _initial():
         v_biaxial("no"),
 	v_biaxial_alt("no"),
@@ -131,23 +206,34 @@ public:
         v_isotropic("no")
         {}
     } initial;
+    /**
+     * Settings regarding scanning over a set of parameters.
+     */
     struct _scanning {
-        bool enabled; std::string v_enabled;
-        std::string variable;
-        double start;
-        double end;
-        double delta;
-        bool reuse_thermalized; std::string v_reuse_thermalized;
-        bool pass_on; std::string v_pass_on;
-        bool threaded; std::string v_threaded;
-        bool threaded_production; std::string v_threaded_production;
-        bool continue_if_results_exist; std::string v_continue_if_results_exist;
-        bool parallel_tempering; std::string v_parallel_tempering;
-        int parallel_tempering_swapfq;
-        std::string v_values;
-        vect values;
-        bool separate_values;
+        bool enabled;                   ///<should scanning be enabled
+        std::string v_enabled;          ///<helper variable
+        std::string variable;           ///<name of the variable to scan over
+        double start;                   ///<initial value
+        double end;                     ///<final value
+        double delta;                   ///<step
+        bool reuse_thermalized;         ///<if for a step in the scanning parameter a previously-thermalized state is found, proceed directly to production
+        std::string v_reuse_thermalized;        ///<helper variable
+        bool pass_on;                   ///<pass the final state from one step as an initial state to the next step
+        std::string v_pass_on;          ///<helper variable
+        bool threaded;                  ///<multiple simulations in parallel, the effect depends further on #threaded_production
+        std::string v_threaded;         ///<helper variable
+        bool threaded_production;       ///<production is split into several threads and the results are combined at the end to form the final ensamble
+        std::string v_threaded_production;      ///<helper variable
+        bool continue_if_results_exist;         ///<if set to true, if for the present value of the scanning parameter the final result is found in the database, this value will be skipped
+        std::string v_continue_if_results_exist;        ///<helper variable
+        bool parallel_tempering;        ///<enable parallel tempering (@todo: broken as of 02.2012)
+        std::string v_parallel_tempering;       ///<helper variable
+        int parallel_tempering_swapfq;  ///<inverse frequency - number of cycles between temperature exchange
+        std::string v_values;           ///<helper variable
+        vect values;                    ///<a list of values to iterate over
+        bool separate_values;           ///<should the classical iteration with step #delta be replaced by iteration over the list #values?
         
+        ///Constructor
         _scanning():
         v_reuse_thermalized("yes"),
         v_pass_on("yes"),
@@ -162,23 +248,38 @@ public:
         
         {}
     } scanning ;
+    /**
+     * Settins regarding parallel computing
+     */
     struct _openmp {
-        bool dynamic; std::string v_dynamic;
-        int number_of_threads;
+        bool dynamic;   ///<should the number of threads be dynamic? Not recommended.
+        std::string v_dynamic;  ///<helper variable
+        int number_of_threads;  ///<number of OpenMP threads 
+        ///Constructor
         _openmp():
         number_of_threads(1),
         v_dynamic("no") {}
     } openmp ;
+    /**
+     * Naming
+     */
     struct _project {
-        std::string name_format;
-        std::string name;
+        std::string name_format;        ///<project name, can contain placeholders which will be replaced by the value imported from the configuration file, such as &hamiltonian.temperature
+        std::string name;               ///<project name converted from #name_format
     } project;
+    /**
+     * PBS stuff
+     */
     struct _pbs {
-        std::string queue;
+        std::string queue;              ///<the PBS queue
         _pbs():
         queue("normal") {}
     } pbs;
 private:
+    
+    /**
+     * boost::program_options stuff
+     */
     void SetupDescription(){
         desc.add_options()
         ("lattice.L",po::value<int>(&lattice.L),"Lattice longitude")
@@ -243,6 +344,9 @@ private:
         ("pbs.queue",po::value<std::string>(&pbs.queue),"PBS queue name")
         ;
     }
+    /**
+     * Convert imported string values ("yes", "no") to booleans
+     */
     void LoadBooleans(){
         output.save_configuration_evolution = TextBool(output.v_save_configuration_evolution);
         output.save_final_configuration = TextBool(output.v_save_final_configuration);
@@ -271,6 +375,10 @@ private:
         simulation.calculate_time = TextBool(simulation.v_calculate_time);
         scanning.separate_values = bool(scanning.v_values.size());
     }
+    /**
+     * Import scanning values when _scanning::separate_values is set to true and
+     * overrides the classic scanning.
+     */
     void LoadScanningValues(){
         std::vector<std::string> names;
         boost::split(names,scanning.v_values,boost::is_any_of(","));
@@ -279,6 +387,11 @@ private:
             scanning.values[i]=std::atof(names[i].c_str());
     }
 public:
+    /**
+     * Constructor. Imports the configuration file and inteprets its contents.
+     * 
+     * @param file Path to the configuration file.
+     */
     Settings(const fs::path & file){
         //SetFile("settings");
         
@@ -310,6 +423,9 @@ public:
         }
         f.close();
     }
+    ///Default empty constructor, needed for initialization of copies
+    Settings(){}
+    ///Copy constructor
     Settings(const Settings & s){
         lattice=s.lattice;
         initial=s.initial;
@@ -322,6 +438,7 @@ public:
         sqlite=s.sqlite;
         hamiltonian=s.hamiltonian;
     }
+    ///Assignment operator
     const Settings & operator=(const Settings & s){
         lattice=s.lattice;
         initial=s.initial;

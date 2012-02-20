@@ -22,7 +22,7 @@ class Delta200CorrelationZ:public SpatialCorrelationEvolution {
         return 3.0/2.0*Rank2Contraction((a.GetQZ()-Identity(3)/3.0),(b.GetQZ()-Identity(3)/3.0));
     }
 public:
-    Delta200CorrelationZ(Lattice * l=NULL, int nc=0):SpatialCorrelationEvolution(l,nc){}
+    Delta200CorrelationZ(shared_ptr<Lattice> l=shared_ptr<Lattice>(), int nc=0):SpatialCorrelationEvolution(l,nc){}
 };
 
 class Delta200CorrelationX:public SpatialCorrelationEvolution {
@@ -33,7 +33,7 @@ class Delta200CorrelationX:public SpatialCorrelationEvolution {
         return 3.0/2.0*Rank2Contraction((a.GetQX()-Identity(3)/3.0),(b.GetQX()-Identity(3)/3.0));
     }
 public:
-    Delta200CorrelationX(Lattice * l=NULL, int nc=0):SpatialCorrelationEvolution(l,nc){}
+    Delta200CorrelationX(shared_ptr<Lattice> l=shared_ptr<Lattice>(), int nc=0):SpatialCorrelationEvolution(l,nc){}
 };
 
 class Delta200CorrelationY:public SpatialCorrelationEvolution {
@@ -44,7 +44,7 @@ class Delta200CorrelationY:public SpatialCorrelationEvolution {
         return 3.0/2.0*Rank2Contraction((a.GetQY()-Identity(3)/3.0),(b.GetQY()-Identity(3)/3.0));
     }
 public:
-    Delta200CorrelationY(Lattice * l=NULL, int nc=0):SpatialCorrelationEvolution(l,nc){}
+    Delta200CorrelationY(shared_ptr<Lattice> l=shared_ptr<Lattice>(), int nc=0):SpatialCorrelationEvolution(l,nc){}
 };
 
 /*
@@ -59,7 +59,7 @@ class Delta220CorrelationZ:public SpatialCorrelationEvolution {
         return std::sqrt(3.0)/2.0*Rank2Contraction((a.GetQX()-a.GetQY()),(b.GetQZ()-Identity(3)/3.0));
     }
 public:
-    Delta220CorrelationZ(Lattice * l=NULL, int nc=0):SpatialCorrelationEvolution(l,nc){}
+    Delta220CorrelationZ(shared_ptr<Lattice> l=shared_ptr<Lattice>(), int nc=0):SpatialCorrelationEvolution(l,nc){}
 };
 
 class Delta220CorrelationX:public SpatialCorrelationEvolution {
@@ -70,7 +70,7 @@ class Delta220CorrelationX:public SpatialCorrelationEvolution {
         return std::sqrt(3.0)/2.0*Rank2Contraction((a.GetQY()-a.GetQZ()),(b.GetQX()-Identity(3)/3.0));
     }
 public:
-    Delta220CorrelationX(Lattice * l=NULL, int nc=0):SpatialCorrelationEvolution(l,nc){}
+    Delta220CorrelationX(shared_ptr<Lattice> l=shared_ptr<Lattice>(), int nc=0):SpatialCorrelationEvolution(l,nc){}
 };
 
 class Delta220CorrelationY:public SpatialCorrelationEvolution {
@@ -81,7 +81,7 @@ class Delta220CorrelationY:public SpatialCorrelationEvolution {
         return std::sqrt(3.0)/2.0*Rank2Contraction((a.GetQZ()-a.GetQX()),(b.GetQY()-Identity(3)/3.0));
     }
 public:
-    Delta220CorrelationY(Lattice * l=NULL, int nc=0):SpatialCorrelationEvolution(l,nc){}
+    Delta220CorrelationY(shared_ptr<Lattice> l=shared_ptr<Lattice>(), int nc=0):SpatialCorrelationEvolution(l,nc){}
 };
 
 /*
@@ -96,7 +96,7 @@ class Delta222CorrelationZ:public SpatialCorrelationEvolution {
         return 0.5*Rank2Contraction((a.GetQX()-a.GetQY()),(b.GetQX()-b.GetQY()));
     }
 public:
-    Delta222CorrelationZ(Lattice * l=NULL, int nc=0):SpatialCorrelationEvolution(l,nc){}
+    Delta222CorrelationZ(shared_ptr<Lattice> l=shared_ptr<Lattice>(), int nc=0):SpatialCorrelationEvolution(l,nc){}
 };
 
 class Delta222CorrelationX:public SpatialCorrelationEvolution {
@@ -107,7 +107,7 @@ class Delta222CorrelationX:public SpatialCorrelationEvolution {
         return 0.5*Rank2Contraction((a.GetQY()-a.GetQZ()),(b.GetQY()-b.GetQZ()));
     }
 public:
-    Delta222CorrelationX(Lattice * l=NULL, int nc=0):SpatialCorrelationEvolution(l,nc){}
+    Delta222CorrelationX(shared_ptr<Lattice> l=shared_ptr<Lattice>(), int nc=0):SpatialCorrelationEvolution(l,nc){}
 };
 
 class Delta222CorrelationY:public SpatialCorrelationEvolution {
@@ -118,7 +118,7 @@ class Delta222CorrelationY:public SpatialCorrelationEvolution {
         return 0.5*Rank2Contraction((a.GetQZ()-a.GetQX()),(b.GetQZ()-b.GetQX()));
     }
 public:
-    Delta222CorrelationY(Lattice * l=NULL, int nc=0):SpatialCorrelationEvolution(l,nc){}
+    Delta222CorrelationY(shared_ptr<Lattice> l=shared_ptr<Lattice>(), int nc=0):SpatialCorrelationEvolution(l,nc){}
 };
 
 /**
@@ -132,7 +132,7 @@ class Delta322Correlation:public SpatialCorrelationEvolution {
         return Rank3Contraction(a.GetT(),b.GetT());
     }
 public:
-    Delta322Correlation(Lattice * l=NULL, int nc=0):SpatialCorrelationEvolution(l,nc){}
+    Delta322Correlation(shared_ptr<Lattice> l=shared_ptr<Lattice>(), int nc=0):SpatialCorrelationEvolution(l,nc){}
 };
 
 
@@ -144,7 +144,7 @@ class ParityCorrelation:public SpatialCorrelationEvolution {
         return a.GetParity()*b.GetParity();
     }
 public:
-    ParityCorrelation(Lattice * l=NULL, int nc=0):SpatialCorrelationEvolution(l,nc){}
+    ParityCorrelation(shared_ptr<Lattice> l=shared_ptr<Lattice>(), int nc=0):SpatialCorrelationEvolution(l,nc){}
 };
 
 /*

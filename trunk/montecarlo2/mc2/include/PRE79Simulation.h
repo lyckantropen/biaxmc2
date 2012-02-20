@@ -1,8 +1,8 @@
-/* 
- * File:   PRE79Simulation.h
- * Author: karol
- *
- * Created on 1 grudzień 2009, 19:47
+/**
+ * @file PRE79Simulation.h
+ * 
+ * Simulation classes
+ * 
  */
 
 #ifndef _PRE79SIMULATION_H
@@ -15,77 +15,94 @@
 #include "AutoCorrelationTimeCalculator.h"
 #include <omp.h>
 
-///Podstawowa symulacja (produkcja) do produkcji równoległej
+/**
+ * A redundant class for a single production when a parallel production is performed.
+ */
 class PRE79Production:public ILoggable {
-    Lattice                     *lattice;
-    PRE79StandardHamiltonian    *H;
-    LatticeSimulation           *simulation;
-    PRE79StandardProperties     *prop;
-    Metropolis                  *metro;
-    Settings  &   settings;
-    long nprod;
-    long ncycles;
+    shared_ptr<Lattice>                     lattice;            ///<pointer to the lattice object
+    shared_ptr<PRE79StandardHamiltonian>    H;                  ///<pointer to the Hamiltonian object
+    shared_ptr<LatticeSimulation>           simulation;         ///<pointer to the LatticeSimulation object
+    shared_ptr<PRE79StandardProperties>     prop;               ///<pointer to the properties calculator and accumulator
+    shared_ptr<Metropolis>                  metro;              ///<pointer to the Metropolis method
+    Settings  &   settings;     ///<local copy of settings
+    long nprod;                 ///<total number of production cycles
+    long ncycles;               ///<number of cycles considered for measurement
 public:
+    /**
+     * Constructor
+     * 
+     * @param set       reference to global Settings object
+     * @param _nprod    number of production cycles for the entire production
+     * @param start     initial state for production
+     */
     PRE79Production(Settings & set,long _nprod, const Lattice & start):
     nprod(_nprod),
     settings(set)
     {
         ncycles = nprod/settings.simulation.measure_frequency;
 
-        lattice = new Lattice(start);
-        H = new PRE79StandardHamiltonian(settings.hamiltonian.temperature, settings.hamiltonian.lambda, settings.hamiltonian.tau,settings.hamiltonian.h);
-        metro = new Metropolis(settings,H,0.065);
-        prop = new PRE79StandardProperties(lattice,ncycles);
-        simulation = new LatticeSimulation(H,lattice,metro,nprod,0);
+        ///create the needed objects
+        lattice = shared_ptr<Lattice>(new Lattice(start));
+        H = shared_ptr<PRE79StandardHamiltonian>(new PRE79StandardHamiltonian(settings.hamiltonian.temperature, settings.hamiltonian.lambda, settings.hamiltonian.tau,settings.hamiltonian.h));
+        metro = shared_ptr<Metropolis>(new Metropolis(settings,H,0.065));
+        prop = shared_ptr<PRE79StandardProperties>(new PRE79StandardProperties(lattice,ncycles));
+        simulation = shared_ptr<LatticeSimulation>(new LatticeSimulation(H,lattice,metro,nprod,0));
         //SetStream(&std::cout);
     }
 
+    /**
+     * Run a single production in the set.
+     */
     void Run() {
-        //std::cout << "Thread " << omp_get_thread_num() << " of " << omp_get_num_threads() << std::endl;
-        #pragma omp critical
+        
+#pragma omp critical
         Log() << "Production with freq " << settings.simulation.measure_frequency << std::endl ;
 
-
-
+        ///save the time for calculation of remaining time
         pt::ptime start_t = pt::second_clock::local_time();
+        ///the remaining time will be reported 5 times through the production
         int remaining_interval = simulation->GetNCycles()/5;
 	if(settings.simulation.calculate_time)
         	Log() << "Remaining time will be reported every " << remaining_interval << " cycles\n";
         
-        AutoCorrelationTimeCalculator ac(lattice,settings.simulation.autocorrelation_frequency,settings.simulation.autocorrelation_length);
+        ///an instance of the autocorrelation time calculator
+        shared_ptr<AutoCorrelationTimeCalculator> ac(new AutoCorrelationTimeCalculator(lattice,settings.simulation.autocorrelation_frequency,settings.simulation.autocorrelation_length));
         
+        ///k will count the cycles
         long k=0;
+        ///this loop will terminate if the underlying #LatticeSimulation Iterate() 
+        ///funcion returns false, which will happen when all the cycles are finished
+        ///the Iterate() function does the actual lattice sweeps
         while(simulation->Iterate()){
-            ac.Update();
-            //--- pomiary
-            if(k%settings.simulation.measure_frequency==0){
-                prop->Update(k,H,&ac);
-            }
-            //---
+            ///update the autocorrelation time calculator
+            ac->Update();
             
-            //--- sprawozdanie z postępu symulacji
+            ///do measurements here
+            if(k%settings.simulation.measure_frequency==0){
+                ///measurements are done via the Update() function of the properties object
+                prop->Update(k,H,ac);
+            }
+            
+            ///here the progress as percentage is calculated and reported
             if(k%1000==0 && settings.output.report_progress){
                 Log() << "E = " << prop->EnergyEvolution()[k/1001] << std::endl;
                 Log() << "Progress: " << (double(k)/double(simulation->GetNCycles()))*100.0 << "%\n";
             }
-            //---
             
             
-            //--- poprawa promienia błądzenia przypadkowego <-- czyżby źródło błędów???
-            // Swendson (2011) częstość zmiany kroku Monte Carlo nie powinna być niższa, niż (liczba kroków MC)^(1/2)
+            ///runtime adjustment of the random-walk radius
+            // Swendson (2011) the interval shouldn't be less than (total number of MC cycles)^(1/2)
             if(k%settings.simulation.radius_adjustment_frequency==0)
                 metro->AdjustRadius(lattice);
-            //---
-
-            //--- pomiar poziomu akceptacji
+            
+            ///measure the acceptance rate if needed
             if(settings.simulation.measure_acceptance && k%settings.simulation.measure_acceptance_frequency==0){
                 //Log() << "Acceptance rate: " << metro->MeasureAccepted(lattice)*100.0 << "%\n";
                 Log() << "Acceptance rate: " << simulation->GetAcceptance()*100.0 << "%\n";
                 Log() << "Mean acceptance rate: " << simulation->GetMeanAcceptance()*100.0 << "%\n";
             }
 
-            //---
-            
+            ///calculate the remaining time of the present production
             if((k+1)%remaining_interval==0 && settings.simulation.calculate_time){
                 pt::time_duration run1k = pt::second_clock::local_time() - start_t;
                 int total1kruns = (simulation->GetNCycles()-k-1)/remaining_interval;
@@ -96,51 +113,60 @@ public:
         }
     }
 
-    Lattice & GetLattice(){
-        return *lattice;
+    ///Access the pointer to the lattice object
+    shared_ptr<Lattice> GetLattice(){
+        return lattice;
     }
-    PRE79StandardProperties & GetProperties(){
-        return *prop;
+    ///Access the pointer to the properties object
+    shared_ptr<PRE79StandardProperties> GetProperties(){
+        return prop;
     }
-    const LatticeSimulation * GetSimulation() const {
+    ///Access the pointer to the LatticeSimulation object (read only)
+    const shared_ptr<LatticeSimulation> GetSimulation() const {
         return simulation;
     }
+    /**
+     * Redefinition of the Log stream, which adds thread information to the output.
+     * The implementation at #ILoggable doesn't have this.
+     */
     virtual std::ostream & Log(){
         ILoggable::Log() << "Thread: " << omp_get_thread_num() << "/" << omp_get_num_threads() << ": ";
 	return ILoggable::Log();
     }
+    ///This is actually unnecessary?
     void SetStream(std::ostream * os) {
 	ILoggable::SetStream(os);
     }
-    ~PRE79Production(){
-        delete lattice;
-        delete H;
-        delete metro;
-        delete prop;
-        delete simulation;
-    }
+
 };
 
-///Pojedyncza symulacja (bez skanowania)
+/**
+ * This class takes care of the entire process of preparing the simulation, thermalizing the initial states
+ * and the actual production phase. Several mechanisms are implemented, such as
+ * searching for thermalized states.
+ */
 class PRE79Simulation:public ILoggable {
-    Lattice                     *lattice;
-    PRE79StandardHamiltonian    *H;
-    LatticeSimulation           *thermalization;
-    LatticeSimulation           *simulation;
-    PRE79StandardProperties     *prop;
-    Metropolis                  *metro;
-    std::vector<PRE79Production*>    productions;
-    PRE79StandardProperties     *thermalprops;
-    Settings  &   settings;
-    SimulationDB        database;
-    bool    restored;      ///<zaczynamy z wczytanego stanu sieci
+    shared_ptr<Lattice>                     lattice;            ///<pointer to the lattice instance
+    shared_ptr<PRE79StandardHamiltonian>    H;                  ///<pointer to the hamiltonian object
+    shared_ptr<LatticeSimulation>           thermalization;     ///<underlying thermalization phase
+    shared_ptr<LatticeSimulation>           simulation;         ///<underlying production phase
+    shared_ptr<PRE79StandardProperties>     prop;               ///<pointer to production properties calculator
+    shared_ptr<Metropolis>                  metro;              ///<pointer to the Metropolis method
+    std::vector<shared_ptr<PRE79Production> >    productions;   ///<a vector of productions if parallel production is enabled
+    shared_ptr<PRE79StandardProperties>     thermalprops;       ///<pointer to thermalization properties calculator
+    Settings  &   settings;     ///<local settings reference
+    SimulationDB        database;       ///<simulation database interface
+    bool    restored;      ///<should we search for a thermalized state to reuse as an initial state?
 
+    /**
+     * Initialization
+     */
     void Init(){
         Log() << "Creating Hamiltonian\n";
-        H = new PRE79StandardHamiltonian(settings.hamiltonian.temperature, settings.hamiltonian.lambda, settings.hamiltonian.tau,settings.hamiltonian.h);
+        H = shared_ptr<PRE79StandardHamiltonian>(new PRE79StandardHamiltonian(settings.hamiltonian.temperature, settings.hamiltonian.lambda, settings.hamiltonian.tau,settings.hamiltonian.h));
         Log() << "Creating Metropolis\n";
-        metro = new Metropolis(settings,H,0.065);
-        //metro->SetStream(&std::cout);
+        metro = shared_ptr<Metropolis>(new Metropolis(settings,H,0.065));
+        
         if(!restored){
 
             //--- szukamy ewentualnego zapisanego stermalizowanego stanu
@@ -172,26 +198,25 @@ class PRE79Simulation:public ILoggable {
                 //---
 
                 if(found){
-                    delete lattice;
-                    lattice = new Lattice(found_state);
+                    lattice = shared_ptr<Lattice>(new Lattice(found_state));
                     
                     Log() << "Creating Supplementary Thermalization for recovered state\n";
-                    thermalization = new LatticeSimulation(H,lattice,metro,settings.simulation.supplementary_thermalization_cycles);
+                    thermalization = shared_ptr<LatticeSimulation>(new LatticeSimulation(H,lattice,metro,settings.simulation.supplementary_thermalization_cycles));
                 }
                 else {
                     Log() << "No thermalized state found, creating Thermalization\n";
-                    thermalization = new LatticeSimulation(H,lattice,metro,settings.simulation.thermalization_cycles);
+                    thermalization = shared_ptr<LatticeSimulation>(new LatticeSimulation(H,lattice,metro,settings.simulation.thermalization_cycles));
                 }
             }
             //---
             else {
                 Log() << "No thermalized state found, creating Thermalization\n";
-                thermalization = new LatticeSimulation(H,lattice,metro,settings.simulation.thermalization_cycles);
+                thermalization = shared_ptr<LatticeSimulation>(new LatticeSimulation(H,lattice,metro,settings.simulation.thermalization_cycles));
             }
         }
         else{
             Log() << "Previous final state passed on as initial, creating Supplementary Thermalization\n";
-            thermalization = new LatticeSimulation(H,lattice,metro,settings.simulation.supplementary_thermalization_cycles);
+            thermalization = shared_ptr<LatticeSimulation>(new LatticeSimulation(H,lattice,metro,settings.simulation.supplementary_thermalization_cycles));
         }
         //--- szukamy stanu, od którego możemy kontynuować symulację
         //TODO: stan się ładuje, ale jeszcze trzeba policzyć albo wczytać brakujące Properties...
@@ -202,8 +227,8 @@ class PRE79Simulation:public ILoggable {
             bool found = false;
             Lattice found_state = FindLastState(settings,found,found_cycle);
             if(found){
-                delete lattice;
-                lattice = new Lattice(found_state);
+                
+                lattice = shared_ptr<Lattice>(new Lattice(found_state));
                 Log() << "Recovering from aborted simulation at " << found_cycle << " cycles\n";
             } else {
                 Log() << "No aborted simulation found\n";
@@ -213,10 +238,10 @@ class PRE79Simulation:public ILoggable {
         int cycle_advantage = settings.simulation.production_cycles - found_cycle;
 
         Log() << "Creating Production\n";
-        simulation = new LatticeSimulation(H,lattice,metro,cycle_advantage,found_cycle);
+        simulation = shared_ptr<LatticeSimulation>(new LatticeSimulation(H,lattice,metro,cycle_advantage,found_cycle));
         Log() << "Creating Properties\n";
-        prop = new PRE79StandardProperties(lattice,settings.simulation.production_cycles/settings.simulation.measure_frequency);
-        thermalprops = new PRE79StandardProperties(lattice,thermalization->GetNCycles()/10);
+        prop = shared_ptr<PRE79StandardProperties>(new PRE79StandardProperties(lattice,settings.simulation.production_cycles/settings.simulation.measure_frequency));
+        thermalprops = shared_ptr<PRE79StandardProperties>(new PRE79StandardProperties(lattice,thermalization->GetNCycles()/10));
 
     }
 
@@ -224,29 +249,29 @@ public:
     PRE79Simulation(Settings & set):
     settings(set),
     database(set),
-            thermalprops(NULL),thermalization(NULL),lattice(NULL)
+            thermalprops(shared_ptr<PRE79StandardProperties>()),thermalization(shared_ptr<LatticeSimulation>()),lattice(shared_ptr<Lattice>())
     {
         if(set.initial.isotropic)
-            lattice = new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::Isotropic);
+            lattice = shared_ptr<Lattice>(new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::Isotropic));
         else
         if(set.initial.biaxial){
             if(set.initial.righthanded)
-                lattice = new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::BiaxialRighthanded);
+                lattice = shared_ptr<Lattice>(new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::BiaxialRighthanded));
             else
-                lattice = new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::Biaxial);
+                lattice = shared_ptr<Lattice>(new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::Biaxial));
         }
         else
         if(set.initial.biaxial_alt){
             if(set.initial.righthanded)
-                lattice = new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::BiaxialRighthandedAlt);
+                lattice = shared_ptr<Lattice>(new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::BiaxialRighthandedAlt));
             else
-                lattice = new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::BiaxialAlt);
+                lattice = shared_ptr<Lattice>(new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::BiaxialAlt));
         }
         else
         if(set.initial.righthanded)
-            lattice = new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::IsotropicRighthanded);
+            lattice = shared_ptr<Lattice>(new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::IsotropicRighthanded));
         else
-            lattice = new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::Isotropic);
+            lattice = shared_ptr<Lattice>(new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::Isotropic));
         restored=false;
         Init();
     }
@@ -256,7 +281,7 @@ public:
         //nie kopiujemy wskaźnika, kopiujemy obiekt
         //żeby nie zmieniać źródłowego obiektu
         restored=true;
-        lattice=new Lattice(saved);
+        lattice=shared_ptr<Lattice>(new Lattice(saved));
         Init();
     }
     const pt::time_duration DurationOf1000Cycles() const {
@@ -280,13 +305,13 @@ public:
     }
 
     const Lattice & Thermalize() {
-        AutoCorrelationTimeCalculator ac(lattice,settings.simulation.autocorrelation_frequency,settings.simulation.autocorrelation_length);
+        shared_ptr<AutoCorrelationTimeCalculator> ac(new AutoCorrelationTimeCalculator(lattice,settings.simulation.autocorrelation_frequency,settings.simulation.autocorrelation_length));
         Log() << "Thermalization cycles: " << thermalization->GetNCycles() << std::endl;
         int tcycle=0;
         while(thermalization->Iterate()){
-            ac.Update();
+            ac->Update();
             if(tcycle%10==0)
-                thermalprops->Update(tcycle,H,&ac);
+                thermalprops->Update(tcycle,H,ac);
             if(tcycle%1000==0 && settings.output.report_progress){
                 Log() << "E = " << thermalprops->EnergyEvolution()[tcycle/1001] << std::endl;
                 Log() << "Progress: " << (double(tcycle)/double(thermalization->GetNCycles()))*100.0 << "%\n";
@@ -337,7 +362,7 @@ public:
         //PRE79Production prototype(settings,settings.simulation.production_cycles/settings.openmp.number_of_threads,*lattice);
         //(settings.openmp.number_of_threads,prototype);
         for(int i=0;i<settings.openmp.number_of_threads;i++)
-            productions.push_back(new PRE79Production(settings,settings.simulation.production_cycles/settings.openmp.number_of_threads,*lattice));
+            productions.push_back(shared_ptr<PRE79Production>(new PRE79Production(settings,settings.simulation.production_cycles/settings.openmp.number_of_threads,*lattice)));
 
         Log() << "Starting " << settings.openmp.number_of_threads << " productions\n";
         #pragma omp parallel for schedule(runtime) shared(rng2) private(random01)
@@ -345,44 +370,41 @@ public:
 	    productions[i]->SetStream(&Log());
             productions[i]->Run();
         }
-        PRE79StandardProperties generalprop = productions[0]->GetProperties();
+        shared_ptr<PRE79StandardProperties> generalprop = productions[0]->GetProperties();
         for(int i=1;i<productions.size();i++){
-            generalprop.Append(productions[i]->GetProperties());
+            generalprop->Append(productions[i]->GetProperties());
         }
-        generalprop.CalculateSpecificHeat();
+        generalprop->CalculateSpecificHeat();
 
         if(settings.output.save_properties_evolution) {
             Log() << "Saving Properties Evolution\n";
-            database.StorePropertiesEvolution(settings,generalprop);
+            database.StorePropertiesEvolution(settings,*generalprop);
         }
         if(settings.output.save_final_configuration){
             Log() << "Saving Final Lattice\n";
-            database.StoreFinalLattice(settings,productions[0]->GetLattice());
+            database.StoreFinalLattice(settings,*productions[0]->GetLattice());
         }
         if(settings.output.save_final_properties){
             Log() << "Saving Final Properties\n";
-            PRE79MeanProperties pp(generalprop,*H);
+            PRE79MeanProperties pp(generalprop,H);
             database.StoreFinalProperties(settings,pp);
         }
 
         Log() << "Done\n";
-        Log() << "Mean EPM: " << generalprop.TemporalMeanEnergyPerMolecule().Print() << std::endl;
-        Log() << "Specific Heat: " << generalprop.SpecificHeat().Print() << std::endl;
+        Log() << "Mean EPM: " << generalprop->TemporalMeanEnergyPerMolecule().Print() << std::endl;
+        Log() << "Specific Heat: " << generalprop->SpecificHeat().Print() << std::endl;
 
         //return the state with the lowest energy
         vect weights(0.0,productions.size());
         for(int i=0;i<weights.size();i++){
-            weights[i]=productions[i]->GetLattice().GetMeanEPM();
+            weights[i]=productions[i]->GetLattice()->GetMeanEPM();
         }
         int best = MinimumIndex(weights);
 
-        Lattice ret = productions[best]->GetLattice();
+        Lattice ret = *productions[best]->GetLattice();
         //--
 
-        //cleanup
-        foreach(PRE79Production * prod,productions){
-            delete prod;
-        }
+        productions.clear();
 
         return ret;
     }
@@ -416,13 +438,13 @@ public:
 	if(settings.simulation.calculate_time)
 	    Log() << "Remaining time will be reported every " << remaining_interval << " cycles\n";
         
-        AutoCorrelationTimeCalculator ac(lattice,settings.simulation.autocorrelation_frequency,settings.simulation.autocorrelation_length);
+        shared_ptr<AutoCorrelationTimeCalculator> ac(new AutoCorrelationTimeCalculator(lattice,settings.simulation.autocorrelation_frequency,settings.simulation.autocorrelation_length));
         
         while(simulation->Iterate()){
-            ac.Update();
+            ac->Update();
             //--- pomiary
             if(k%settings.simulation.measure_frequency==0){
-                prop->Update(k,H,&ac);
+                prop->Update(k,H,ac);
                 if(settings.output.save_configuration_evolution){
                     database.StoreLattice(settings,*lattice,k);
                 }
@@ -440,7 +462,7 @@ public:
             if(k%intermediate_frequency==0){
                 if(settings.output.save_intermediate_states){
                     database.StoreLattice(settings,*lattice,k);
-                    PRE79MeanProperties pp(*prop,*H);
+                    PRE79MeanProperties pp(prop,H);
                     database.StoreProperties(settings,pp,k);
                 }
 
@@ -480,7 +502,7 @@ public:
         }
         if(settings.output.save_final_properties){
             Log() << "Saving Final Properties\n";
-            PRE79MeanProperties pp(*prop,*H);
+            PRE79MeanProperties pp(prop,H);
             database.StoreFinalProperties(settings,pp);
         }
         
@@ -508,35 +530,26 @@ public:
         return oldT;
     }
     */
-    ~PRE79Simulation(){
-        delete metro;
-        delete lattice;
-        delete H;
-        delete prop;
-        delete thermalization;
-        delete simulation;
-        delete thermalprops;
-    }
 
-    Lattice & GetLattice(){
-        return *lattice;
+    shared_ptr<Lattice> GetLattice(){
+        return lattice;
     }
-    PRE79StandardProperties & GetProperties(){
-        return *prop;
+    shared_ptr<PRE79StandardProperties> GetProperties(){
+        return prop;
     }
-    PRE79StandardProperties & GetThermalizationProperties(){
-        return *thermalprops;
+    shared_ptr<PRE79StandardProperties> GetThermalizationProperties(){
+        return thermalprops;
     }
     int GetNProductions(){
         return productions.size();
     }
-    PRE79Production & GetProduction(const int & i) {
-        return *productions[i];
+    shared_ptr<PRE79Production> GetProduction(const int & i) {
+        return productions[i];
     }
-    const LatticeSimulation * GetSimulation() const {
+    shared_ptr<LatticeSimulation> GetSimulation() const {
         return simulation;
     }
-    const LatticeSimulation * GetThermalization() const {
+    shared_ptr<LatticeSimulation> GetThermalization() const {
         return thermalization;
     }
 

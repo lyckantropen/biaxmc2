@@ -18,7 +18,7 @@
 #include "ILoggable.h"
 
 class AutoCorrelationTimeCalculator:public ILoggable {
-    Lattice                     *lattice;
+    shared_ptr<Lattice>                     lattice;
     int ncycles;
     int acc_idx;
     vect ec;
@@ -34,12 +34,35 @@ class AutoCorrelationTimeCalculator:public ILoggable {
         return Mean(e,0,0,e.size());
     }
 public:
-    AutoCorrelationTimeCalculator(Lattice * l, int _nc, int _nh):lattice(l),ncycles(_nc),t(_nh/2){
+    AutoCorrelationTimeCalculator(shared_ptr<Lattice> l, int _nc, int _nh):lattice(l),ncycles(_nc),t(_nh/2){
         ec.resize(_nc,0.0);
         R.resize(_nh,0.0);
         acc_idx=0;
         //SetFile("autocorrelation");
         //SetStream(&std::cout);
+    }
+    
+    AutoCorrelationTimeCalculator(const AutoCorrelationTimeCalculator & s){
+        ec.resize(s.ec.size(),0.0);
+        R.resize(s.R.size(),0.0);
+        ec=s.ec;
+        R=s.R;
+        t=s.t;
+        lattice=s.lattice;
+        ncycles=s.ncycles;
+        acc_idx=s.acc_idx;
+    }
+    
+    const AutoCorrelationTimeCalculator & operator=(const AutoCorrelationTimeCalculator & s){
+        ec.resize(s.ec.size(),0.0);
+        R.resize(s.R.size(),0.0);
+        ec=s.ec;
+        R=s.R;
+        t=s.t;
+        lattice=s.lattice;
+        ncycles=s.ncycles;
+        acc_idx=s.acc_idx;
+        return *this;
     }
     void Update() {
         ec[acc_idx]=double(CalculateMeanEnergy());

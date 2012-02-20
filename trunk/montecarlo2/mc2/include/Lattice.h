@@ -1,8 +1,5 @@
-/* 
- * File:   Lattice.h
- * Author: karol
- *
- * Created on 17 listopad 2009, 17:41
+/**
+ * @file Lattice.h
  */
 
 #ifndef _LATTICE_H
@@ -13,6 +10,14 @@
 #include "serializer.h"
 #include "random01.h"
 
+/**
+ * @brief Stores the lattice
+ * 
+ * This class stores the particles which constitute the lattice. It takes care 
+ * of creating and arranging the lattice and also performs the lattice-wide 
+ * Monte Carlo sweep.
+ */
+
 class Lattice {
     friend class PRE79StandardProperties;
     friend class SpatialCorrelation;
@@ -22,13 +27,21 @@ class Lattice {
     template<class stream_t>
     friend void operator|(boostbase::inserializer<stream_t> & s, Lattice & lat);
     friend std::ostream & operator<<(std::ostream & s,const Lattice & lat);
-    int N;      ///<liczba cząstek
-    int L,W,H;  ///<wymiary siatki
-    std::vector<Particle>   Particles;
+    int N;      ///<number of particles
+    int L;      ///<lattice length
+    int W;      ///<lattice width
+    int H;      ///<lattice height
+    std::vector<Particle>   Particles;          ///<linear vector of #N particles
+    /**
+     * Construct the lattice. Invokes the Particle::Connect() function #N*12 times,
+     * while taking care of the periodic boundary conditions.
+     * 
+     * @todo: Should the boundary conditions ever be changed, it needs to be done here.
+     */
     void Construct(){
         //std::cout << "Constructing\n";
         if(Particles.size()!=0) Particles.clear();
-        Particles = std::vector<Particle>(N);
+        Particles.resize(N); //= std::vector<Particle>(N);
         
         for(int i=0;i<N;i++){
             Particle & cur = Particles[i];
@@ -65,8 +78,17 @@ class Lattice {
 
     }
 public:
+    ///the multiple options for the initial conditions
     typedef enum { Isotropic, IsotropicRighthanded, Biaxial, BiaxialRighthanded, BiaxialAlt, BiaxialRighthandedAlt } state_t;
     Lattice():L(0),W(0),H(0),N(0) {}
+    /**
+     * Main constructor. Construct the lattice and initialize it with proper initial conditions.
+     * 
+     * @param l Length
+     * @param w Width
+     * @param h Height
+     * @param state The desired option for the initial condition of the lattice
+     */
     Lattice(const int & l, const int & w, const int & h,const state_t & state=Isotropic):
     L(l),W(w),H(h),N(l*w*h)
     {
@@ -93,7 +115,12 @@ public:
         }
     }
 
-    // tak to trzeba zrobić, bo Particle zawiera wskaźniki
+    /**
+     * Assignment operator
+     * 
+     * @param s source lattice
+     * @return 
+     */
     const Lattice & operator=(const Lattice & s){
         L=s.L;
         W=s.W;
@@ -104,6 +131,10 @@ public:
             Particles[i].RestoreState(s.Particles[i]);
         return *this;
     }
+    /**
+     * Copy constructor
+     * @param s source lattice
+     */
     Lattice(const Lattice & s){
         L=s.L;
         W=s.W;
@@ -115,19 +146,25 @@ public:
     }
 
 private:
-    ///najwyższa symetria
+    /**
+     * Both degrees of freedom are randomly drawn
+     */
     void IsotropicState(){
         foreach(Particle & p, Particles){
             p.SetOrientation(RandomPointOn4DSphereMarsaglia(1.0),plusminusone());
         }
     }
-    ///porządek chiralny
+    /**
+     * The orientations are randomly drawn over the 4D-sphere, the parity is equal to +1
+     */
     void IsotropicRighthandedState(){
         foreach(Particle & p, Particles){
             p.SetOrientation(RandomPointOn4DSphereMarsaglia(1.0),1);
         }
     }
-    ///porządek dwuosiowy
+    /**
+     * Ordered orientations, with the longest quadrupolar axis along Z, parity is random.
+     */
     void BiaxialState(){
         vect o(4);
         o[0]=1.0;
@@ -136,7 +173,9 @@ private:
             p.SetOrientation(o,plusminusone());
         }
     }
-    ///porządek dwuosiowy + chiralny
+    /**
+     * Ordered orientations, with the longest quadrupolar axis along Z, parity is +1.
+     */
     void BiaxialRighthandedState(){
         vect o(4);
         o[0]=1.0;
@@ -145,7 +184,9 @@ private:
             p.SetOrientation(o,1);
         }
     }
-    ///porządek dwuosiowy z b||z
+        /**
+     * Ordered orientations, with the longest quadrupolar axis along X, parity is random.
+     */
     void BiaxialStateAlt(){
 	    vect o(4);
 	    o[2]=o[3]=0.0;
@@ -155,7 +196,9 @@ private:
 		    p.SetOrientation(o,plusminusone());
 	    }
     }
-    ///porządek dwuosiowy z b||z + chiralny
+        /**
+     * Ordered orientations, with the longest quadrupolar axis along X, parity is +1.
+     */
     void BiaxialRighthandedStateAlt(){
 	    vect o(4);
 	    o[2]=o[3]=0.0;
@@ -167,8 +210,16 @@ private:
     }
 
 public:
-    ///jedno przemiecenie Monte Carlo
-    void Sweep(MCProto * proto, int & acc_rot, int & acc_p){
+    /**
+     * A signle Monte Carlo sweep over all particles. The particles are picked at
+     * ranomd and updated using the Particle::Nudge() function. An implementation
+     * of the #MCProto prototype class is necessary.
+     * 
+     * @param proto     An implementation of the #MCProto mechanism
+     * @param acc_rot   The counter which is incremented by +1 if a rotational move is accepted
+     * @param acc_p     The counter which is incremented by +1 if a parity move is accepted
+     */
+    void Sweep(shared_ptr<MCProto> proto, int & acc_rot, int & acc_p){
         for(int i=0;i<N;i++){
             int site = int(N*random01());
             int ar=0,ap=0;
@@ -179,22 +230,31 @@ public:
         }
     }
 
-    //Accessors
+    ///Read-only accessor to #N
     const int & GetN() const {
         return N;
     }
+    ///Read-only accessor to #L
     const int & GetL() const {
         return L;
     }
+    ///Read-only accessor to #W
     const int & GetW() const {
         return W;
     }
+    ///Read-only accessor to #H
     const int & GetH() const {
         return H;
     }
+    ///Read-only accessor to #Particles
     const std::vector<Particle> & GetParticles() const {
         return Particles;
     }
+    /**
+     * Calculate the mean energy per molecule. The mean is the arithmetic mean.
+     * 
+     * @return Arithmetic mean energy per molecule 
+     */
     const double GetMeanEPM() const {
         double epm=0.0;
         foreach(const Particle & p, Particles) {
