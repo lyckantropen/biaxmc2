@@ -65,6 +65,12 @@ public:
     
     void SetTemperature(const double & t) {
         temperature = t;
+        epsilon = 1.0/temperature;
+
+        v1=epsilon*(2*lambda*lambda+sqrt6*lambda);
+        v2=epsilon*(2*lambda*lambda-sqrt6*lambda);
+        v3=epsilon*(3.0/2-lambda*lambda);
+        vt=epsilon*tau;
     }
 
     //Accessors

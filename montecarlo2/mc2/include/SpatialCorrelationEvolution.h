@@ -26,13 +26,13 @@ private:
     template<class serializer_t>
     friend void operator|(serializer_t &,SpatialCorrelationEvolution &);
     std::vector<vect> correlation;    ///<ewolucja funkcji korelacji
-    Lattice *   lat;
+    shared_ptr<Lattice>    lat;
     int ncycles;
     int acc_idx;
     int max;
     bool readonly;
     vectijk nnn;    ///nnn[site][neighbor][distance], tablica indeksów sąsiadów
-    void ConstructNNN(Lattice * lat){
+    void ConstructNNN(shared_ptr<Lattice> lat){
         if(readonly) return;
         for(int site=0;site<nnn.size();site++)
             for(int n=0;n<coord_num;n++)
@@ -60,7 +60,7 @@ private:
     }
 protected:
     ///konstruktor tradycyjny (zasłonięty, bo funkcja CalculateContraction pozostaje do określenia w klasie dziedziczącej)
-    SpatialCorrelationEvolution(Lattice * l=NULL, int nc=0){
+    SpatialCorrelationEvolution(shared_ptr<Lattice> l=shared_ptr<Lattice>(), int nc=0){
         if(l==NULL) return; //serializacja
 
         readonly=false;
@@ -89,7 +89,7 @@ protected:
 public:
     ///konstruktor serializacyjny
     SpatialCorrelationEvolution(){
-        lat=NULL;
+        lat=shared_ptr<Lattice>();
         ncycles=0;
         acc_idx=0;
         readonly=true;

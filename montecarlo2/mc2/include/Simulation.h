@@ -19,7 +19,7 @@ class Simulation {
     int ncycles;
 protected:
     virtual void DoIterate() {}
-    Simulation(const int & nc,const int & sc=0){
+    Simulation(const int & nc=0,const int & sc=0){
         ncycles=nc;
         acc_idx=sc-1;
     }
@@ -41,9 +41,9 @@ public:
 };
 
 class LatticeSimulation:public Simulation {
-    Lattice * lat;
-    Hamiltonian * H;
-    Metropolis * metropolis;
+    shared_ptr<Lattice> lat;
+    shared_ptr<Hamiltonian>  H;
+    shared_ptr<Metropolis> metropolis;
     double  accepted_fraction;
     double  accepted_fraction_p;
     vect acf;
@@ -65,7 +65,7 @@ class LatticeSimulation:public Simulation {
         acfp[GetAccIdx()]=accepted_fraction_p;
     }
 public:
-    LatticeSimulation(Hamiltonian * h=NULL,Lattice * l=NULL,Metropolis * metro=NULL,int nc=0,int startc=0):
+    LatticeSimulation(shared_ptr<Hamiltonian> h=shared_ptr<Hamiltonian>(),shared_ptr<Lattice> l=shared_ptr<Lattice>(),shared_ptr<Metropolis> metro=shared_ptr<Metropolis>(),int nc=0,int startc=0):
     Simulation(nc,startc),
     metropolis(metro),
     H(h),
@@ -74,6 +74,35 @@ public:
     {
         acf.resize(nc,0.0);
         acfp.resize(nc,0.0);
+    }/*
+    LatticeSimulation(){
+        lat=NULL;
+        H=NULL;
+        metropolis=NULL;
+    }*/
+    
+    LatticeSimulation(const LatticeSimulation & s){
+        lat=s.lat;
+        H=s.H;
+        metropolis=s.metropolis;
+        accepted_fraction=s.accepted_fraction;
+        accepted_fraction_p=s.accepted_fraction_p;
+        acf.resize(s.acf.size(),0.0);
+        acfp.resize(s.acfp.size(),0.0);
+        acf=s.acf;
+        acfp=s.acfp;
+    }
+    const LatticeSimulation & operator=(const LatticeSimulation & s){
+        lat=s.lat;
+        H=s.H;
+        metropolis=s.metropolis;
+        accepted_fraction=s.accepted_fraction;
+        accepted_fraction_p=s.accepted_fraction_p;
+        acf.resize(s.acf.size(),0.0);
+        acfp.resize(s.acfp.size(),0.0);
+        acf=s.acf;
+        acfp=s.acfp;
+        return *this;
     }
 
     const double & GetAcceptance() const {
@@ -89,7 +118,7 @@ public:
     const double & GetMeanAcceptanceP() const {
         return Mean(acfp,0,GetAccIdx()+1);
     }
-    void SetLattice(Lattice * l){
+    void SetLattice(shared_ptr<Lattice> l){
         lat=l;
     }
 };
