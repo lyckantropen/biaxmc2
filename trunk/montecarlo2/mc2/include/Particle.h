@@ -43,6 +43,7 @@ class Particle {
     vect    Qy;         ///<6 independent components of the Y(x)Y tensor
     vect    Qz;         ///<6 independent components of the Z(x)Z tensor
     vect    T;          ///<10 independent components of the T32 tensor
+    vect    R;          ///<position on lattice
     double  energy;     ///<total energy per molecule
     std::vector<Particle*>  neighbors;  ///<6 pointers to the neighboring particles
     std::vector<int>        neighbors_indices;  ///<a list of 6 integers which specifiy their indices in Lattice::Particles
@@ -55,6 +56,7 @@ class Particle {
      *
      */
     void RestoreState(const Particle & p){
+        R=p.R;
         x=p.x;
         parity=p.parity;
         ex=p.ex;
@@ -189,7 +191,7 @@ class Particle {
 public:
     ///Constructor
     Particle():
-    x(4),ex(3),ey(3),ez(3),Qx(6),Qy(6),Qz(6),T(10) {
+    x(4),ex(3),ey(3),ez(3),Qx(6),Qy(6),Qz(6),T(10),R(3) {
         //,e2p(coord_num){
         parity=1;
         energy=0;
@@ -207,6 +209,7 @@ public:
         Qy.resize(6,0.0);
         Qz.resize(6,0.0);
         T.resize(10,0.0);
+        R.resize(3,0.0);
         x=s.x;
         ex=s.ex;
         ey=s.ey;
@@ -215,6 +218,7 @@ public:
         Qy=s.Qy;
         Qz=s.Qz;
         T=s.T;
+        R=s.R;
         parity=s.parity;
         energy=s.energy;
         neighbors = s.neighbors;
@@ -234,6 +238,8 @@ public:
         Qy.resize(6,0.0);
         Qz.resize(6,0.0);
         T.resize(10,0.0);
+        R.resize(3,0.0);
+        R=s.R;
         x=s.x;
         ex=s.ex;
         ey=s.ey;
@@ -395,6 +401,13 @@ public:
     const vect & GetT() const {
         return T;
     }
+    /**
+     * Read only accessor to R
+     * @return read only reference to R
+     */
+    const vect & GetR() const {
+        return R;
+    }
 
 };
 /**
@@ -415,6 +428,7 @@ void operator|(serializer_t & s,Particle & p){
     s|p.T;
     s|p.energy;
     s|p.neighbors_indices;
+    s|p.R;
 }
 extern std::ostream & operator<<(std::ostream & o, const Particle & p);
 

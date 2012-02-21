@@ -43,7 +43,7 @@ public:
 
         ///create the needed objects
         lattice = shared_ptr<Lattice>(new Lattice(start));
-        H = shared_ptr<PRE79StandardHamiltonian>(new PRE79StandardHamiltonian(settings.hamiltonian.temperature, settings.hamiltonian.lambda, settings.hamiltonian.tau,settings.hamiltonian.h));
+        H = shared_ptr<PRE79StandardHamiltonian>(new PRE79StandardHamiltonian(settings.hamiltonian.temperature, settings.hamiltonian.lambda, settings.hamiltonian.tau,settings.hamiltonian.h,settings.hamiltonian.kappa));
         metro = shared_ptr<Metropolis>(new Metropolis(settings,H,0.065));
         prop = shared_ptr<PRE79StandardProperties>(new PRE79StandardProperties(lattice,ncycles));
         simulation = shared_ptr<LatticeSimulation>(new LatticeSimulation(H,lattice,metro,nprod,0));
@@ -163,7 +163,7 @@ class PRE79Simulation:public ILoggable {
      */
     void Init(){
         Log() << "Creating Hamiltonian\n";
-        H = shared_ptr<PRE79StandardHamiltonian>(new PRE79StandardHamiltonian(settings.hamiltonian.temperature, settings.hamiltonian.lambda, settings.hamiltonian.tau,settings.hamiltonian.h));
+        H = shared_ptr<PRE79StandardHamiltonian>(new PRE79StandardHamiltonian(settings.hamiltonian.temperature, settings.hamiltonian.lambda, settings.hamiltonian.tau,settings.hamiltonian.h,settings.hamiltonian.kappa));
         Log() << "Creating Metropolis\n";
         metro = shared_ptr<Metropolis>(new Metropolis(settings,H,0.065));
         
