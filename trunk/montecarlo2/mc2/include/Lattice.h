@@ -8,6 +8,7 @@
 #include "Particle.h"
 #include "std.h"
 #include "serializer.h"
+#include "Settings.h"
 #include "random01.h"
 
 /**
@@ -31,6 +32,7 @@ class Lattice {
     int L;      ///<lattice length
     int W;      ///<lattice width
     int H;      ///<lattice height
+    bool periodic_L, periodic_W, periodic_H;
     std::vector<Particle>   Particles;          ///<linear vector of #N particles
     /**
      * Construct the lattice. Invokes the Particle::Connect() function #N*12 times,
@@ -53,30 +55,33 @@ class Lattice {
             cur.R[0]=x;
             cur.R[1]=y;
             cur.R[2]=z;
-            if(x==L-1)
+            
+            if(x==L-1 && periodic_L)
                 cur.Connect(Particles[i-L+1],i-L+1);
             else
-                cur.Connect(Particles[i+1],i+1);
-            if(x==0)
+                if(L!=1) cur.Connect(Particles[i+1],i+1);
+            if(x==0 && periodic_L)
                 cur.Connect(Particles[i+L-1],i+L-1);
             else
-                cur.Connect(Particles[i-1],i-1);
-            if(y==W-1)
+                if(L!=1) cur.Connect(Particles[i-1],i-1);
+            
+            if(y==W-1 && periodic_W)
                 cur.Connect(Particles[i-A+L],i-A+L);
             else
-                cur.Connect(Particles[i+L],i+L);
-            if(y==0)
+                if(W!=1) cur.Connect(Particles[i+L],i+L);
+            if(y==0 && periodic_W)
                 cur.Connect(Particles[i+A-L],i+A-L);
             else
-                cur.Connect(Particles[i-L],i-L);
-            if(z==H-1)
+                if(W!=1) cur.Connect(Particles[i-L],i-L);
+            
+            if(z==H-1 && periodic_H)
                 cur.Connect(Particles[i-N+A],i-N+A);
             else
-                cur.Connect(Particles[i+A],i+A);
-            if(z==0)
+                if(H!=1) cur.Connect(Particles[i+A],i+A);
+            if(z==0 && periodic_H)
                 cur.Connect(Particles[i+N-A],i+N-A);
             else
-                cur.Connect(Particles[i-A],i-A);
+                if(H!=1) cur.Connect(Particles[i-A],i-A);
         }
 
     }
@@ -92,9 +97,13 @@ public:
      * @param h Height
      * @param state The desired option for the initial condition of the lattice
      */
-    Lattice(const int & l, const int & w, const int & h,const state_t & state=Isotropic):
-    L(l),W(w),H(h),N(l*w*h)
+    Lattice(const Settings & set,const state_t & state=Isotropic):
+    L(set.lattice.L),W(set.lattice.W),H(set.lattice.H)
     {
+        N=L*W*H;
+        periodic_L=set.lattice_boundary_conditions.periodic_boundary_condition_L;
+        periodic_W=set.lattice_boundary_conditions.periodic_boundary_condition_W;
+        periodic_H=set.lattice_boundary_conditions.periodic_boundary_condition_H;
         Construct();
         switch(state){
             case Isotropic:
@@ -129,6 +138,9 @@ public:
         W=s.W;
         H=s.H;
         N=L*W*H;
+        periodic_L=s.periodic_L;
+        periodic_W=s.periodic_W;
+        periodic_H=s.periodic_H;
         Construct();
         for(int i=0;i<N;i++)
             Particles[i].RestoreState(s.Particles[i]);
@@ -143,6 +155,9 @@ public:
         W=s.W;
         H=s.H;
         N=L*W*H;
+        periodic_L=s.periodic_L;
+        periodic_W=s.periodic_W;
+        periodic_H=s.periodic_H;
         Construct();
         for(int i=0;i<N;i++)
             Particles[i].RestoreState(s.Particles[i]);
@@ -272,6 +287,9 @@ void operator|(boostbase::outserializer<stream_t> & s, Lattice & lat){
     //std::cout << "Saving\n";
     s|lat.N;
     s|lat.L;s|lat.W;s|lat.H;
+    s|lat.periodic_L;
+    s|lat.periodic_W;
+    s|lat.periodic_H;
     foreach(Particle & p, lat.Particles){
         s|p;
     }
@@ -282,6 +300,9 @@ void operator|(boostbase::inserializer<stream_t> & s, Lattice & lat){
     //std::cout << "Loading\n";
     s|lat.N;
     s|lat.L;s|lat.W;s|lat.H;
+    s|lat.periodic_L;
+    s|lat.periodic_W;
+    s|lat.periodic_H;
     lat.Construct();
     foreach(Particle & p, lat.Particles){
         s|p;

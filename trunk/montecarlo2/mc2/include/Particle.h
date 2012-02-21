@@ -191,7 +191,7 @@ class Particle {
 public:
     ///Constructor
     Particle():
-    x(4),ex(3),ey(3),ez(3),Qx(6),Qy(6),Qz(6),T(10),R(3) {
+    x(4),ex(3),ey(3),ez(3),Qx(6),Qy(6),Qz(6),T(10),R(3),neighbors(0) {
         //,e2p(coord_num){
         parity=1;
         energy=0;
@@ -210,6 +210,7 @@ public:
         Qz.resize(6,0.0);
         T.resize(10,0.0);
         R.resize(3,0.0);
+        neighbors.resize(0);
         x=s.x;
         ex=s.ex;
         ey=s.ey;
@@ -239,6 +240,7 @@ public:
         Qz.resize(6,0.0);
         T.resize(10,0.0);
         R.resize(3,0.0);
+        neighbors.resize(0);
         R=s.R;
         x=s.x;
         ex=s.ex;
@@ -262,13 +264,11 @@ public:
      * @param i Index of the particle in the great particle container Lattice::Particles
      * @return False only if we attempt to connect more than coord_num particles
      */
-    bool Connect(Particle & n, const int & i){
-        if(neighbors.size()<coord_num){
-            neighbors.push_back(&n);
-            neighbors_indices.push_back(i);
-            return true;
-        }
-        else return false;
+    void Connect(Particle & n, const int & i){
+
+        neighbors.push_back(&n);
+        neighbors_indices.push_back(i);
+
     }
     /**
      * A signle Monte Carlo update. Note that the actual acceptance scheme is not defined.

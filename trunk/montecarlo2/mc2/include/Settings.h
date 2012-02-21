@@ -74,7 +74,19 @@ public:
         ///Constructor
         _lattice():L(0),W(0),H(0){}
     } lattice;
-    /**
+
+     struct _lattice_boundary_conditions {
+        bool periodic_boundary_condition_L; ///<lattice length
+        std::string v_periodic_boundary_condition_L; ///<helper variable
+        bool periodic_boundary_condition_W; ///<lattice width
+        std::string v_periodic_boundary_condition_W; ///<helper variable
+        bool periodic_boundary_condition_H; ///<lattice height
+        std::string v_periodic_boundary_condition_H; ///<helper variable
+        ///Constructor
+        _lattice_boundary_conditions():periodic_boundary_condition_L(false),periodic_boundary_condition_W(false),periodic_boundary_condition_H(false),
+                                       v_periodic_boundary_condition_L("no"),v_periodic_boundary_condition_W("no"),v_periodic_boundary_condition_H("no"){}
+    } lattice_boundary_conditions ;
+      /**
      * Parameters of the hamiltonian. If scanning applies, not all are in use.
      * E.g. if there is scanning of temperature, the temperature parameter is not
      * in use.
@@ -286,6 +298,9 @@ private:
         ("lattice.L",po::value<int>(&lattice.L),"Lattice longitude")
         ("lattice.W",po::value<int>(&lattice.W),"Lattice width")
         ("lattice.H",po::value<int>(&lattice.H),"Lattice height")
+        ("lattice_boundary_conditions.periodic_boundary_condition_L",po::value<std::string>(&lattice_boundary_conditions.v_periodic_boundary_condition_L),"Choose periodic or free boundary condition in L i.e. x axis direction")
+        ("lattice_boundary_conditions.periodic_boundary_condition_W",po::value<std::string>(&lattice_boundary_conditions.v_periodic_boundary_condition_W),"Choose periodic or free boundary condition in W i.e. y axis direction")
+        ("lattice_boundary_conditions.periodic_boundary_condition_H",po::value<std::string>(&lattice_boundary_conditions.v_periodic_boundary_condition_H),"Choose periodic or free boundary condition in H i.e. z axis direction")
         ("hamiltonian.lambda",po::value<double>(&hamiltonian.lambda),"Lambda coupling constant")
         ("hamiltonian.kappa",po::value<double>(&hamiltonian.kappa),"Lattice coupling constant")
         ("hamiltonian.tau",po::value<double>(&hamiltonian.tau),"Tau coupling constant")
@@ -350,6 +365,9 @@ private:
      * Convert imported string values ("yes", "no") to booleans
      */
     void LoadBooleans(){
+        lattice_boundary_conditions.periodic_boundary_condition_L=TextBool(lattice_boundary_conditions.v_periodic_boundary_condition_L);
+        lattice_boundary_conditions.periodic_boundary_condition_W=TextBool(lattice_boundary_conditions.v_periodic_boundary_condition_W);
+        lattice_boundary_conditions.periodic_boundary_condition_H=TextBool(lattice_boundary_conditions.v_periodic_boundary_condition_H);
         output.save_configuration_evolution = TextBool(output.v_save_configuration_evolution);
         output.save_final_configuration = TextBool(output.v_save_final_configuration);
         output.save_final_properties = TextBool(output.v_save_final_properties);
@@ -421,7 +439,8 @@ public:
 
         }
         catch(po::unknown_option &e){
-            Log() << "Unrecognized option found: " << e.get_option_name() << std::endl;
+            /*Log()*/ std::cout << "Unrecognized option found: " << e.get_option_name() << std::endl;
+                      std::exit(1);
         }
         f.close();
     }

@@ -252,26 +252,26 @@ public:
             thermalprops(shared_ptr<PRE79StandardProperties>()),thermalization(shared_ptr<LatticeSimulation>()),lattice(shared_ptr<Lattice>())
     {
         if(set.initial.isotropic)
-            lattice = shared_ptr<Lattice>(new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::Isotropic));
+            lattice = shared_ptr<Lattice>(new Lattice(set,Lattice::Isotropic));
         else
         if(set.initial.biaxial){
             if(set.initial.righthanded)
-                lattice = shared_ptr<Lattice>(new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::BiaxialRighthanded));
+                lattice = shared_ptr<Lattice>(new Lattice(set,Lattice::BiaxialRighthanded));
             else
-                lattice = shared_ptr<Lattice>(new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::Biaxial));
+                lattice = shared_ptr<Lattice>(new Lattice(set,Lattice::Biaxial));
         }
         else
         if(set.initial.biaxial_alt){
             if(set.initial.righthanded)
-                lattice = shared_ptr<Lattice>(new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::BiaxialRighthandedAlt));
+                lattice = shared_ptr<Lattice>(new Lattice(set,Lattice::BiaxialRighthandedAlt));
             else
-                lattice = shared_ptr<Lattice>(new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::BiaxialAlt));
+                lattice = shared_ptr<Lattice>(new Lattice(set,Lattice::BiaxialAlt));
         }
         else
         if(set.initial.righthanded)
-            lattice = shared_ptr<Lattice>(new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::IsotropicRighthanded));
+            lattice = shared_ptr<Lattice>(new Lattice(set,Lattice::IsotropicRighthanded));
         else
-            lattice = shared_ptr<Lattice>(new Lattice(set.lattice.L,set.lattice.W,set.lattice.H,Lattice::Isotropic));
+            lattice = shared_ptr<Lattice>(new Lattice(set,Lattice::Isotropic));
         restored=false;
         Init();
     }

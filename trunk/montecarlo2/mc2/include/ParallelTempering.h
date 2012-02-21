@@ -316,19 +316,19 @@ public:
         index.resize(n,0);
         if(settings.initial.isotropic && !settings.initial.righthanded)
         for(int i=0;i<n;i++)
-                lattices.push_back(shared_ptr<Lattice>(new Lattice(settings.lattice.L,settings.lattice.W,settings.lattice.H,
+                lattices.push_back(shared_ptr<Lattice>(new Lattice(settings,
                         Lattice::Isotropic)));
         else if(settings.initial.isotropic && settings.initial.righthanded)
         for(int i=0;i<n;i++)
-                lattices.push_back(shared_ptr<Lattice>(new Lattice(settings.lattice.L,settings.lattice.W,settings.lattice.H,
+                lattices.push_back(shared_ptr<Lattice>(new Lattice(settings,
                         Lattice::IsotropicRighthanded)));
         else if(settings.initial.biaxial && !settings.initial.righthanded)
         for(int i=0;i<n;i++)
-                lattices.push_back(shared_ptr<Lattice>(new Lattice(settings.lattice.L,settings.lattice.W,settings.lattice.H,
+                lattices.push_back(shared_ptr<Lattice>(new Lattice(settings,
                         Lattice::Biaxial)));
         else if(settings.initial.biaxial && settings.initial.righthanded)
         for(int i=0;i<n;i++)
-                lattices.push_back(shared_ptr<Lattice>(new Lattice(settings.lattice.L,settings.lattice.W,settings.lattice.H,
+                lattices.push_back(shared_ptr<Lattice>(new Lattice(settings,
                         Lattice::BiaxialRighthanded)));
         
             
