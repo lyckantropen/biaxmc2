@@ -107,6 +107,8 @@ public:
                 current_settings.hamiltonian.temperature=value;
 	    if(variable=="hamiltonian.h")
 		current_settings.hamiltonian.h=value;
+            if(variable=="hamiltonian.kappa")
+		current_settings.hamiltonian.kappa=value;
 
             ///here we search the database for an existing result for the present value
             if(settings.scanning.continue_if_results_exist){
@@ -250,6 +252,8 @@ public:
                 current_settings.hamiltonian.temperature=value;
 	    if(variable=="hamiltonian.h")
 		current_settings.hamiltonian.h=value;
+            if(variable=="hamiltonian.kappa")
+		current_settings.hamiltonian.kappa=value;
 
             ///here we search the database for an existing result for the present value
             if(current_settings.scanning.continue_if_results_exist){
@@ -369,6 +373,10 @@ public:
                     current_settings.hamiltonian.lambda=value;
                 if(variable=="hamiltonian.temperature")
                     current_settings.hamiltonian.temperature=value;
+                if(variable=="hamiltonian.h")
+                    current_settings.hamiltonian.h=value;
+                if(variable=="hamiltonian.kappa")
+		    current_settings.hamiltonian.kappa=value;
                 
                 ///we look for a thermalized state that can be utilized in the next step,
                 ///so we can omit this thermalization and just use the found state
@@ -423,6 +431,10 @@ public:
                     current_settings.hamiltonian.lambda=value;
                 if(variable=="hamiltonian.temperature")
                     current_settings.hamiltonian.temperature=value;
+                if(variable=="hamiltonian.h")
+                    current_settings.hamiltonian.h=value;
+                if(variable=="hamiltonian.kappa")
+		    current_settings.hamiltonian.kappa=value;
 
                 ///entirely skip thermalization, since we have thermalized states already
                 current_settings.simulation.thermalization_cycles=0;
