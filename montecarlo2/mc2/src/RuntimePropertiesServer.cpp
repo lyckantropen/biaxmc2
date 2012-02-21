@@ -32,11 +32,11 @@ void RuntimePropertiesServer::operator()() {
             ////symulacja jednowątkowa
             if(serial){
                 if(line=="lattice")
-                    Write(sim->GetLattice());
+                    Write(*(sim->GetLattice()));
                 if(line=="properties")
-                    Write(sim->GetProperties());
+                    Write(*(sim->GetProperties()));
                 if(line=="thermalization_history")
-                    Write(sim->GetThermalizationProperties());
+                    Write(*(sim->GetThermalizationProperties()));
 
                 if(line=="progress"){
                     std::stringstream o;
@@ -62,19 +62,19 @@ void RuntimePropertiesServer::operator()() {
                 if(s[0]=="production_number")
                     Write(n);
                 if(s[0]=="lattice" && s.size()>1)
-                    Write(sim->GetProduction(std::atoi(s[1].c_str())).GetLattice());
+                    Write(*(sim->GetProduction(std::atoi(s[1].c_str()))->GetLattice()));
                 if(s[0]=="lattice" && s.size()==1)
-                    Write(sim->GetLattice());
+                    Write(*(sim->GetLattice()));
                 if(s[0]=="properties")
-                    Write(sim->GetProduction(std::atoi(s[1].c_str())).GetProperties());
+                    Write(*(sim->GetProduction(std::atoi(s[1].c_str()))->GetProperties()));
                 if(s[0]=="thermalization_history")
-                    Write(sim->GetThermalizationProperties());
+                    Write(*(sim->GetThermalizationProperties()));
                 if(s[0]=="progress"){
                     std::stringstream o;
                     o << n << ": Thermalization: " << double(sim->GetThermalization()->GetAccIdx()+1)/double(sim->GetThermalization()->GetNCycles())*100.0 << "%\n";
 
                     for(int i=0;i<n;i++)
-                        o << i << ": Simulation: " << double(sim->GetProduction(i).GetSimulation()->GetAccIdx()+1)/double(sim->GetSimulation()->GetNCycles())*100.0 << "%\n";
+                        o << i << ": Simulation: " << double(sim->GetProduction(i)->GetSimulation()->GetAccIdx()+1)/double(sim->GetSimulation()->GetNCycles())*100.0 << "%\n";
 
                     Write(o.str());
                 }
