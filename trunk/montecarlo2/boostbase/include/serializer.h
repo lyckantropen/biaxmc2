@@ -23,6 +23,7 @@ namespace boostbase {
         virtual void operator|(unsigned int &) = 0;
         virtual void operator|(long int &) = 0;
         virtual void operator|(short int &) = 0;
+        virtual void operator|(bool &) = 0;
         virtual void operator|(std::string &) = 0;
         virtual void operator|(std::list<float> &) = 0;
         virtual void operator|(std::list<double> &) = 0;
@@ -69,6 +70,11 @@ namespace boostbase {
         virtual void operator|(short int & c) {
             s.write((char*) & c, sizeof (short int));
         }
+        
+        virtual void operator|(bool & c) {
+            s.write((char*) & c, sizeof (bool));
+        }
+
 
         virtual void operator|(long int & c) {
             s.write((char*) & c, sizeof (long int));
@@ -181,6 +187,10 @@ namespace boostbase {
 
         virtual void operator|(short int & c) {
             s.read((char*) & c, sizeof (short int));
+        }
+        
+        virtual void operator|(bool & c) {
+            s.read((char*) & c, sizeof (bool));
         }
 
         virtual void operator|(long int & c) {
