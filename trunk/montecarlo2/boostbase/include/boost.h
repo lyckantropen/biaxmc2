@@ -33,6 +33,10 @@
 #include <boost/program_options.hpp>
 #include <boost/algorithm/string.hpp>
 #include <boost/thread.hpp>
+#include <boost/shared_ptr.hpp>
+#include <boost/pointer_cast.hpp>
+#include <boost/make_shared.hpp>
+#include <boost/enable_shared_from_this.hpp>
 
 #define foreach BOOST_FOREACH
 
@@ -42,7 +46,10 @@ namespace pt = boost::posix_time;
 namespace gr = boost::gregorian;
 namespace po = boost::program_options;
 namespace assign = boost::assign;
-
+using boost::shared_ptr;
+using boost::make_shared;
+using boost::dynamic_pointer_cast;
+using boost::const_pointer_cast;
 
 
 #endif	/* _BOOST_HEADERS_H */
