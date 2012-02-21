@@ -50,6 +50,9 @@ class Lattice {
             x=i%L;
             y=i%A/L;
             z=i/A;
+            cur.R[0]=x;
+            cur.R[1]=y;
+            cur.R[2]=z;
             if(x==L-1)
                 cur.Connect(Particles[i-L+1],i-L+1);
             else

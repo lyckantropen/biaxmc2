@@ -84,10 +84,11 @@ public:
         double tau;             ///<strength of tetrahedratic coupling
         double temperature;     ///<temperature
         double h;               ///<field constant in second order coupling to the quadrupolar tensor
-        
+        double kappa;           ///<strength of the lattice cross coupling
+
         ///Constructor
         _hamiltonian():
-        lambda(0.0),tau(0.0),temperature(1.0),h(0.0) {}
+        lambda(0.0),tau(0.0),temperature(1.0),h(0.0),kappa(0.0) {}
     } hamiltonian ;
     /**
      * Technical parameters for the simulation. 
@@ -286,6 +287,7 @@ private:
         ("lattice.W",po::value<int>(&lattice.W),"Lattice width")
         ("lattice.H",po::value<int>(&lattice.H),"Lattice height")
         ("hamiltonian.lambda",po::value<double>(&hamiltonian.lambda),"Lambda coupling constant")
+        ("hamiltonian.kappa",po::value<double>(&hamiltonian.kappa),"Lattice coupling constant")
         ("hamiltonian.tau",po::value<double>(&hamiltonian.tau),"Tau coupling constant")
         ("hamiltonian.temperature",po::value<double>(&hamiltonian.temperature),"Temperature")
         ("hamiltonian.h",po::value<double>(&hamiltonian.h),"Field coupling to second order tensor (along z)")

@@ -15,15 +15,34 @@ class PRE79StandardHamiltonian:public Hamiltonian {
     double temperature ;
     double lambda;
     double tau;
+    double kappa;
     double h;   ///<second order field coupling
-    double v1,v2,v3,vt,epsilon;
+    double v1,v2,v3,vt,vk,epsilon;
     double hxx,hyy,hzz;
+    double LatticeCoupling(const Particle & a,const Particle & b) {
+        double p1=a.GetParity();
+        double p2=b.GetParity();
+        vect r=b.GetR()-a.GetR();
+        r[0]=0.0;
+        r[2]=0.0;
+        vect q=std::sqrt(1.5)*(Identity(3)/3.-a.GetQZ())+lambda*(a.GetQX()-a.GetQY());
+        vect s=std::sqrt(1.5)*(Identity(3)/3.-b.GetQZ())+lambda*(b.GetQX()-b.GetQY());
+     
+        return    (p2*(q[0]+q[1]+q[2])*(r[2]*(-s[0]-s[2]+s[3]+s[4])+r[1]*(s[0]+s[1]-s[4]-s[5])+r[0]*(-s[1]+s[2]-s[3]+s[5]))+p1*(q[5]*r[1]*
+        s[0]-q[1]*r[2]*s[0]-q[3]*r[2]*s[0]-q[5]*r[0]*s[1]+q[5]*r[1]*s[1]+q[0]*r[2]*s[1]-q[3]*r[2]*s[1]+q[1]*r[0]*s[2]+q[3]*r[0]*s[2]-q[0]*r[1]*
+        s[2]-q[1]*r[1]*s[2]+q[5]*r[1]*s[2]-q[1]*r[2]*s[2]-q[3]*r[2]*s[2]-q[5]*r[0]*s[3]+q[0]*r[2]*s[3]+q[1]*r[2]*s[3]+q[1]*r[0]*s[4]+q[3]*r[0]*
+        s[4]-q[5]*r[0]*s[4]-q[0]*r[1]*s[4]-q[1]*r[1]*s[4]+q[0]*r[2]*s[4]+q[1]*r[2]*s[4]+q[2]*(-(r[0]-r[2])*(s[1]+s[3]+s[4])+r[1]*(s[0]+s[1]-s[4]-s[5]))+((q[1]+q[3])*r[0]-(q[0]+q[1])*r[1])*s[5]+q[4]*
+        ((r[1]-r[2])*(s[0]+s[1]+s[2])+r[0]*(-s[1]+s[2]-s[3]+s[5]))));
+    }
+    
+    
 public:
-    PRE79StandardHamiltonian(const double & temp=1.0, const double & lam=0.0, const double & t=0.0, const double & hval=0.0){
+    PRE79StandardHamiltonian(const double & temp=1.0, const double & lam=0.0, const double & t=0.0, const double & hval=0.0, const double & kap=0.0){
         temperature=temp;
         tau=t;
         lambda=lam;
         h=hval;
+        kappa=kap;
 
         epsilon = 1.0/temperature;
 
@@ -31,6 +50,7 @@ public:
         v2=epsilon*(2*lambda*lambda-sqrt6*lambda);
         v3=epsilon*(3.0/2-lambda*lambda);
         vt=epsilon*tau;
+        vk=epsilon*kappa;
 
         //wartości Kacpra. Te są dobre, trzeba rozpisać jedynkę
         hxx = (lambda-1/sqrt6);
@@ -59,7 +79,7 @@ public:
         double zz = DotProduct(a.GetEZ(),b.GetEZ());
 
         // uwaga - TEMPERATURA siedzi w stałych
-        return - v1*xx*xx - v2*yy*yy - v3*zz*zz - vt*Rank3Contraction(a.GetT(),b.GetT());
+        return - v1*xx*xx - v2*yy*yy - v3*zz*zz - vt*Rank3Contraction(a.GetT(),b.GetT())-vk*LatticeCoupling(a,b);
  
     }
     
