@@ -11,9 +11,6 @@
 #include "valarray_external.h"
 #include "SimulationDB.h"
 
-/*
- * todo: Mathematica output
- */
 typedef enum { table, mathematica, maple, count } output_t ;
 
 template<class v_type>
@@ -77,8 +74,9 @@ std::vector<PRE79MeanProperties> do_recalculate(boostbase::base & db,const boost
 
             //PRE79StandardHamiltonian H(wwg[i].Temperature(),wwg[i].Lambda(),wwg[i].Tau(),wwg[i].Field());
 
-            PRE79StandardHamiltonian H(t,l,tau,h);
-            whatwegot[i]=PRE79MeanProperties(wwg2[i],H);
+            shared_ptr<PRE79StandardProperties> wwg2i(new PRE79StandardProperties(wwg2[i]));
+            shared_ptr<PRE79StandardHamiltonian> H(new PRE79StandardHamiltonian(t,l,tau,h));
+            whatwegot[i]=PRE79MeanProperties(wwg2i,H);
             if(commit){
                 Settings s(commit_file);
                 s.hamiltonian.temperature=t;
