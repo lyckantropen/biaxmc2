@@ -22,6 +22,7 @@ inline Lattice FindFinalState(const Settings & settings, bool & success) {
             (sdb.lambda_label,settings.hamiltonian.lambda)
             (sdb.tau_label,settings.hamiltonian.tau)
             (sdb.h_label,settings.hamiltonian.h)
+            (sdb.kappa_label,settings.hamiltonian.kappa)
 //            (sdb.id_kw,settings.project.name)
 
             );
@@ -48,6 +49,7 @@ inline Lattice FindState(const Settings & settings, int production_cycle, bool &
             (sdb.lambda_label,settings.hamiltonian.lambda)
             (sdb.tau_label,settings.hamiltonian.tau)
             (sdb.h_label,settings.hamiltonian.h)
+            (sdb.kappa_label,settings.hamiltonian.kappa)
 //            (sdb.id_kw,settings.project.name)
             (sdb.cycle_label,production_cycle)
 
@@ -75,6 +77,7 @@ inline PRE79MeanProperties FindFinalProperties(const Settings & settings, bool &
             (sdb.lambda_label,settings.hamiltonian.lambda)
             (sdb.tau_label,settings.hamiltonian.tau)
             (sdb.h_label,settings.hamiltonian.h)
+            (sdb.kappa_label,settings.hamiltonian.kappa)
 //            (sdb.id_kw,settings.project.name)
 
             );
@@ -102,6 +105,7 @@ inline PRE79MeanProperties FindThermalizationHistory(const Settings & settings, 
             (sdb.lambda_label,settings.hamiltonian.lambda)
             (sdb.tau_label,settings.hamiltonian.tau)
             (sdb.h_label,settings.hamiltonian.h)
+            (sdb.kappa_label,settings.hamiltonian.kappa)
 //            (sdb.id_kw,settings.project.name)
 
             );
@@ -129,6 +133,7 @@ inline Lattice FindLastState(const Settings & settings, bool & success, int & cy
             (sdb.lambda_label,settings.hamiltonian.lambda)
             (sdb.tau_label,settings.hamiltonian.tau)
             (sdb.h_label,settings.hamiltonian.h)
+            (sdb.kappa_label,settings.hamiltonian.kappa)
 //            (sdb.id_kw,settings.project.name)
 
             );
@@ -155,6 +160,7 @@ inline Lattice FindLastStateTemperatureTolerant(const Settings & settings, bool 
             (sdb.lambda_label,settings.hamiltonian.lambda)
             (sdb.tau_label,settings.hamiltonian.tau)
             (sdb.h_label,settings.hamiltonian.h)
+            (sdb.kappa_label,settings.hamiltonian.kappa)
 //            (sdb.id_kw,settings.project.name)
             ,
             boostbase::between(sdb.temperature_label,
@@ -183,6 +189,7 @@ inline Lattice FindLastStateFieldTolerant(const Settings & settings, bool & succ
             (sdb.temperature_label,settings.hamiltonian.temperature)
             (sdb.lambda_label,settings.hamiltonian.lambda)
             (sdb.tau_label,settings.hamiltonian.tau)
+            (sdb.kappa_label,settings.hamiltonian.kappa)
 //            (sdb.h_label,settings.hamiltonian.h)
 //            (sdb.id_kw,settings.project.name)
             ,

@@ -39,6 +39,7 @@ public:
     const std::string lambda_label;
     const std::string tau_label;
     const std::string h_label;
+    const std::string kappa_label;
 public:
     SimulationDB(const Settings & set):
     db(fs::path(set.sqlite.file),fs::path(set.sqlite.dir)),
@@ -60,7 +61,8 @@ public:
             lambda_label("lambda"),
             tau_label("tau"),
             // uwaga - SQLite nie rozróżnia wielkich i małych liter... stąd konflikt "H" i "h"
-            h_label("field")
+            h_label("field"),
+            kappa_label("kappa")
     {
         id = set.project.name;
         user = std::getenv("USER");
@@ -79,6 +81,7 @@ public:
           (lambda_label,settings.hamiltonian.lambda)
           (tau_label,settings.hamiltonian.tau)
           (h_label,settings.hamiltonian.h)
+          (kappa_label,settings.hamiltonian.kappa)
           (type_label,current_lattice_kw)
         );
     }
@@ -95,6 +98,7 @@ public:
           (lambda_label,settings.hamiltonian.lambda)
           (tau_label,settings.hamiltonian.tau)
           (h_label,settings.hamiltonian.h)
+          (kappa_label,settings.hamiltonian.kappa)
           (type_label,final_lattice_kw)
         );
     }
@@ -111,6 +115,7 @@ public:
           (lambda_label,settings.hamiltonian.lambda)
           (tau_label,settings.hamiltonian.tau)
           (h_label,settings.hamiltonian.h)
+          (kappa_label,settings.hamiltonian.kappa)
           (type_label,properties_evolution_kw)
         );
     }
@@ -127,6 +132,7 @@ public:
           (lambda_label,settings.hamiltonian.lambda)
           (tau_label,settings.hamiltonian.tau)
           (h_label,settings.hamiltonian.h)
+          (kappa_label,settings.hamiltonian.kappa)
           (type_label,thermalization_history_kw)
         );
     }
@@ -147,6 +153,7 @@ public:
           (lambda_label,settings.hamiltonian.lambda)
           (tau_label,settings.hamiltonian.tau)
           (h_label,settings.hamiltonian.h)
+          (kappa_label,settings.hamiltonian.kappa)
           (type_label,current_properties_kw)
         );
     }
@@ -163,6 +170,7 @@ public:
           (lambda_label,settings.hamiltonian.lambda)
           (tau_label,settings.hamiltonian.tau)
           (h_label,settings.hamiltonian.h)
+          (kappa_label,settings.hamiltonian.kappa)
           (type_label,final_properties_kw)
         );
     }
