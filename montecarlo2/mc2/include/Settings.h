@@ -448,6 +448,7 @@ public:
     Settings(){}
     ///Copy constructor
     Settings(const Settings & s){
+        lattice_boundary_conditions=s.lattice_boundary_conditions;
         lattice=s.lattice;
         initial=s.initial;
         openmp=s.openmp;
@@ -461,6 +462,7 @@ public:
     }
     ///Assignment operator
     const Settings & operator=(const Settings & s){
+        lattice_boundary_conditions=s.lattice_boundary_conditions;
         lattice=s.lattice;
         initial=s.initial;
         openmp=s.openmp;

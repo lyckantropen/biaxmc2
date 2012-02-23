@@ -23,8 +23,12 @@ class PRE79StandardHamiltonian:public Hamiltonian {
         double p1=a.GetParity();
         double p2=b.GetParity();
         vect r=b.GetR()-a.GetR();
-        r[0]=0.0;
-        r[2]=0.0;
+        ///account for boundary effects
+        if(Norm(r)>1.01) r=-r;
+        
+        r/=Norm(r);
+        //r[0]=0.0;
+        //r[2]=0.0;
         vect q=std::sqrt(1.5)*(Identity(3)/3.-a.GetQZ())+lambda*(a.GetQX()-a.GetQY());
         vect s=std::sqrt(1.5)*(Identity(3)/3.-b.GetQZ())+lambda*(b.GetQX()-b.GetQY());
      
@@ -105,6 +109,9 @@ public:
     }
     const double & GetH() const {
         return h;
+    }
+    const double & GetKappa() const {
+        return kappa;
     }
 };
 

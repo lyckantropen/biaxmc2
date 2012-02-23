@@ -82,10 +82,13 @@ class Particle {
     void UpdateEnergy(shared_ptr<Hamiltonian> hamiltonian){
         if(hamiltonian==NULL) return;
         energy=0;
+        //std::cout << neighbors.size() << " neighbors and " ;
         for(int i=0;i<neighbors.size();i++){
             energy+=hamiltonian->TwoParticleEnergy(*this,*neighbors[i])/2.0;
         }
         energy+=hamiltonian->ExternalInteractionEnergy(*this);
+        
+        //std::cout << energy << " energy\n";
     }
     /**
      * Update the energy of the neighboring particles. This necessarily implies
@@ -96,8 +99,12 @@ class Particle {
      * @param h Pointer to the hamiltonian implementation
      */
     void UpdateNeighborsEnergy(shared_ptr<Hamiltonian> h){
-        foreach(Particle * n, neighbors){
+        /*
+         /foreach(Particle * n, neighbors){
             n->UpdateEnergy(h);
+        }*/
+        for(int i=0;i<neighbors.size();i++){
+            neighbors[i]->UpdateEnergy(h);
         }
     }
     /**
@@ -265,7 +272,7 @@ public:
      * @return False only if we attempt to connect more than coord_num particles
      */
     void Connect(Particle & n, const int & i){
-
+        //std::cout << "Connecting to " << i << "\n";
         neighbors.push_back(&n);
         neighbors_indices.push_back(i);
 
@@ -407,6 +414,10 @@ public:
      */
     const vect & GetR() const {
         return R;
+    }
+    
+    int GetNNeighbors() const {
+        return neighbors.size();
     }
 
 };
