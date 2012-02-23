@@ -22,6 +22,14 @@ CND_ARTIFACT_PATH_Release=dist/Release/GNU-Linux-x86/liblibmc2.a
 CND_PACKAGE_DIR_Release=dist/Release/GNU-Linux-x86/package
 CND_PACKAGE_NAME_Release=libmc2.tar
 CND_PACKAGE_PATH_Release=dist/Release/GNU-Linux-x86/package/libmc2.tar
+# Debug_without_O3 configuration
+CND_PLATFORM_Debug_without_O3=GNU-Linux-x86
+CND_ARTIFACT_DIR_Debug_without_O3=dist/Debug_without_O3/GNU-Linux-x86
+CND_ARTIFACT_NAME_Debug_without_O3=liblibmc2.a
+CND_ARTIFACT_PATH_Debug_without_O3=dist/Debug_without_O3/GNU-Linux-x86/liblibmc2.a
+CND_PACKAGE_DIR_Debug_without_O3=dist/Debug_without_O3/GNU-Linux-x86/package
+CND_PACKAGE_NAME_Debug_without_O3=libmc2.tar
+CND_PACKAGE_PATH_Debug_without_O3=dist/Debug_without_O3/GNU-Linux-x86/package/libmc2.tar
 #
 # include compiler specific variables
 #

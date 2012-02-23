@@ -35,14 +35,14 @@ private:
     void ConstructNNN(shared_ptr<Lattice> lat){
         if(readonly) return;
         for(int site=0;site<nnn.size();site++)
-            for(int n=0;n<coord_num;n++)
+            for(int n=0;n<lat->GetParticles()[site].GetNNeighbors();n++)
                 for(int dist=0;dist<(max+1);dist++){
                     if(dist==0)
                         nnn[site][n][dist]=site;
                     else if(dist==1)
-                        nnn[site][n][dist]=lat->Particles[site].neighbors_indices[n];
+                        nnn[site][n][dist]=lat->GetParticles()[site].neighbors_indices[n];
                     else
-                        nnn[site][n][dist]=lat->Particles[nnn[site][n][dist-1]].neighbors_indices[n];
+                        nnn[site][n][dist]=lat->GetParticles()[nnn[site][n][dist-1]].neighbors_indices[n];
                 }
     }
 
@@ -51,12 +51,14 @@ protected:
 private:
     virtual void CalculateCorrelation(){
         vect result(max+1);
+        int NN = 0;
         for(int site=0;site<lat->GetN();site++)
-            for(int n=0;n<coord_num;n++)
+            for(int n=0;n<lat->GetParticles()[site].GetNNeighbors();n++)
                 for(int dist=0;dist<(max+1);dist++){
-                    result[dist]+=CalculateContraction(lat->Particles[site],lat->Particles[nnn[site][n][dist]]);
+                    result[dist]+=CalculateContraction(lat->GetParticles()[site],lat->GetParticles()[nnn[site][n][dist]]);
+                    NN+=lat->GetParticles()[site].GetNNeighbors();
                 }
-        correlation[acc_idx]=result/double(lat->GetN()*coord_num);
+        correlation[acc_idx]=result/double(NN);
     }
 protected:
     ///konstruktor tradycyjny (zasłonięty, bo funkcja CalculateContraction pozostaje do określenia w klasie dziedziczącej)

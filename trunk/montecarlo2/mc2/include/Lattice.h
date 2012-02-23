@@ -10,6 +10,7 @@
 #include "serializer.h"
 #include "Settings.h"
 #include "random01.h"
+#include "ILoggable.h"
 
 /**
  * @brief Stores the lattice
@@ -19,7 +20,7 @@
  * Monte Carlo sweep.
  */
 
-class Lattice {
+class Lattice:public ILoggable {
     friend class PRE79StandardProperties;
     friend class SpatialCorrelation;
     friend class SpatialCorrelationEvolution;
@@ -41,10 +42,11 @@ class Lattice {
      * @todo: Should the boundary conditions ever be changed, it needs to be done here.
      */
     void Construct(){
-        //std::cout << "Constructing\n";
+        Log() << "Constructing\n";
         if(Particles.size()!=0) Particles.clear();
         Particles.resize(N); //= std::vector<Particle>(N);
         
+        //std::cout << "Constructing lattice\n";
         for(int i=0;i<N;i++){
             Particle & cur = Particles[i];
             int A=L*W;
@@ -56,32 +58,57 @@ class Lattice {
             cur.R[1]=y;
             cur.R[2]=z;
             
-            if(x==L-1 && periodic_L)
+            //std::cout << "Particle " << i << " at " << cur.R << std::endl;
+            
+            if(x==L-1 && periodic_L){
                 cur.Connect(Particles[i-L+1],i-L+1);
+                Log() << "L boundary: " << i << " at "<< cur.R << " to " << i-L+1 << std::endl;
+            }
             else
-                if(L!=1) cur.Connect(Particles[i+1],i+1);
-            if(x==0 && periodic_L)
+                if(i+1<N) cur.Connect(Particles[i+1],i+1);
+            
+            if(x==0 && periodic_L){
                 cur.Connect(Particles[i+L-1],i+L-1);
+                Log() << "L boundary: " << i << " at "<< cur.R << " to " << i+L-1 << std::endl;
+            }
             else
-                if(L!=1) cur.Connect(Particles[i-1],i-1);
+                if(i-1>=0) cur.Connect(Particles[i-1],i-1);
             
-            if(y==W-1 && periodic_W)
+            if(y==W-1 && periodic_W){
                 cur.Connect(Particles[i-A+L],i-A+L);
+                Log() << "W boundary: " << i << " at "<< cur.R << " to " << i-A+L << std::endl;
+            }
             else
-                if(W!=1) cur.Connect(Particles[i+L],i+L);
-            if(y==0 && periodic_W)
-                cur.Connect(Particles[i+A-L],i+A-L);
-            else
-                if(W!=1) cur.Connect(Particles[i-L],i-L);
+                if(i+L<N) cur.Connect(Particles[i+L],i+L);
             
-            if(z==H-1 && periodic_H)
+            if(y==0 && periodic_W){
+                cur.Connect(Particles[i+A-L],i+A-L);
+                Log() << "W boundary: " << i << " at "<< cur.R << " to " << i+A-L << std::endl;
+            }
+            else
+                if(i-L>=0) cur.Connect(Particles[i-L],i-L);
+            
+            if(z==H-1 && periodic_H){
                 cur.Connect(Particles[i-N+A],i-N+A);
+                Log() << "H boundary: " << i << " at "<< cur.R << " to " << i-N+A << std::endl;
+            }
             else
-                if(H!=1) cur.Connect(Particles[i+A],i+A);
-            if(z==0 && periodic_H)
+                if(i+A<N) cur.Connect(Particles[i+A],i+A);
+            
+            if(z==0 && periodic_H){
                 cur.Connect(Particles[i+N-A],i+N-A);
+                Log() << "H boundary: " << i << " at "<< cur.R << " to " << i+N-A << std::endl;
+            }
             else
-                if(H!=1) cur.Connect(Particles[i-A],i-A);
+                if(i-A>=0) cur.Connect(Particles[i-A],i-A);
+            
+        }
+        for(int i=0;i<N;i++){
+            Log() << "Particle " << i << " at " << Particles[i].GetR() << " has neighbors: \n";
+            for(int n=0;n<Particles[i].GetNNeighbors();n++){
+                Log() << Particles[i].neighbors_indices[n] << ": "<< Particles[i].neighbors[n]->GetR() << ", " ;
+            }
+            Log() << std::endl;
         }
 
     }
@@ -100,6 +127,8 @@ public:
     Lattice(const Settings & set,const state_t & state=Isotropic):
     L(set.lattice.L),W(set.lattice.W),H(set.lattice.H)
     {
+        //SetFile("Lattice");
+        //SetStream(&std::cout);
         N=L*W*H;
         periodic_L=set.lattice_boundary_conditions.periodic_boundary_condition_L;
         periodic_W=set.lattice_boundary_conditions.periodic_boundary_condition_W;

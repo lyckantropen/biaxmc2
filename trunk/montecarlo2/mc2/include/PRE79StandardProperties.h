@@ -854,6 +854,7 @@ class PRE79MeanProperties {
     double tau;
     double lambda;
     double h;
+    double kappa;
     
     Value mean_autocorrelation_time;
 
@@ -972,6 +973,7 @@ public:
         tau = H.GetTau();
         lambda = H.GetLambda();
         h = H.GetH();
+        kappa = H.GetKappa();
     }
     PRE79MeanProperties(const PRE79MeanProperties & s) {
         int size = s.mean_paritycor.size();
@@ -1029,6 +1031,7 @@ public:
         tau=s.tau;
         lambda=s.lambda;
         h=s.h;
+        kappa=s.kappa;
 
         energy=s.energy;
         parity=s.parity;
@@ -1115,6 +1118,7 @@ public:
         tau=s.tau;
         lambda=s.lambda;
         h=s.h;
+        kappa=s.kappa;
 
         energy=s.energy;
         parity=s.parity;
@@ -1451,6 +1455,9 @@ public:
     const double & Field() const {
         return h;
     }
+    const double & Kappa() const {
+        return kappa;
+    }
     
     const Value & MeanAutocorrelationTime() const {
         return mean_autocorrelation_time;
@@ -1532,6 +1539,8 @@ void operator|(serializer_t & s, PRE79MeanProperties & p){
     s|p.T32T32_sus;
     
     s|p.mean_autocorrelation_time;
+    
+    s|p.kappa;
 }
 
 #endif	/* _STANDARDPROPERTIES_H */
