@@ -24,9 +24,16 @@ class PRE79StandardHamiltonian:public Hamiltonian {
         double p2=b.GetParity();
         vect r=b.GetR()-a.GetR();
         ///account for boundary effects
-        if(Norm(r)>1.01) r=-r;
-        
-        r/=Norm(r);
+        if(Norm(r)>1.01) {
+            //std::cout << r << " changed to ";
+            r=-r;
+            r/=Norm(r);
+            //std::cout << r << std::endl;
+        }
+        for(int k=0;k<3;k++){
+            if(r[k]<0.1) r[k]=0;
+            if(r[k]>0.5) r[k]=int(r[k]);
+        }
         //r[0]=0.0;
         //r[2]=0.0;
         vect q=std::sqrt(1.5)*(Identity(3)/3.-a.GetQZ())+lambda*(a.GetQX()-a.GetQY());

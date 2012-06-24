@@ -115,6 +115,7 @@ Value Mean(const std::valarray<value_type> & v,const int start=0, const int limi
         slices=v.size();
     //    std::cout << v.size() << ", but slices: " << _slices << ". Decimated to " << slices << std::endl;
     }
+    if(slices==0) slices=1;
     /*
     std::valarray<value_type> relevant = v[std::slice(start,lim-start,1)];
     value_type mean = relevant.sum()/value_type(relevant.size());
