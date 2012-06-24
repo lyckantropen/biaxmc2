@@ -10,6 +10,7 @@
 
 #include <valarray>
 #include <iostream>
+#include <vector>
 #include "serializer.h"
 typedef std::valarray<double>   vect;
 
@@ -23,6 +24,14 @@ extern std::string MathematicaForm(const vect &);
 extern double MatrixDotProduct(const vect & a, const vect & b);
 extern double Minimum(const vect & a);
 extern int MinimumIndex(const vect & a);
+
+template<class V> 
+std::vector<V>  operator|(const std::vector<V> & src,const std::valarray<bool> & mask){
+    std::vector<V> ret;
+    for(int i=0;i<src.size();i++)
+        if(mask[i]) ret.push_back(src[i]);
+    return ret;
+}
 
 #define sgn(x) (std::ceil((std::abs(x))/(x)))
 
