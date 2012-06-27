@@ -435,7 +435,7 @@ void mathematica_output(const std::string & data_type,const std::vector<std::str
             //współrzędne - wszystko jest w zależności od T,h,lambda i tau
             std::stringstream coord;
             temperature[i]=prop.Temperature();
-            coord << "[" << prop.Temperature() << "," << prop.Field() << "," << prop.Lambda() << "," << prop.Tau() << "]" ;
+            coord << "[" << prop.Temperature() << "," << prop.Field() << "," << prop.Lambda() << "," << prop.Tau() << "," << prop.Kappa() << "]" ;
 
             std::cout << "SpecificHeat" << coord.str() << "=" << prop.SpecificHeat().MathematicaForm() << ";\n";
             std::cout << "Fluctuation" << coord.str() << "=" << prop.Fluctuation().MathematicaForm() << ";\n";
@@ -509,7 +509,7 @@ void mathematica_output(const std::string & data_type,const std::vector<std::str
         std::vector<Lattice> whatwegot= db.get<Lattice>(wheres,betweens);
         boostbase::pair_t_proxy nwheres = wheres;
         nwheres.pop();
-        nwheres(std::string("data_type"),std::string("final_properties"));
+        nwheres(std::string("data_type"),data_type=="final_lattice"?std::string("final_properties"):std::string("properties"));
         std::vector<PRE79MeanProperties> props= db.get<PRE79MeanProperties>(nwheres,betweens);
 
         //foreach(const Lattice & lat,whatwegot) {
@@ -521,7 +521,7 @@ void mathematica_output(const std::string & data_type,const std::vector<std::str
               for(int h=0;h<lat.GetH();h++){
                   int p=h*(lat.GetL()*lat.GetW())+l*lat.GetW() + w;
                   std::stringstream coord;
-                  coord << "[" << prop.Temperature() << "," << prop.Field() << "," << prop.Lambda() << "," << prop.Tau() ;
+                  coord << "[" << prop.Temperature() << "," << prop.Field() << "," << prop.Lambda() << "," << prop.Tau() << "," << prop.Kappa() ;
                   coord << "," << l << "," << w << "," << h <<"]";
                   const Particle & cp = lat.GetParticles()[p];
 
