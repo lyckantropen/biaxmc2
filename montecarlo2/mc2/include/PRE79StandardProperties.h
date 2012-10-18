@@ -75,15 +75,6 @@ class PRE79StandardProperties {
 
     Delta322Correlation d322cor; ///<correlation function history for T32(0)*T32(r)
     ParityCorrelation paritycor; ///<correlation function history for p(0)*p(r)
-    
-    ///bookkeeping of inverse temperature indices for parallel tempering
-    vect b_idx;
-    ///bookkeeping of inverse temperature values for parallel tempering
-    vect b_val;
-    ///current beta value for parallel tempering
-    double cur_b_val;
-    ///current index value for parallel tempering
-    double cur_b_idx;
 
     /**
      * Calculate the instanteneous lattice mean energy and update the energy history vector.
@@ -190,8 +181,6 @@ public:
     {
         acc_idx=-1;
         index=0;
-        cur_b_val=0.0;
-        cur_b_idx=0.0;
         energy.resize(ncycles,0.0);
         parity.resize(ncycles,0.0);
         T32T32.resize(ncycles,0.0);
@@ -204,10 +193,6 @@ public:
 
         T20T20y.resize(ncycles,0.0);
         T22T22y.resize(ncycles,0.0);
-        
-        b_idx.resize(ncycles,0.0);
-        b_val.resize(ncycles,0.0);
-        
         for(int i=0;i<ncycles;i++){
             MeanQxTensor[i].resize(6,0.0);
             MeanQyTensor[i].resize(6,0.0);
@@ -247,11 +232,6 @@ public:
 	T32T32.resize(p.T32T32.size());
 	T32T32 = p.T32T32;
         
-        b_idx.resize(p.b_idx.size());
-        b_idx = p.b_idx;
-        b_val.resize(p.b_val.size());
-        b_val = p.b_val;
-        
         autocorrelation_time.resize(p.autocorrelation_time.size());
         autocorrelation_time = p.autocorrelation_time;
 
@@ -277,8 +257,6 @@ public:
         d322cor=p.d322cor;
         paritycor=p.paritycor;
         acc_idx=p.acc_idx;
-        cur_b_val=p.cur_b_val;
-        cur_b_idx=p.cur_b_idx;
     }
     const PRE79StandardProperties operator=(const PRE79StandardProperties & p){
         /*
@@ -309,11 +287,6 @@ public:
 	T32T32.resize(p.T32T32.size());
 	T32T32 = p.T32T32;
         
-        b_idx.resize(p.b_idx.size());
-        b_idx = p.b_idx;
-        b_val.resize(p.b_val.size());
-        b_val = p.b_val;
-        
         autocorrelation_time.resize(p.autocorrelation_time.size());
         autocorrelation_time = p.autocorrelation_time;
 
@@ -339,20 +312,14 @@ public:
         d322cor=p.d322cor;
         paritycor=p.paritycor;
         acc_idx=p.acc_idx;
-        cur_b_val=p.cur_b_val;
-        cur_b_idx=p.cur_b_idx;
         return *this;
     }
 
-    
     ///obliczenie kontrakcji
     void Update(int idx,const shared_ptr<PRE79StandardHamiltonian> H, const shared_ptr<AutoCorrelationTimeCalculator> ac = shared_ptr<AutoCorrelationTimeCalculator>()){
         if(readonly) return;
         if((acc_idx+1)>=ncycles) return;
         index=idx;
-        b_val[acc_idx]=cur_b_val;
-        b_idx[acc_idx]=cur_b_idx;
-        
         acc_idx++;
         
         if(ac!=shared_ptr<AutoCorrelationTimeCalculator>())
@@ -414,9 +381,6 @@ public:
         vect tmpt22t22y(0.0,ncycles);
 	vect tmpt32t32(0.0,ncycles);
         
-        vect tmpb_val(0.0,ncycles);
-        vect tmpb_idx(0.0,ncycles);
-        
         vect tmpactime(0.0,ncycles);
         /*
         vect tmpD200(0.0,ncycles);
@@ -437,9 +401,6 @@ public:
             tmpt22t22y[i]=T22T22y[i];
 	    tmpt32t32[i]=T32T32[i];
             
-            tmpb_val[i]=b_val[i];
-            tmpb_idx[i]=b_idx[i];
-            
             tmpactime[i]=autocorrelation_time[i];
             /*
             tmpD200[i]=D200[i];
@@ -459,8 +420,6 @@ public:
             tmpt20t20z[i]=p.T20T20z[i-oldsize];
             tmpt22t22z[i]=p.T22T22z[i-oldsize];
 	    tmpt32t32[i]=p.T32T32[i-oldsize];
-            tmpb_val[i]=p.b_val[i-oldsize];
-            tmpb_idx[i]=p.b_idx[i-oldsize];
             tmpactime[i]=p.autocorrelation_time[i-oldsize];
             /*
             tmpD200[i]=p.D200[i-oldsize];
@@ -478,8 +437,6 @@ public:
         T20T20y.resize(ncycles,0.0);
         T22T22y.resize(ncycles,0.0);
 	T32T32.resize(ncycles,0.0);
-        b_val.resize(ncycles,0.0);
-        b_idx.resize(ncycles,0.0);
         autocorrelation_time.resize(ncycles,0.0);
         //D200.resize(ncycles,0.0);
         //D220.resize(ncycles,0.0);
@@ -494,8 +451,6 @@ public:
         T20T20y=tmpt20t20y;
         T22T22y=tmpt22t22y;
 	T32T32=tmpt32t32;
-        b_val=tmpb_val;
-        b_idx=tmpb_idx;
         autocorrelation_time=tmpactime;
         //D200=tmpD200;
         //D220=tmpD220;
@@ -782,83 +737,12 @@ public:
     const int & GetNCycles() const {
         return ncycles;
     }
-    const vect & GetBetaValues() const {
-        return b_val;
-    }
-    const vect & GetBetaIndices() const {
-        return b_idx;
-    }
     int GetMaxCorrLen() const {
         //return lat->GetL()/2+1;
         return paritycor.GetMax()+1;
     }
     void SetLattice(shared_ptr<Lattice> l){
         lat=l;
-    }
-    const shared_ptr<Lattice> & GetLattice() const {
-        return lat;
-    }
-    void SetCurrentBetaValue(const double & bv){
-        cur_b_val=bv;
-        b_val[acc_idx]=bv;
-    }
-    void SetCurrentBetaIndex(const double & bi){
-        cur_b_idx=bi;
-        b_idx[acc_idx]=bi;
-    }
-    const double & GetCurrentBetaValue() const {
-        return cur_b_val;
-    }
-    const double & GetCurrentBetaIndex() const {
-        return cur_b_idx;
-    }
-    std::valarray<bool>      GetReplicaMask(const double & replica) const {
-        std::cout << "Indices for replica " << replica << ": " << b_idx << std::endl;
-        std::valarray<bool> mask(false,b_idx.size());
-        
-        for(int i=0;i<b_idx.size();i++)
-            mask[i]=(b_idx[i]==replica); 
-        return mask;
-    }
-    static shared_ptr<PRE79StandardProperties> FromReplicaMask(const PRE79StandardProperties& p,const double & replica){
-        std::valarray<bool> mask = p.GetReplicaMask(replica);
-        int n=0;
-        for(int i=0;i<mask.size();i++) if(mask[i]) n++;
-        std::cout << "Retrieved " << n << " entries out of " << p.GetNCycles() << " for replica " << replica << "\n";
-        
-        shared_ptr<PRE79StandardProperties> ret(new PRE79StandardProperties(p.GetLattice(),n));
-        
-        ret->energy = p.energy[mask];
-        ret->parity = p.parity[mask];
-        ret->T20T20z = p.T20T20z[mask];
-        ret->T20T20x = p.T20T20x[mask];
-        ret->T20T20y = p.T20T20y[mask];
-        ret->T22T22z = p.T22T22z[mask];
-        ret->T22T22x = p.T22T22x[mask];
-        ret->T22T22y = p.T22T22y[mask];
-        ret->T32T32 = p.T32T32[mask];
-        ret->b_val = p.b_val[mask];
-        ret->autocorrelation_time = p.autocorrelation_time[mask];
-        ret->MeanQxTensor = p.MeanQxTensor|mask;
-        ret->MeanQyTensor = p.MeanQyTensor|mask;
-        ret->MeanQzTensor = p.MeanQzTensor|mask;
-        (SpatialCorrelationEvolution)ret->d200corz = p.d200corz[mask];
-        (SpatialCorrelationEvolution)ret->d200corx = p.d200corx[mask];
-        (SpatialCorrelationEvolution)ret->d200cory = p.d200cory[mask];
-        (SpatialCorrelationEvolution)ret->d220corz = p.d220corz[mask];
-        (SpatialCorrelationEvolution)ret->d220corx = p.d220corx[mask];
-        (SpatialCorrelationEvolution)ret->d220cory = p.d220cory[mask];
-        (SpatialCorrelationEvolution)ret->d222corz = p.d222corz[mask];
-        (SpatialCorrelationEvolution)ret->d222corx = p.d222corx[mask];
-        (SpatialCorrelationEvolution)ret->d222cory = p.d222cory[mask];
-        (SpatialCorrelationEvolution)ret->d322cor = p.d322cor[mask];
-        (SpatialCorrelationEvolution)ret->paritycor = p.paritycor[mask];
-        
-        ret->acc_idx = n;
-        
-        //ret->CalculateSpecificHeat();
-        
-        return ret;
     }
 };
 
@@ -901,11 +785,6 @@ void operator|(serializer_t & s, PRE79StandardProperties & prop){
     s|prop.T32T32;
     
     s|prop.autocorrelation_time;
-    
-    s|prop.cur_b_val;
-    s|prop.cur_b_idx;
-    s|prop.b_val;
-    s|prop.b_idx;
 }
 
 /**

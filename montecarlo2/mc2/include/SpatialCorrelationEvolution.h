@@ -62,9 +62,7 @@ private:
     }
 protected:
     ///konstruktor tradycyjny (zasłonięty, bo funkcja CalculateContraction pozostaje do określenia w klasie dziedziczącej)
-    //SpatialCorrelationEvolution(shared_ptr<Lattice> l=shared_ptr<Lattice>(), int nc=0){
-    SpatialCorrelationEvolution(shared_ptr<Lattice> l, int nc){
-
+    SpatialCorrelationEvolution(shared_ptr<Lattice> l=shared_ptr<Lattice>(), int nc=0){
         if(l==NULL) return; //serializacja
 
         readonly=false;
@@ -151,11 +149,6 @@ public:
     }
     const vect & operator[](int t) const {
         return correlation[t];
-    }
-    SpatialCorrelationEvolution operator[](const std::valarray<bool> & mask) const {
-        SpatialCorrelationEvolution ret;
-        ret.correlation = correlation|mask;
-        return ret;
     }
 };
 

@@ -48,6 +48,7 @@ namespace boostbase {
         values.push_back(pair_t(field,s.str()));
         return pair_t_proxy(values);
     }
+#ifndef __APPLE__
     template pair_t_proxy where<double>(const std::string &, const double &);
     template pair_t_proxy where<float>(const std::string &, const float &);
     template pair_t_proxy where<int>(const std::string &, const int &);
@@ -56,6 +57,7 @@ namespace boostbase {
     template pair_t_proxy pair_t_proxy::operator()<float>(const std::string &, const float &);
     template pair_t_proxy pair_t_proxy::operator()<int>(const std::string &, const int &);
     template pair_t_proxy pair_t_proxy::operator()<std::string>(const std::string &, const std::string &);
+#endif //__APPLE__
 
     struct tween_t {
         std::string field,begin,end;
@@ -97,6 +99,7 @@ namespace boostbase {
         values.push_back(tween_t(field,s1.str(),s2.str()));
         return tween_t_proxy(values);
     }
+#ifndef __APPLE__
     template tween_t_proxy between<double>(const std::string &, const double &, const double &);
     template tween_t_proxy between<float>(const std::string &, const float &, const float &);
     template tween_t_proxy between<int>(const std::string &, const int &, const int &);
@@ -105,6 +108,8 @@ namespace boostbase {
     template tween_t_proxy tween_t_proxy::operator()<float>(const std::string &, const float &, const float &);
     template tween_t_proxy tween_t_proxy::operator()<int>(const std::string &, const int &, const int &);
     template tween_t_proxy tween_t_proxy::operator()<std::string>(const std::string &, const std::string &, const std::string &);
+#endif //__APPLE__
+
 
 };
 
