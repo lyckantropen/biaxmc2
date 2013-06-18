@@ -169,11 +169,14 @@ namespace boostbase {
         base(const fs::path & dbfile, const fs::path & dir,bool readonly=false) :
         base_dir(dir) {
             int result = 0;
-	    if(!fs::exists(dbfile.parent_path()))
-		fs::create_directories(dbfile.parent_path());
-            if(!fs::exists(base_dir))
+            try{
+              if(!fs::exists(dbfile.parent_path()))
+                fs::create_directories(dbfile.parent_path());
+              if(!fs::exists(base_dir))
                 fs::create_directories(base_dir);
-
+            }catch(fs::filesystem_error &e){
+              log() << e.what();
+            }
 
             //do {
             if(readonly)

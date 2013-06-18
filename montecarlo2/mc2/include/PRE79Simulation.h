@@ -47,7 +47,7 @@ public:
         metro = shared_ptr<Metropolis>(new Metropolis(settings,H,0.065));
         prop = shared_ptr<PRE79StandardProperties>(new PRE79StandardProperties(lattice,ncycles));
         simulation = shared_ptr<LatticeSimulation>(new LatticeSimulation(H,lattice,metro,nprod,0));
-        //SetStream(&std::cout);
+        SetStream(&std::cout);
     }
 
     /**

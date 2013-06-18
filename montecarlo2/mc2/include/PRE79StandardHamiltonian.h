@@ -22,6 +22,7 @@ class PRE79StandardHamiltonian:public Hamiltonian {
     double LatticeCoupling(const Particle & a,const Particle & b) {
         double p1=a.GetParity();
         double p2=b.GetParity();
+        if(p1!=p2) return 0.;
         vect r=b.GetR()-a.GetR();
         ///account for boundary effects
         if(Norm(r)>1.01) r=-r;
@@ -32,11 +33,15 @@ class PRE79StandardHamiltonian:public Hamiltonian {
         vect q=std::sqrt(1.5)*(Identity(3)/3.-a.GetQZ())+lambda*(a.GetQX()-a.GetQY());
         vect s=std::sqrt(1.5)*(Identity(3)/3.-b.GetQZ())+lambda*(b.GetQX()-b.GetQY());
      
+        /*
         return    (p2*(q[0]+q[1]+q[2])*(r[2]*(-s[0]-s[2]+s[3]+s[4])+r[1]*(s[0]+s[1]-s[4]-s[5])+r[0]*(-s[1]+s[2]-s[3]+s[5]))+p1*(q[5]*r[1]*
         s[0]-q[1]*r[2]*s[0]-q[3]*r[2]*s[0]-q[5]*r[0]*s[1]+q[5]*r[1]*s[1]+q[0]*r[2]*s[1]-q[3]*r[2]*s[1]+q[1]*r[0]*s[2]+q[3]*r[0]*s[2]-q[0]*r[1]*
         s[2]-q[1]*r[1]*s[2]+q[5]*r[1]*s[2]-q[1]*r[2]*s[2]-q[3]*r[2]*s[2]-q[5]*r[0]*s[3]+q[0]*r[2]*s[3]+q[1]*r[2]*s[3]+q[1]*r[0]*s[4]+q[3]*r[0]*
         s[4]-q[5]*r[0]*s[4]-q[0]*r[1]*s[4]-q[1]*r[1]*s[4]+q[0]*r[2]*s[4]+q[1]*r[2]*s[4]+q[2]*(-(r[0]-r[2])*(s[1]+s[3]+s[4])+r[1]*(s[0]+s[1]-s[4]-s[5]))+((q[1]+q[3])*r[0]-(q[0]+q[1])*r[1])*s[5]+q[4]*
         ((r[1]-r[2])*(s[0]+s[1]+s[2])+r[0]*(-s[1]+s[2]-s[3]+s[5]))));
+        */
+
+        return (p1+p2)*(q[4]*r[1]*s[1]+q[0]*r[2]*s[1]-q[3]*r[2]*s[1]-q[0]*r[1]*s[2]+q[5]*r[1]*s[2]-q[4]*r[2]*s[2]-q[4]*r[0]*s[3]+q[3]*r[0]*s[4]-q[5]*r[0]*s[4]+q[1]*(r[0]*s[2]+r[2]*(-s[0]+s[3])-r[1]*s[4])+q[2]*(-r[0]*s[1]+r[2]*s[4]+r[1]*(s[0]-s[5]))+q[4]*r[0]*s[5]);
     }
     
     
