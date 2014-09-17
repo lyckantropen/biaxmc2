@@ -38,8 +38,8 @@ class StandardL2Hamiltonian: public Hamiltonian
         }
         for(int k = 0; k < 3; k++)
         {
-            if(r[k] < 0.1) r[k] = 0;
-            if(r[k] > 0.5) r[k] = int(r[k]);
+            if(r[k] < 0.1) r[k] = std::floor(r[k]);
+            if(r[k] > 0.5) r[k] = std::ceil(r[k]);
         }
         //r[0]=0.0;
         //r[2]=0.0;
