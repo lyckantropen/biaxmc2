@@ -504,7 +504,7 @@ public:
     {
         std::stringstream help;
         for(const boost::shared_ptr<po::option_description> & o : desc.options())
-            help << std::setw(60) << o->canonical_display_name() + ": " << std::setw(120) << (o->description() + '\n');
+            help << std::setw(60) << o->long_name() + ": " << std::setw(120) << (o->description() + '\n');
         return help.str();
     }
 };

@@ -53,7 +53,7 @@ pair_t_proxy where(const std::string & field, const value_type & val)
     values.push_back(pair_t(field, s.str()));
     return pair_t_proxy(values);
 }
-#ifndef __APPLE__
+#if defined(__GNUC__) && (__GNUC_MINOR__ < 7)
 template pair_t_proxy where<double>(const std::string &, const double &);
 template pair_t_proxy where<float>(const std::string &, const float &);
 template pair_t_proxy where<int>(const std::string &, const int &);
@@ -110,7 +110,7 @@ tween_t_proxy between(const std::string & field, const value_type & begin, const
     values.push_back(tween_t(field, s1.str(), s2.str()));
     return tween_t_proxy(values);
 }
-#ifndef __APPLE__
+#if defined(__GNUC__) && (__GNUC_MINOR__ < 7)
 template tween_t_proxy between<double>(const std::string &, const double &, const double &);
 template tween_t_proxy between<float>(const std::string &, const float &, const float &);
 template tween_t_proxy between<int>(const std::string &, const int &, const int &);

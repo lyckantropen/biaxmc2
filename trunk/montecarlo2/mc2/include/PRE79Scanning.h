@@ -362,6 +362,8 @@ public:
             if(chunk * incr > nscans)
                 current_nscans = nscans - (chunk - 1) * incr;
 
+            double nstart = start+chunk*incr*delta;
+
             ///a vector which will hold the thermalized states
             std::vector<Lattice>    states(current_nscans);
 
@@ -381,7 +383,7 @@ public:
                 if(settings->scanning.separate_values)
                     value = settings->scanning.values[t];
                 else
-                    value = start + double(t) * delta;
+                    value = nstart + double(t) * delta;
 
                 ///make sure one thread at a time executes operations that are non-thread-safe
                 #pragma omp critical
