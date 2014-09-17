@@ -17,7 +17,7 @@
 namespace boostbase {
 
     template<class item_t>
-    std::string md5gen(item_t & item) {
+    std::string md5gen(const item_t & item) {
         hashwrapper * md5 = new md5wrapper();
         std::string content = serialsave<item_t > (item);
         std::string hash = md5->getHashFromString(content);
@@ -30,9 +30,9 @@ namespace boostbase {
         return (md5gen<item_t > (item) == hash);
     }
 
-    extern std::string md5gen(const std::string & data);
-    extern std::string md5gen(const fs::path & file);
-};
+    std::string md5gen(const std::string & data);
+    std::string md5gen(const fs::path & file);
+}
 
 
 

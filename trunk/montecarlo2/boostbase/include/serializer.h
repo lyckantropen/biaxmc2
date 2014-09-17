@@ -93,7 +93,7 @@ namespace boostbase {
             unsigned int size = v.size();
             operator|(size);
 
-            foreach(t & item, v) {
+            for(t & item : v) {
 
                 operator|(item);
             }
@@ -113,7 +113,7 @@ namespace boostbase {
             unsigned int size = l.size();
             operator|(size);
 
-            foreach(t & item, l) {
+            for(t & item : l) {
 
                 operator|(item);
             }

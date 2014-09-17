@@ -7,7 +7,12 @@
 
 #ifndef MARSAGLIARNG_H
 #define	MARSAGLIARNG_H
+#ifndef OMP_DEBUG
 #include <omp.h>
+#else
+#include "omp_debug.h"
+#endif
+
 #include <iostream>
 
 

@@ -7,11 +7,12 @@ set(Boost_USE_STATIC_LIBS ON)
 set(Boost_USE_MULTITHREADED ON)
 find_package(Boost 1.38.0 COMPONENTS thread filesystem program_options system date_time iostreams REQUIRED)
 find_package(Threads REQUIRED)
-find_package(OpenMP REQUIRED)
+#find_package(OpenMP REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 link_directories(${Boost_LIBRARY_DIRS})
 link_libraries(${Boost_LIBRARIES})
 
+set(SQLITE_LIBRARIES sqlite3)
 #pkg_check_modules(SQLITE sqlite3)
 find_package(ZLIB REQUIRED)
 
@@ -29,19 +30,29 @@ set(EXECUTABLE_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 set(LIBRARIY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/bin)
 link_directories(${PROJECT_SOURCE_DIR}/bin)
 
-#set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -msse4")
+if(CMAKE_C_COMPILER MATCHES "gcc")
+  set(OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS} -fopenmp -msse4")
+	set(OpenMP_C_FLAGS "${OpenMP_C_FLAGS} -fopenmp -msse4")
+endif(CMAKE_C_COMPILER MATCHES "gcc")
+
+
 if(CMAKE_C_COMPILER MATCHES "icc")
 	set(OpenMP_CXX_FLAGS "${OpenMP_CXX_FLAGS} -parallel -openmp-link static")
 	set(OpenMP_C_FLAGS "${OpenMP_C_FLAGS} -parallel -openmp-link static")
 endif(CMAKE_C_COMPILER MATCHES "icc")
 
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${OpenMP_CXX_FLAGS}")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${OpenMP_C_FLAGS}")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -O3")
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} -O3 -std=c99")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${OpenMP_CXX_FLAGS} -O3")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${OpenMP_C_FLAGS} -O3")
 if(WITH_SSE MATCHES "YES")
-	set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -msse4.1")
-	set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} -msse4.1")
+        set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -msse4.1")
+        set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${OpenMP_C_FLAGS} -msse4.1")
 endif(WITH_SSE MATCHES "YES")
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS} -std=c++11")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS} -std=c99") 
 
 add_subdirectory(boostbase)
 add_subdirectory(mc2)

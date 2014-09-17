@@ -1,4 +1,4 @@
-#include "valarray_external.h"
+#include "Maths.h"
 #include <cmath>
 
 std::ostream & operator<<(std::ostream & o, const vect & v){
@@ -38,7 +38,7 @@ double  Norm(const vect & v){
     vect result = std::pow(v,2.0);
     return std::sqrt(result.sum());
 }
-vect Identity(const int & dim=3){
+vect Identity(const int & dim){
     //TODO: wyższe wymiary niż 3
     vect out(6);
     out[0]=out[3]=out[5]=1.0;

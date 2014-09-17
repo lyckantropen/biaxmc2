@@ -86,7 +86,7 @@ int main(int argc, char** argv)
         nwheres(std::string("data_type"),std::string("final_properties"));
         std::vector<PRE79MeanProperties> props= db.get<PRE79MeanProperties>(nwheres,betweens);
 
-        //foreach(const Lattice & lat,whatwegot) {
+        //for(const Lattice & lat : whatwegot) {
         for(int i=0;i<whatwegot.size();i++) {
             const Lattice & lat = whatwegot[i];
             const PRE79MeanProperties & prop = props[i];

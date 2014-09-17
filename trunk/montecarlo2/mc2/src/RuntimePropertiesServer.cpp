@@ -4,6 +4,46 @@
 /**
  * @todo równoległa produkcja i równoległe symulacje
  */
+RuntimePropertiesServer::RuntimePropertiesServer(const Settings &_settings, PRE79Simulation &_sim):
+    sim(&_sim),settings(&_settings),end(false),
+    FIFOInterface(_settings.project.name)
+{
+    scanning = NULL;
+    if(settings->scanning.threaded_production){
+        parallel_simulation = false;
+        parallel_production = true;
+        serial=false;
+    }
+    else {
+        parallel_simulation = false;
+        parallel_production = false;
+        serial = true;
+    }
+}
+
+RuntimePropertiesServer::RuntimePropertiesServer(const Settings &_settings, PRE79Scanning &_scan):
+    scanning(&_scan),settings(&_settings),end(false),
+    FIFOInterface(_settings.project.name)
+{
+    std::cout << settings->project.name << std::endl;
+    sim = NULL;
+    parallel_simulation = true;
+    parallel_production = false;
+    serial = false;
+}
+
+RuntimePropertiesServer::RuntimePropertiesServer(const RuntimePropertiesServer &s):
+    settings(s.settings),
+    sim(s.sim),
+    scanning(s.scanning),
+    end(s.end),
+    serial(s.serial),
+    parallel_simulation(s.parallel_simulation),
+    parallel_production(s.parallel_production),
+    FIFOInterface((const FIFOInterface & )(s))
+{
+}
+
 void RuntimePropertiesServer::operator()() {
     while(true){
         int l = 0;
@@ -14,7 +54,7 @@ void RuntimePropertiesServer::operator()() {
             boost::erase_all(line,"\n");
             ////ogólne
             if(line=="settings")
-                Write(settings.GetLog());
+                Write(settings->GetInternalLog());
             if(line=="hello")
                 Write("hello\n");
             if(line=="threads"){
@@ -53,7 +93,7 @@ void RuntimePropertiesServer::operator()() {
 
                 /*
                 if(line.length()>0)
-                foreach(std::string & c,s){
+                for(std::string & c : s){
                     std::cout << "s: " << c << "\n";
                 }
                 */
@@ -83,4 +123,8 @@ void RuntimePropertiesServer::operator()() {
             if(end) return;
         }
     }
+}
+
+void RuntimePropertiesServer::Terminate() {
+    end=true;
 }

@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   FIFOInterface.h
  * Author: karol
  *
@@ -6,7 +6,7 @@
  */
 
 #ifndef _FIFOINTERFACE_H
-#define	_FIFOINTERFACE_H
+#define _FIFOINTERFACE_H
 
 #include "stringsaveload.h"
 #include "boost.h"
@@ -19,7 +19,8 @@
 #include <cstdio>
 #include <cstring>
 
-class FIFOInterface {
+class FIFOInterface
+{
     //std::ifstream in;
     //std::ofstream out;
 
@@ -28,75 +29,36 @@ class FIFOInterface {
     fs::path in_name;
     fs::path out_name;
 protected:
-    int Read(std::string & s) {
-        char buff[255];
-        int l = read(in,(void*)buff,255);
-        if(l>0) s = std::string(buff);
-        return l;
-    }
+    int Read(std::string & s);
     template<class item_t>
-    void Write(item_t & item){
-        int out = open(out_name.string().c_str(),O_WRONLY|O_NONBLOCK);
+    void Write(item_t & item)
+    {
+        int out = open(out_name.string().c_str(), O_WRONLY | O_NONBLOCK);
         std::string s = boostbase::serialsave<item_t>(item);
-        int w = write(out,(const void*)(s.c_str()),s.length());
+        int w = write(out, (const void*)(s.c_str()), s.length());
         fsync(out);
-        if(w<s.length())
+        if(w < s.length())
             std::cout << w << "<" << s.length() << std::endl;
         close(out);
     }
-    void Write(const char * cmd){
-        Write(std::string(cmd));
-    }
-    void Write(const int & i){
-        std::stringstream s;
-        s << i << std::endl;
-        Write(s.str());
-    }
-    void Write(const std::string & cmd){
-        int out = open(out_name.string().c_str(),O_WRONLY|O_NONBLOCK);
-        if(write(out,(const void*)(cmd.c_str()),cmd.length())==-1)
-            std::cout << std::strerror(errno) << std::endl;
-        fsync(out);
-        close(out);
-    }
+    void Write(const char * cmd);
+    void Write(const int & i);
+    void Write(const std::string & cmd);
     template<class item_t>
-    item_t Restore(const std::string & s){
+    item_t Restore(const std::string & s)
+    {
         return boostbase::serialload<item_t>(s);
     }
 public:
-    FIFOInterface(const std::string & bbase)
-    {
-        in_name=fs::path(bbase)/"in";
-        out_name=fs::path(bbase)/"out";
-        if(!fs::exists(bbase))
-            fs::create_directories(bbase);
+    FIFOInterface(const std::string & bbase);
+    FIFOInterface(const FIFOInterface & s);
 
+    ~FIFOInterface();
 
-        mkfifo(in_name.string().c_str(),0666);
-        mkfifo(out_name.string().c_str(),0666);
-        in = open(in_name.string().c_str(),O_RDONLY|O_NONBLOCK);
-        
-    }
-    FIFOInterface(const FIFOInterface & s){
-        in = s.in;
-        in_name = s.in_name;
-        out_name = s.out_name;
-        ref++;
-    }
-    
-    ~FIFOInterface(){
-        ref--;
-        if(ref==0){
-            close(in);
-            fs::remove(in_name);
-            fs::remove(out_name);
-        }
-    }
-     
 
 };
 
 
 
-#endif	/* _FIFOINTERFACE_H */
+#endif  /* _FIFOINTERFACE_H */
 

@@ -20,9 +20,9 @@ namespace boostbase {
      * zapisywanie obiektu do pliku i czytanie
      */
     template<class item_t>
-    void serialsave(item_t & item, const fs::path & file) {
-	if (!fs::exists(file.parent_path()))
-	    fs::create_directories(file.parent_path());
+    void serialsave(const item_t & item, const fs::path & file) {
+        if (!file.parent_path().empty() && !fs::exists(file.parent_path()))
+            fs::create_directories(file.parent_path());
         if (fs::exists(file.parent_path()) && !fs::is_directory(file.parent_path()))
             throw exception::file_is_directory();
         std::ofstream o_file;
@@ -84,7 +84,7 @@ namespace boostbase {
 
     }
 
-};
+}
 
 
 #endif	/* _SERIALSAVELOAD_H */

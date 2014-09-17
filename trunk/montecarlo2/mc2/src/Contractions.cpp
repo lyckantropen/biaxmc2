@@ -8,7 +8,6 @@ double  Rank2Contraction(const vect & a, const vect & b){
         return coeff.sum();
 }
 
-// kantrakcja tensora 3x3x kodowanego 10-cioma składowymi
 double  Rank3Contraction(const vect & a, const vect & b){
         vect coeff(10);
         coeff[0]=1;
