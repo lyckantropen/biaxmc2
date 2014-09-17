@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   SpatialCorrelationEvolution.h
  * Author: karol
  *
@@ -6,7 +6,7 @@
  */
 
 #ifndef _SPATIALCORRELATIONEVOLUTION_H
-#define	_SPATIALCORRELATIONEVOLUTION_H
+#define _SPATIALCORRELATIONEVOLUTION_H
 
 //#include "SpatialCorrelation.h"
 #include "Lattice.h"
@@ -19,150 +19,177 @@
  * klasa prototypowa do obliczania funkcji korelacji
  */
 
-class SpatialCorrelationEvolution {
+class SpatialCorrelationEvolution
+{
 public:
     typedef std::valarray<std::valarray<std::valarray<double> > >  vectijk;
 private:
     template<class serializer_t>
-    friend void operator|(serializer_t &,SpatialCorrelationEvolution &);
+    friend void operator|(serializer_t &, SpatialCorrelationEvolution &);
     std::vector<vect> correlation;    ///<ewolucja funkcji korelacji
-    shared_ptr<Lattice>    lat;
+    const Lattice * lat;
     int ncycles;
     int acc_idx;
     int max;
     bool readonly;
     vectijk nnn;    ///nnn[site][neighbor][distance], tablica indeksów sąsiadów
-    void ConstructNNN(shared_ptr<Lattice> lat){
+    void ConstructNNN(const Lattice * lat)
+    {
         if(readonly) return;
-        for(int site=0;site<nnn.size();site++)
-            for(int n=0;n<lat->GetParticles()[site].GetNNeighbors();n++)
-                for(int dist=0;dist<(max+1);dist++){
-                    if(dist==0)
-                        nnn[site][n][dist]=site;
-                    else if(dist==1)
-                        nnn[site][n][dist]=lat->GetParticles()[site].neighbors_indices[n];
+        for(int site = 0; site < nnn.size(); site++)
+            for(int n = 0; n < lat->GetParticles()[site].GetNNeighbors(); n++)
+                for(int dist = 0; dist < (max + 1); dist++)
+                {
+                    if(dist == 0)
+                        nnn[site][n][dist] = site;
+                    else if(dist == 1)
+                        nnn[site][n][dist] = lat->GetParticles()[site].GetNeighborIndex(n);
                     else
-                        nnn[site][n][dist]=lat->GetParticles()[nnn[site][n][dist-1]].neighbors_indices[n];
+                        nnn[site][n][dist] = lat->GetParticles()[nnn[site][n][dist - 1]].GetNeighborIndex(n);
                 }
     }
 
 protected:
-    virtual double CalculateContraction(const Particle &,const Particle&)   { return 0.0; };
+    virtual double CalculateContraction(const Particle &, const Particle&)
+    {
+        return 0.0;
+    }
 private:
-    virtual void CalculateCorrelation(){
-        vect result(max+1);
+    virtual void CalculateCorrelation()
+    {
+        vect result(max + 1);
         int NN = 0;
-        for(int site=0;site<lat->GetN();site++)
-            for(int n=0;n<lat->GetParticles()[site].GetNNeighbors();n++)
-                for(int dist=0;dist<(max+1);dist++){
-                    result[dist]+=CalculateContraction(lat->GetParticles()[site],lat->GetParticles()[nnn[site][n][dist]]);
-                    NN+=lat->GetParticles()[site].GetNNeighbors();
+        for(int site = 0; site < lat->GetN(); site++)
+            for(int n = 0; n < lat->GetParticles()[site].GetNNeighbors(); n++)
+                for(int dist = 0; dist < (max + 1); dist++)
+                {
+                    result[dist] += CalculateContraction(lat->GetParticles()[site], lat->GetParticles()[nnn[site][n][dist]]);
+                    NN += lat->GetParticles()[site].GetNNeighbors();
                 }
-        correlation[acc_idx]=result/double(NN);
+        correlation[acc_idx] = result / double(NN);
     }
 protected:
     ///konstruktor tradycyjny (zasłonięty, bo funkcja CalculateContraction pozostaje do określenia w klasie dziedziczącej)
-    //SpatialCorrelationEvolution(shared_ptr<Lattice> l=shared_ptr<Lattice>(), int nc=0){
-    SpatialCorrelationEvolution(shared_ptr<Lattice> l, int nc){
+    //SpatialCorrelationEvolution(Lattice> l=Lattice>(), int nc=0){
+    SpatialCorrelationEvolution(const Lattice * l, int nc)
+    {
 
-        if(l==NULL) return; //serializacja
+        if(l == NULL) return; //serializacja
 
-        readonly=false;
-        lat=l;
-        max=lat->GetL()/2-1;
-        ncycles=nc;
-        acc_idx=-1;
-        for(int i=0;i<ncycles;i++)
-            correlation.push_back(vect(max+1));
+        readonly = false;
+        lat = l;
+        max = lat->GetL() / 2 - 1;
+        ncycles = nc;
+        acc_idx = -1;
+        for(int i = 0; i < ncycles; i++)
+            correlation.push_back(vect(max + 1));
 
         nnn.resize(lat->GetN());
-        for(int i=0;i<nnn.size();i++){
+        for(int i = 0; i < nnn.size(); i++)
+        {
             nnn[i].resize(6);
-            for(int j=0;j<6;j++)
-                nnn[i][j].resize(max+1);
+            for(int j = 0; j < 6; j++)
+                nnn[i][j].resize(max + 1);
         }
         ConstructNNN(lat);
     }
     template<class serializer_t>
-    void SerializerHelper(serializer_t & s){
-        s|ncycles;
-        s|acc_idx;
-        s|max;
-        s|correlation;
+    void SerializerHelper(serializer_t & s)
+    {
+        s | ncycles;
+        s | acc_idx;
+        s | max;
+        s | correlation;
     }
 public:
     ///konstruktor serializacyjny
-    SpatialCorrelationEvolution(){
-        lat=shared_ptr<Lattice>();
-        ncycles=0;
-        acc_idx=0;
-        readonly=true;
+    SpatialCorrelationEvolution()
+    {
+        lat = NULL;
+        ncycles = 0;
+        acc_idx = 0;
+        readonly = true;
     }
     ///policzenie kolejnej wartości funkcji korelacji
-    void Update(){
+    void Update()
+    {
         if(readonly) return;
-        if((acc_idx+1)>=ncycles) return;
+        if((acc_idx + 1) >= ncycles) return;
         acc_idx++;
         CalculateCorrelation();
     }
     ///granica funkcji korelacji dla maksymalnej odległości (do par. porządku)
-    Value   Limit() const {
-        vect cor(acc_idx+1);
-        for(int i=0;i<(acc_idx+1);i++){
-            cor[i]=correlation[i][max];
+    Value   Limit() const
+    {
+        vect cor(acc_idx + 1);
+        for(int i = 0; i < (acc_idx + 1); i++)
+        {
+            cor[i] = correlation[i][max];
         }
         //return BootstrapMean(cor);
         return ::Mean(cor);
     }
     ///historia granicy funkcji korelacji
-    vect LimitHistory() const {
-        vect cor(acc_idx+1);
-        for(int i=0;i<(acc_idx+1);i++){
-            cor[i]=correlation[i][max];
+    vect LimitHistory() const
+    {
+        vect cor(acc_idx + 1);
+        for(int i = 0; i < (acc_idx + 1); i++)
+        {
+            cor[i] = correlation[i][max];
         }
         return cor;
     }
-    
+
     ///dołożenie danych z innej ewolucji tej samej funkcji korelacji, nie należy wykonywać przed zakończeniem obliczania bieżącej funkcji
-    void Append(const SpatialCorrelationEvolution & c){
-        ncycles+=c.ncycles;
-        acc_idx+=c.ncycles;
-        correlation.insert(correlation.end(),c.correlation.begin(),c.correlation.end());
+    void Append(const SpatialCorrelationEvolution & c)
+    {
+        ncycles += c.ncycles;
+        acc_idx += c.ncycles;
+        correlation.insert(correlation.end(), c.correlation.begin(), c.correlation.end());
     }
     ///średnia z funkcji korelacji po czasie
-    vect    Mean(int acc_idx_i=0) const {
-        return MeanVector(correlation,0,acc_idx_i);
+    vect    Mean(int acc_idx_i = 0) const
+    {
+        return MeanVector(correlation, 0, acc_idx_i);
     }
     //Accessors
-    const int & GetNCycles() const {
+    const int & GetNCycles() const
+    {
         return ncycles;
     }
-    const int & GetAccIdx() const {
+    const int & GetAccIdx() const
+    {
         return acc_idx;
     }
-    const vectijk & GetNNN() const {
+    const vectijk & GetNNN() const
+    {
         return nnn;
     }
-    const vect & CurrentCorrelation() const {
+    const vect & CurrentCorrelation() const
+    {
         return correlation[acc_idx];
     }
-    const int & GetMax() const {
+    const int & GetMax() const
+    {
         return max;
     }
-    const vect & operator[](int t) const {
+    const vect & operator[](int t) const
+    {
         return correlation[t];
     }
-    SpatialCorrelationEvolution operator[](const std::valarray<bool> & mask) const {
+    SpatialCorrelationEvolution operator[](const std::valarray<bool> & mask) const
+    {
         SpatialCorrelationEvolution ret;
-        ret.correlation = correlation|mask;
+        ret.correlation = correlation | mask;
         return ret;
     }
 };
 
 template<class serializer_t>
-void operator|(serializer_t & s,SpatialCorrelationEvolution & e){
+void operator|(serializer_t & s, SpatialCorrelationEvolution & e)
+{
     e.SerializerHelper<serializer_t>(s);
-};
+}
 
-#endif	/* _SPATIALCORRELATIONEVOLUTION_H */
+#endif  /* _SPATIALCORRELATIONEVOLUTION_H */
 

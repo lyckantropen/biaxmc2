@@ -2,7 +2,7 @@
 
 #include "std.h"
 #include "boost.h"
-#include "valarray_external.h"
+#include "Maths.h"
 
 struct evs {
 	double e;

@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   ILoggable.h
  * Author: karol
  *
@@ -6,63 +6,90 @@
  */
 
 #ifndef _ILOGGABLE_H
-#define	_ILOGGABLE_H
+#define _ILOGGABLE_H
 
 #include "std.h"
 #include "sys/types.h"
 #include "unistd.h"
-#include "omp.h"
+#include "boost.h"
 
-class ILoggable {
-protected:
-    std::stringstream log;
-    io::null_sink	null_sink;
-    io::stream<io::null_sink>	null;
-    std::ostream * stream;
-    ILoggable():null(null_sink)
-	{
-        //stream = &log;
-	stream = &null;
-    }
-
+///
+/// Creates a flexible logging mechanism for the
+/// child class. The log can be either a file or a standard
+/// output stream (such as std::cout).
+///
+///
+template<class Holder>
+class loggable_proxy
+{
+    std::mutex access;
+    std::function<void(const std::string&)> f_print;
+    bool pass;
 public:
-
-    ILoggable(const ILoggable & s){
-        log << s.log.str();
-        if(s.stream==&s.log)
-            stream=&log;
-        else
-            stream=const_cast<std::ostream*>(s.stream);
+    loggable_proxy(Holder * _h, void (Holder::*f)(const std::string &))
+    {
+        pass = false;
+        using std::placeholders::_1;
+        f_print = std::bind(f,_h,_1);
     }
-    const ILoggable & operator=(const ILoggable & s){
-        log << s.log.str();
-        if(s.stream==&s.log)
-            stream=&log;
-        else
-            stream=const_cast<std::ostream*>(s.stream);
-        return *this;
+    template<class val_t>
+    loggable_proxy<Holder> & operator<<(const val_t & s)
+    {
+        if(!pass)
+        {
+            std::stringstream str;
+            str << s;
+            f_print(str.str());
+        }
+        return * this;
     }
-    std::string GetLog() const {
-        return log.str();
+    loggable_proxy<Holder> & operator<<( std::ostream &(ff)(std::ostream &) )
+    {
+        if(!pass)
+        {
+            std::stringstream str;
+            ff(str);
+            f_print(str.str());
+        }
+        return * this;
     }
-    std::string Print() {
-        return log.str();
-    }
-    virtual std::ostream & Log() {
-        return *stream;
-    }
-    virtual void SetStream(std::ostream * os){
-        if(os!=NULL)
-            stream = os;
-        else
-            stream = &log;
-    }
-    virtual void SetFile(const std::string & f){
-        std::stringstream s;
-        s << getpid() << "_" << omp_get_thread_num() << "_" << f;
-        stream = new std::ofstream(s.str().c_str());
+    void SetPass(bool p)
+    {
+        pass = p;
     }
 };
 
-#endif	/* _ILOGGABLE_H */
+class ILoggable
+{
+//    std::mutex print_mutex;
+
+//    void print_thread(std::string s);
+
+    loggable_proxy<ILoggable> proxy;
+
+    std::stringstream log;
+    io::null_sink   null_sink;
+    io::stream<io::null_sink>   null;
+    std::ostream * stream;
+    bool internal;
+
+public:
+
+    ILoggable();
+    ILoggable(const ILoggable & s);
+    virtual ~ILoggable();
+    const ILoggable & operator=(const ILoggable & s);
+    std::string GetInternalLog() const;
+    void Print(const std::string & s);
+
+    /// Use this function as in Log() << "output";
+    virtual loggable_proxy<ILoggable> &Log();
+    void SetStream(std::ostream * os);
+    void SetStream(ILoggable * other);
+    void SetFile(const std::string & f);
+
+    void SetInternal(bool i);
+};
+
+#endif  /* _ILOGGABLE_H */
 

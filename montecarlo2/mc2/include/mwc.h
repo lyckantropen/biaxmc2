@@ -1,7 +1,11 @@
 #include <cmath>
 #include <stdint.h>
 #include <boost/date_time/posix_time/posix_time.hpp>
+#ifndef OMP_DEBUG
 #include <omp.h>
+#else
+#include "omp_debug.h"
+#endif
 
 
 #ifndef _MWC_H_

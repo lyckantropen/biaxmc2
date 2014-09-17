@@ -1,6 +1,7 @@
 #include "serialhash.h"
 
-namespace boostbase {
+namespace boostbase
+{
     std::string md5gen(const std::string & data){
         hashwrapper * md5 = new md5wrapper();
         std::string hash = md5->getHashFromString(data);
@@ -13,4 +14,4 @@ namespace boostbase {
         delete md5;
         return hash;
     }
-};
+}

@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   valuearray.h
  * Author: karol
  *
@@ -6,7 +6,7 @@
  */
 
 #ifndef _VALUEARRAY_H
-#define	_VALUEARRAY_H
+#define _VALUEARRAY_H
 
 #include "std.h"
 #include "boost.h"
@@ -18,7 +18,8 @@
  */
 
 template<class value_type>
-class ranged_quantity {
+class ranged_quantity
+{
     value_type & value;
     value_type low;
     value_type high;
@@ -28,106 +29,121 @@ public:
 private:
     dir_t direction;
 public:
-    ranged_quantity(value_type & val, const value_type & l,const value_type & h,const value_type & i):
-    value(val),low(l),high(h),interval(i)
+    ranged_quantity(value_type & val, const value_type & l, const value_type & h, const value_type & i):
+        value(val), low(l), high(h), interval(i)
     {
-        if(low>high)
-            direction=down;
-        if(high>low)
-            direction=up;
-        value=low;
+        if(low > high)
+            direction = down;
+        if(high > low)
+            direction = up;
+        value = low;
     }
-    ranged_quantity(const ranged_quantity & source):value(source.value){
-        low=source.low;
-        high=source.high;
-        interval=source.interval;
-        if(low>high)
-            direction=down;
-        if(high>low)
-            direction=up;
+    ranged_quantity(const ranged_quantity & source): value(source.value)
+    {
+        low = source.low;
+        high = source.high;
+        interval = source.interval;
+        if(low > high)
+            direction = down;
+        if(high > low)
+            direction = up;
     }
-    const ranged_quantity & operator=(const ranged_quantity & source){
-        value=source.value;
-        low=source.low;
-        high=source.high;
-        interval=source.interval;
-        if(low>high)
-            direction=down;
-        if(high>low)
-            direction=up;
+    const ranged_quantity & operator=(const ranged_quantity & source)
+    {
+        value = source.value;
+        low = source.low;
+        high = source.high;
+        interval = source.interval;
+        if(low > high)
+            direction = down;
+        if(high > low)
+            direction = up;
         return *this;
     }
 
-    operator value_type(){
+    operator value_type()
+    {
         return value;
     }
-    bool operator++(int){
+    bool operator++(int)
+    {
         if(finished())
             return false;
-        if(direction==up)
-            value+=interval;
-        if(direction==down)
-            value-=interval;
+        if(direction == up)
+            value += interval;
+        if(direction == down)
+            value -= interval;
         return true;
     }
-    bool finished() {
-        if(direction==up)
-            return (value+interval)>end();
-        else return (value-interval)<end();
+    bool finished()
+    {
+        if(direction == up)
+            return (value + interval) > end();
+        else return (value - interval) < end();
     }
-    void reset() {
-        value=low;
+    void reset()
+    {
+        value = low;
     }
 private:
-    value_type begin() const {
-        if(direction==up)
+    value_type begin() const
+    {
+        if(direction == up)
             return low;
         else return high;
     }
-    value_type end() const {
-        if(direction==up)
-            return high-interval;
-        else return high+interval;
+    value_type end() const
+    {
+        if(direction == up)
+            return high - interval;
+        else return high + interval;
     }
 };
 
 template<class quantity_t, class value_type>
-class quantity_iterator {
+class quantity_iterator
+{
     template<class v> friend class value_array;
     typedef typename std::list<quantity_t>::iterator     iterator;
     std::list<quantity_t>                       quantities;
     iterator                                current;
 public:
     quantity_iterator(const std::list<quantity_t> & q):
-    quantities(q) {
+        quantities(q)
+    {
         // z niewiadomego powodu to tutaj musi być
-        current=quantities.end();
+        current = quantities.end();
     }
-    void add(const quantity_t & q){
+    void add(const quantity_t & q)
+    {
         quantities.push_back(q);
     }
-    bool operator++(int){
-        iterator next=quantities.end();
-        next=find_last_unfinished(next);
-        if(next==quantities.begin() && next->finished())
+    bool operator++(int)
+    {
+        iterator next = quantities.end();
+        next = find_last_unfinished(next);
+        if(next == quantities.begin() && next->finished())
             return false;
         (*next)++;
-        current=next;
+        current = next;
         next++;
-        for(iterator i=next;i!=quantities.end();i++)
+        for(iterator i = next; i != quantities.end(); i++)
             i->reset();
-        if(next==quantities.end())
+        if(next == quantities.end())
             next--;
         return true;
     }
-    operator value_type () const {
+    operator value_type() const
+    {
         return *current;
     }
 private:
-    iterator find_last_unfinished(iterator & it){
-        if(!it->finished() || it==quantities.begin())
+    iterator find_last_unfinished(iterator & it)
+    {
+        if(!it->finished() || it == quantities.begin())
             return it;
-        else{
+        else
+        {
             it--;
             return find_last_unfinished(it);
         }
@@ -143,28 +159,32 @@ typedef quantity_iterator<ranged_quantity<float>, float>    float_iterator;
 typedef quantity_iterator<ranged_quantity<int>, int>      int_iterator;
 
 template<class value_type>
-class ranged_quantity_proxy {
+class ranged_quantity_proxy
+{
     std::list<ranged_quantity<value_type> > values;
 public:
-    ranged_quantity_proxy(const std::list<ranged_quantity<value_type> > & v):values(v){}
-    ranged_quantity_proxy operator()(value_type & val, const value_type & a, const value_type & b, const value_type & c){
-        values.push_back(ranged_quantity<value_type>(val,a,b,c));
+    ranged_quantity_proxy(const std::list<ranged_quantity<value_type> > & v): values(v) {}
+    ranged_quantity_proxy operator()(value_type & val, const value_type & a, const value_type & b, const value_type & c)
+    {
+        values.push_back(ranged_quantity<value_type>(val, a, b, c));
         return ranged_quantity_proxy(values);
     }
-    operator std::list<ranged_quantity<value_type> > () const {
+    operator std::list<ranged_quantity<value_type> > () const
+    {
         return values;
     }
 };
 
 template<class value_type>
-ranged_quantity_proxy<value_type> with(value_type & val, const value_type & a, const value_type & b, const value_type & c){
+ranged_quantity_proxy<value_type> with(value_type & val, const value_type & a, const value_type & b, const value_type & c)
+{
     std::list<ranged_quantity<value_type> > values;
-    values.push_back(ranged_quantity<value_type>(val,a,b,c));
+    values.push_back(ranged_quantity<value_type>(val, a, b, c));
     return ranged_quantity_proxy<value_type>(values);
 };
 template ranged_quantity_proxy<double> with<double>(double &, const double &, const double &, const double &);
 
 
 
-#endif	/* _VALUEARRAY_H */
+#endif  /* _VALUEARRAY_H */
 

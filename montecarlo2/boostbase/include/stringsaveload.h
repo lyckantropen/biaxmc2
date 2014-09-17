@@ -12,23 +12,19 @@
 
 namespace boostbase {
 
-    /**
-     * zamiana obiektu na string i odwrotnie
-     * 
-     * jakby były wątpliwości, to jest tutaj kompresja i dekompresja przez zlib
-     */
+    /// serialization
     template<class item_t>
-    int size(item_t & item) {
+    int size(const item_t & item) {
         io::filtering_ostream oo;
         oo.push(io::counter());
         oo.push(io::null_sink());
         ofilterserializer of(oo);
-        of | item;
+        of | const_cast< typename remove_const<item_t>::type &>(item);
         return oo.component<0, io::counter>()->characters();
     }
 
     template<class item_t>
-    std::string serialsave(item_t & item) {
+    std::string serialsave(const item_t & item) {
         int i_size = size<item_t>(item);
 
         std::string output;
@@ -37,7 +33,7 @@ namespace boostbase {
         oo.push(io::back_inserter(output));
         //oo.push(output);
         ofilterserializer of(oo);
-        of | item;
+        of | const_cast< typename remove_const<item_t>::type &>(item);
         return output;
     }
 
@@ -55,7 +51,7 @@ namespace boostbase {
         return item;
     }
 
-};
+}
 
 
 #endif	/* _STRINGSAVELOAD_H */

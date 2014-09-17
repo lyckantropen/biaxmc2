@@ -1,4 +1,4 @@
-/* 
+/*
  * File:   hamiltonian.h
  * Author: karol
  *
@@ -6,16 +6,17 @@
  */
 
 #ifndef _HAMILTONIAN_H
-#define	_HAMILTONIAN_H
+#define _HAMILTONIAN_H
 
 class Particle;
 
-class Hamiltonian {
+class Hamiltonian
+{
 public:
-    virtual double TwoParticleEnergy(const Particle &, const Particle &)=0;
-    virtual double ExternalInteractionEnergy(const Particle &)=0;
+    virtual double TwoParticleEnergy(const Particle &, const Particle &) const = 0;
+    virtual double ExternalInteractionEnergy(const Particle &) const = 0;
 
 };
 
-#endif	/* _HAMILTONIAN_H */
+#endif  /* _HAMILTONIAN_H */
 
