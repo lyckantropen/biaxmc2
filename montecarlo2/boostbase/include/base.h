@@ -214,11 +214,17 @@ public:
             std::lock_guard<std::mutex> lock(dbaccess);
 
             int result = 0;
-            if(!dbfile.parent_path().empty() && !fs::exists(dbfile.parent_path()))
-                fs::create_directories(dbfile.parent_path());
-            if(!fs::exists(base_dir))
-                fs::create_directories(base_dir);
-
+			      try
+			      {
+            	if(!dbfile.parent_path().empty() && !fs::exists(dbfile.parent_path()))
+                	fs::create_directories(dbfile.parent_path());
+            	if(!fs::exists(base_dir))
+                	fs::create_directories(base_dir);
+            }
+            catch(fs::filesystem_error &e)
+            {
+              log() << e.what();
+            }
 
             //do {
             if(readonly)

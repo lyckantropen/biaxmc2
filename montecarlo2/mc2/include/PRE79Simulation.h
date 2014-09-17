@@ -53,7 +53,7 @@ public:
         metro = make_unique<Metropolis>(*settings, H.get());
         prop = make_unique<PRE79StandardProperties>(lattice.get(), ncycles);
         simulation = make_unique<LatticeSimulation>(H.get(), lattice.get(), metro.get(), nprod, 0);
-        //SetStream(&std::cout);
+        SetStream(&std::cout);
     }
 
     /**
