@@ -1,9 +1,25 @@
 include_directories(${CMAKE_SOURCE_DIR}/boostbase/include)
 include_directories(${CMAKE_SOURCE_DIR}/boostbase/include/hashlib)
 include_directories(${CMAKE_SOURCE_DIR}/mc2/include)
-link_directories(${CMAKE_SOURCE_DIR}/lib)
+#link_directories(${CMAKE_SOURCE_DIR}/lib)
 
-link_libraries(boostbase mc2)
+set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${OpenMP_CXX_FLAGS}")
+set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${OpenMP_C_FLAGS}")
+
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} ${OpenMP_CXX_FLAGS}")
+set(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} ${OpenMP_C_FLAGS}")
+
+if(CMAKE_USE_PTHREADS_INIT)
+      set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pthread")
+      set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pthread")
+endif(CMAKE_USE_PTHREADS_INIT)
+link_libraries(${CMAKE_THREAD_LIBS_INIT})
+
+link_libraries(${SQLITE_LIBRARIES})
+link_libraries(${Boost_LIBRARIES})
+link_libraries(${ZLIB_LIBRARIES})
+link_libraries(dl)
+link_libraries(mc2)
 add_executable(simulation simulation.cpp)
 add_executable(dbmine mc2mine.cpp)
 add_executable(runtest runtest.cpp)

@@ -4,12 +4,16 @@
 
 int main(int argc, char ** argv)
 {
+
+    ILoggable log;
+    log.SetStream(&std::cout);
+
     Settings set;
     set.sqlite.dir = "database.db.dir";
     set.sqlite.file = "database.db";
 
 
-    std::cout << set.ListOptions();
+    log.Log() << set.ListOptions();
 
     set.lattice.H = 16;
     set.lattice.W = 16;
@@ -27,10 +31,9 @@ int main(int argc, char ** argv)
     Metropolis met(set,&H);
 
     SimulationDB db(set);
-    //db.GetDB().SetStream(&std::cout);
+    log.Log() << dynamic_cast<std::stringstream&>(db.GetDB().log()).str();
+    db.GetDB().SetStream(&std::cout);
 
-    ILoggable log;
-    log.SetStream(&std::cout);
 
     for(int i=0; i<100; i++)
     {

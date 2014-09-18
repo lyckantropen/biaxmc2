@@ -568,13 +568,13 @@ public:
     template<class item_t>
     void store(const item_t & item, const std::vector<pair_t> & column_values)
     {
+        log() << "Launching thread\n";
         /// if curious about the syntax, it's a lambda function, i.e. a function
         /// object defined in place, which is then passed as the function to execute
         /// in the new thread, which is then pushed to the thread pool, so we can
         /// retain its handle and allow it to safely terminate
-        thread_pool.push_back(std::thread::thread(
-                                  [=]{ store_thread<item_t>(item,column_values); }
-        ));
+
+        thread_pool.push_back(std::thread::thread( [=]{ store_thread<item_t>(item,column_values); }));
     }
 
     /// in/out function for accessing the SQLite log
