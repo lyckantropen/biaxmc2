@@ -485,7 +485,7 @@ public:
     void store_thread(const item_t & item, const std::vector<pair_t> & column_values)
     {
 
-        log() << "store_thread id = " << std::this_thread::get_id() << ", this = " << reinterpret_cast<void *>(this) << std::endl;
+        log() << "store_thread id = " << boost::this_thread::get_id() << ", this = " << reinterpret_cast<void*>(this) << ", item = " << reinterpret_cast<const void*>(&item) << std::endl;
         std::stringstream s1, s2; // dwie części polecenia SQL, w jednej nazwy kolumn, w drugiej wartości
         std::stringstream f; // nazwa pliku
         std::string md5 = md5gen<item_t> (item); // unikalny hash obiektu
@@ -573,8 +573,9 @@ public:
         /// object defined in place, which is then passed as the function to execute
         /// in the new thread, which is then pushed to the thread pool, so we can
         /// retain its handle and allow it to safely terminate
-
-        thread_pool.push_back(std::thread::thread( [=]{ store_thread<item_t>(item,column_values); }));
+        
+        //thread_pool.push_back(std::thread( [=]{ store_thread<item_t>(item,column_values); }));
+        thread_pool.push_back(std::thread(std::bind(&base::store_thread<item_t>,this,item,column_values)));
     }
 
     /// in/out function for accessing the SQLite log
