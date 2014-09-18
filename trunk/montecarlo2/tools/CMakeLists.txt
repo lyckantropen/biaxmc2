@@ -1,7 +1,5 @@
-include_directories(${CMAKE_SOURCE_DIR}/boostbase/include)
-include_directories(${CMAKE_SOURCE_DIR}/boostbase/include/hashlib)
-include_directories(${CMAKE_SOURCE_DIR}/mc2/include)
-#link_directories(${CMAKE_SOURCE_DIR}/lib)
+include_directories(${CMAKE_SOURCE_DIR}/include)
+include_directories(${CMAKE_SOURCE_DIR}/include/hashlib)
 
 set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} ${OpenMP_CXX_FLAGS}")
 set(CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} ${OpenMP_C_FLAGS}")
