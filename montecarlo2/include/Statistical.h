@@ -197,12 +197,12 @@ Value BootstrapMean(const std::valarray<value_type> & v, const int start = 0, co
 /// of resampling iterations is equal to the size of the original sample.
 extern Value CalculateFluctuation(const vect & variable, const int & acc_idx = 0);
 
-#if defined(__GNUC__) && (__GNUC_MINOR__ < 7)
-template Value Mean<Value>(const std::valarray<Value> & v, const int, const int, const int);
-template  Value Mean<double>(const std::valarray<double> & v, const int, const int, const int);
-template  std::valarray<double> MeanVector<double>(const std::vector<vect> & v, const int start, const int limit);
-template  Value BootstrapMean<double>(const std::valarray<double> & v, const int start, const int limit, const int resamples);
-template<>  std::valarray<double> MeanVector<>(const std::vector<std::valarray<Value> > & v, const int & limit);
-#endif //__APPLE__
+//#if defined(__GNUC__) && (__GNUC_MINOR__ < 7)
+//template Value Mean<Value>(const std::valarray<Value> & v, const int, const int, const int);
+//template  Value Mean<double>(const std::valarray<double> & v, const int, const int, const int);
+//template  std::valarray<double> MeanVector<double>(const std::vector<vect> & v, const int start, const int limit);
+//template  Value BootstrapMean<double>(const std::valarray<double> & v, const int start, const int limit, const int resamples);
+//template<>  std::valarray<double> MeanVector<>(const std::vector<std::valarray<Value> > & v, const int & limit);
+//#endif //__APPLE__
 #endif  /* _STATISTICAL_H */
 
