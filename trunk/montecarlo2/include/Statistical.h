@@ -178,14 +178,13 @@ Value BootstrapMean(const std::valarray<value_type> & v, const int start = 0, co
 
     for(int i = 0; i < resamples; i++)
     {
-        value_type * sample = new value_type[N];
+        value_type sample[N];
         // próbkowanie z powtórzeniami
         for(int j = 0; j < N; j++)
         {
             sample[j] = relevant[int(N * random01())];
         }
-        bootmean[i] = std::valarray<value_type>(sample, N).sum() / value_type(N);
-        delete sample;
+        bootmean[i] = std::valarray<value_type>(&sample, N).sum() / value_type(N);
     }
     value_type Bsum = bootmean.sum() / B;
     double stddev = std::sqrt(std::pow((bootmean - Bsum), value_type(2.0)).sum() / (B - value_type(1)));
