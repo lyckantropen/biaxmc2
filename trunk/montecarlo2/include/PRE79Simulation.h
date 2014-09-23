@@ -417,7 +417,7 @@ public:
         //
         // Concatenate the resulting properties
         //
-        PRE79StandardProperties generalprop ;
+        PRE79StandardProperties generalprop(lattice.get(),0);
         for(int i = 0; i < productions.size(); i++)
         {
             generalprop.Append(productions[i]->GetProperties());
