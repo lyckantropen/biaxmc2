@@ -2,6 +2,10 @@
 #include "Lattice.h"
 #include "Metropolis.h"
 
+class nic {
+    int a = 7;
+};
+
 int main(int argc, char ** argv)
 {
 
