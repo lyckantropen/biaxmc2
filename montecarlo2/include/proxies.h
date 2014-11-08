@@ -53,16 +53,16 @@ pair_t_proxy where(const std::string & field, const value_type & val)
     values.push_back(pair_t(field, s.str()));
     return pair_t_proxy(values);
 }
-#if defined(__GNUC__) && (__GNUC_MINOR__ < 7)
-template pair_t_proxy where<double>(const std::string &, const double &);
-template pair_t_proxy where<float>(const std::string &, const float &);
-template pair_t_proxy where<int>(const std::string &, const int &);
-template pair_t_proxy where<std::string>(const std::string &, const std::string &);
-template pair_t_proxy pair_t_proxy::operator()<double>(const std::string &, const double &);
-template pair_t_proxy pair_t_proxy::operator()<float>(const std::string &, const float &);
-template pair_t_proxy pair_t_proxy::operator()<int>(const std::string &, const int &);
-template pair_t_proxy pair_t_proxy::operator()<std::string>(const std::string &, const std::string &);
-#endif
+//#if defined(__GNUC__) && (__GNUC_MINOR__ < 7)
+//template pair_t_proxy where<double>(const std::string &, const double &);
+//template pair_t_proxy where<float>(const std::string &, const float &);
+//template pair_t_proxy where<int>(const std::string &, const int &);
+//template pair_t_proxy where<std::string>(const std::string &, const std::string &);
+//template pair_t_proxy pair_t_proxy::operator()<double>(const std::string &, const double &);
+//template pair_t_proxy pair_t_proxy::operator()<float>(const std::string &, const float &);
+//template pair_t_proxy pair_t_proxy::operator()<int>(const std::string &, const int &);
+//template pair_t_proxy pair_t_proxy::operator()<std::string>(const std::string &, const std::string &);
+//#endif
 struct tween_t
 {
     std::string field, begin, end;
