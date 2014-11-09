@@ -10,6 +10,7 @@
 
 class Particle;
 
+/// purely virtual class, base class for any two-particle hamiltonian
 class Hamiltonian
 {
 public:

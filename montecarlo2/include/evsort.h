@@ -4,6 +4,9 @@
 #include "boost.h"
 #include "Maths.h"
 
+/// A sortable structure describing an eigenvalue and the
+/// corresponding eigenvector of a 3x3 matrix
+/// The eigenvectors are sorted by descending eigenvalue modulus
 struct evs {
 	double e;
 	double v[3];

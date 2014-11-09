@@ -55,6 +55,8 @@ public:
         simulation = make_unique<LatticeSimulation>(H.get(), lattice.get(), metro.get(), nprod, 0);
         SetStream(&std::cout);
     }
+    /// disable copying
+    PRE79Production(const PRE79Production &) = delete;
 
     /**
      * Run a single production in the set.
@@ -187,16 +189,15 @@ class PRE79Simulation: public ILoggable
         if(!restored)
         {
 
-            //--- szukamy ewentualnego zapisanego stermalizowanego stanu
+            ///--- search for a possible somewhat-thermalized state
             if(settings->simulation.find_thermalized)
             {
                 Log() << "Searching database for thermalized state\n";
                 bool found = false;
 
-                //ostatni zapisany stan lepiej nadaje się jako stermalizowany
-                int cycle = 0; // nieużywane
+                int cycle = 0; ///< will store the cycle at which the state was left, unused
 
-                //--- dopuszczamy załadowanie stanu z zadaną tolerancją temperatury, ale wtedy musimy dotermalizować
+                ///--- allow for a temperature tolerance in searching for states (subsequent thermalization is still necessary)
                 Lattice found_state;
                 if(settings->simulation.find_thermalized_temperature_tolerance != 0.0)
                 {
@@ -207,8 +208,8 @@ class PRE79Simulation: public ILoggable
                 {
                     found_state = FindLastState(*settings, found, cycle);
                 }
-                //---
-                //--- dopuszczamy ewentualny stan z polem o bliskiej wartości, ale musimy dotermalizować
+                ///---
+                ///--- allow for a field tolerance in searching for states (subsequent thermalization is still necessary)
                 if(settings->simulation.find_thermalized_h_tolerance != 0.0)
                 {
                     Log() << "Field tolerance enabled\n";
@@ -218,7 +219,7 @@ class PRE79Simulation: public ILoggable
                 {
                     found_state = FindLastState(*settings, found, cycle);
                 }
-                //---
+                ///---
 
                 if(found)
                 {
@@ -245,8 +246,8 @@ class PRE79Simulation: public ILoggable
             Log() << "Previous final state passed on as initial, creating Supplementary Thermalization\n";
             thermalization = make_unique<LatticeSimulation>(H.get(), lattice.get(), metro.get(), settings->simulation.supplementary_thermalization_cycles);
         }
-        //--- szukamy stanu, od którego możemy kontynuować symulację
-        // TODO: stan się ładuje, ale jeszcze trzeba policzyć albo wczytać brakujące Properties...
+        ///--- UNFINISHED - resume simulation from a saved state
+        // TODO: the state is loaded, but the runtime properties are not present and need to be calculated or loaded...
         int found_cycle = 0;
         if(settings->simulation.pick_up_aborted)
         {
@@ -305,16 +306,18 @@ public:
         restored = false;
         Init();
     }
+
+    /// new simulation from a saved state
     PRE79Simulation(const Settings & set, const Lattice & saved):
         settings(&set), database(set)
     {
-        //nie kopiujemy wskaźnika, kopiujemy obiekt
-        //żeby nie zmieniać źródłowego obiektu
         restored = true;
         lattice = make_unique<Lattice>(saved);
         Init();
     }
+    PRE79Simulation(const PRE79Simulation &) = delete;
 
+    /// measure the duration of a 1000 cycles (for time estimation)
     pt::time_duration DurationOf1000Cycles() const
     {
         LatticeSimulation test(H.get(), lattice.get(), metro.get(), 1000);
@@ -333,11 +336,11 @@ public:
     }
     pt::time_duration ExpectedSimulationTime() const
     {
-
         int total1kruns = (thermalization->GetNCycles() + simulation->GetNCycles()) / 1000 ;
         return DurationOf1000Cycles() * total1kruns;
     }
 
+    /// thermalization
     const Lattice & Thermalize()
     {
         AutoCorrelationTimeCalculator ac(lattice.get(), settings->simulation.autocorrelation_frequency, settings->simulation.autocorrelation_length);
@@ -353,20 +356,17 @@ public:
                 Log() << "E = " << thermalprops->EnergyEvolution()[tcycle / 1001] << std::endl;
                 Log() << "Progress: " << (double(tcycle) / double(thermalization->GetNCycles())) * 100.0 << "%\n";
             }
-            //--- poprawa promienia błądzenia przypadkowego <-- czyżby źródło błędów???
+            ///--- CAUTION - live adjustment of the random walk radius - could break detailed balance!!!
             if(tcycle % settings->simulation.radius_adjustment_frequency == 0)
                 metro->AdjustRadius(lattice.get());
-            //---
+            ///---
             if(settings->simulation.measure_acceptance && tcycle % settings->simulation.measure_acceptance_frequency == 0)
             {
-                //Log() << "Acceptance rate: " << metro->MeasureAccepted(lattice)*100.0 << "%\n";
                 Log() << "Acceptance rate: " << thermalization->GetAcceptance() * 100.0 << "%\n";
                 Log() << "Mean acceptance rate: " << thermalization->GetMeanAcceptance() * 100.0 << "%\n";
             }
             tcycle++;
         }
-        //-- zapisywanie historii termalizacji
-
         if(settings->output.save_thermalization_properties)
         {
             Log() << "Saving thermalization history\n";
@@ -376,10 +376,15 @@ public:
         return *lattice;
     }
 
-    ///jednowątkowa termalizacja i wielowątkowa produkcja
+    ///
+    /// One single-threaded thermalization followed by multi-threaded production
+    /// (replicas). The replicas start from the same thermalized state, but
+    /// use different seeds for the random number generator.
+    /// \return The final state with minimum energy
+    ///
     Lattice RunParallel()
     {
-        //--- termalizacja
+        ///--- thermalization
         Log() << "Adjusting radius\n";
         metro->AdjustRadius(lattice.get());
         if(settings->simulation.calculate_time)
@@ -393,20 +398,20 @@ public:
             Log() << "Thermalization\n";
             Thermalize();
         }
-        //---
+        ///---
 
-        //--- tworzymy fragmentaryczne symulacje
+        ///--- set up partial simulations (on replicas)
 
-        //tutaj nie może być wątpliwości ile jest wątków
+        /// here there can be no doubt as for the number of currently running threads
         omp_set_dynamic(0);
         omp_set_num_threads(settings->openmp.number_of_threads);
 
-        //PRE79Production prototype(settings,settings->simulation.production_cycles/settings->openmp.number_of_threads,*lattice);
-        //(settings->openmp.number_of_threads,prototype);
         for(int i = 0; i < settings->openmp.number_of_threads; i++)
             productions.push_back(make_unique<PRE79Production>(*settings, settings->simulation.production_cycles / settings->openmp.number_of_threads, *lattice));
 
         Log() << "Starting " << settings->openmp.number_of_threads << " productions\n";
+
+        /// GO!
         #pragma omp parallel for schedule(runtime) shared(rng2) private(random01)
         for(int i = 0; i < productions.size(); i++)
         {
@@ -414,9 +419,9 @@ public:
             productions[i]->Run();
         }
 
-        //
-        // Concatenate the resulting properties
-        //
+        ///
+        /// Concatenate the resulting properties
+        ///
         PRE79StandardProperties generalprop(lattice.get(),0);
         for(int i = 0; i < productions.size(); i++)
         {
@@ -445,7 +450,7 @@ public:
         Log() << "Mean EPM: " << generalprop.TemporalMeanEnergyPerMolecule().Print() << std::endl;
         Log() << "Specific Heat: " << generalprop.SpecificHeat().Print() << std::endl;
 
-        //return the state with the lowest energy
+        ///return the state with the lowest energy
         vect weights(0.0, productions.size());
         for(int i = 0; i < weights.size(); i++)
         {
@@ -454,7 +459,7 @@ public:
         int best = MinimumIndex(weights);
 
         Lattice ret = *productions[best]->GetLattice();
-        //--
+        ///--
 
         productions.clear();
 
@@ -462,7 +467,10 @@ public:
     }
 
 
-    ///Symulacja. Zwraca końcowy stan sieci.
+    ///
+    /// Single-threaded simulation.
+    /// \return Resulting state
+    ///
     const Lattice & Run()
     {
         Log() << "Production cycles: " << simulation->GetNCycles() << std::endl;
@@ -480,9 +488,9 @@ public:
             Thermalize();
         }
 
-        //--- zapisywanie stanów pośrednich
+        ///--- intermediate state saving frequency
         int intermediate_frequency = simulation->GetNCycles() / settings->output.intermediate_states;
-        //---
+        ///---
 
         #pragma omp critical
         Log() << "Production with freq " << settings->simulation.measure_frequency << std::endl ;
@@ -498,7 +506,7 @@ public:
         while(simulation->Iterate())
         {
             ac.Update();
-            //--- pomiary
+            ///--- update the statistical properties and store lattice state
             if(k % settings->simulation.measure_frequency == 0)
             {
                 prop->Update(k, H.get(), &ac);
@@ -507,17 +515,17 @@ public:
                     database.StoreLattice(*settings, *lattice, k);
                 }
             }
-            //---
+            ///---
 
-            //--- sprawozdanie z postępu symulacji
+            ///--- progress report
             if(k % 1000 == 0 && settings->output.report_progress)
             {
                 Log() << "E = " << prop->EnergyEvolution()[k / 1001] << std::endl;
                 Log() << "Progress: " << (double(k) / double(simulation->GetNCycles())) * 100.0 << "%\n";
             }
-            //---
+            ///---
 
-            //--- zapis stanów pośrednich
+            ///--- intermediate snapshots of average statistical properties
             if(k % intermediate_frequency == 0)
             {
                 if(settings->output.save_intermediate_states)
@@ -529,20 +537,19 @@ public:
 
             }
 
-            //--- poprawa promienia błądzenia przypadkowego <-- czyżby źródło błędów???
-            // Swendson (2011) częstość zmiany kroku Monte Carlo nie powinna być niższa, niż (liczba kroków MC)^(1/2)
+            ///--- CAUTION: excessive adjustment of Monte Carlo step radius breaks detailed balance
+            // Swendson (2011)
             if(k % settings->simulation.radius_adjustment_frequency == 0)
                 metro->AdjustRadius(lattice.get());
-            //---
+            ///---
 
-            //--- pomiar poziomu akceptacji
+            ///--- measurement of acceptance rate
             if(settings->simulation.measure_acceptance && k % settings->simulation.measure_acceptance_frequency == 0)
             {
-                //Log() << "Acceptance rate: " << metro->MeasureAccepted(lattice)*100.0 << "%\n";
                 Log() << "Acceptance rate: " << simulation->GetAcceptance() * 100.0 << "%\n";
                 Log() << "Mean acceptance rate: " << simulation->GetMeanAcceptance() * 100.0 << "%\n";
             }
-            //---
+            ///---
 
             if((k + 1) % remaining_interval == 0 && settings->simulation.calculate_time)
             {

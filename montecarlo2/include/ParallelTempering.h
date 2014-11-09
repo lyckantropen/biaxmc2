@@ -17,6 +17,8 @@
 #endif
 
 
+/// UNFINISHED implementation of Parallel Tempering
+///
 class ParallelTempering: public ILoggable
 {
     std::vector<LatticeSimulation>       simulations;

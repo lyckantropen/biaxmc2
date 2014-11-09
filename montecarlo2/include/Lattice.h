@@ -117,6 +117,10 @@ public:
      * @return Arithmetic mean energy per molecule
      */
     const double GetMeanEPM() const;
+
+    const bool & GetPeriodicL() const;
+    const bool & GetPeriodicW() const;
+    const bool & GetPeriodicH() const;
 };
 
 template<class stream_t>

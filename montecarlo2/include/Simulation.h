@@ -14,6 +14,10 @@
 #include "Maths.h"
 #include "Statistical.h"
 
+///
+/// A Monte Carlo simulation prototype
+///
+
 class Simulation
 {
     int acc_idx;
@@ -45,6 +49,12 @@ public:
     }
 };
 
+///
+/// A general lattice simulation class. In principle, you
+/// could isolate this class and build your own program
+/// by implementing a different Hamiltonian and Metropolis
+/// algorightm.
+///
 class LatticeSimulation: public Simulation
 {
     Lattice * lat;
@@ -81,37 +91,6 @@ public:
     {
         acf.resize(nc, 0.0);
         acfp.resize(nc, 0.0);
-    }/*
-    LatticeSimulation(){
-        lat=NULL;
-        H=NULL;
-        metropolis=NULL;
-    }*/
-
-    LatticeSimulation(const LatticeSimulation & s)
-    {
-        lat = s.lat;
-        H = s.H;
-        metropolis = s.metropolis;
-        accepted_fraction = s.accepted_fraction;
-        accepted_fraction_p = s.accepted_fraction_p;
-        acf.resize(s.acf.size(), 0.0);
-        acfp.resize(s.acfp.size(), 0.0);
-        acf = s.acf;
-        acfp = s.acfp;
-    }
-    const LatticeSimulation & operator=(const LatticeSimulation & s)
-    {
-        lat = s.lat;
-        H = s.H;
-        metropolis = s.metropolis;
-        accepted_fraction = s.accepted_fraction;
-        accepted_fraction_p = s.accepted_fraction_p;
-        acf.resize(s.acf.size(), 0.0);
-        acfp.resize(s.acfp.size(), 0.0);
-        acf = s.acf;
-        acfp = s.acfp;
-        return *this;
     }
 
     const double & GetAcceptance() const

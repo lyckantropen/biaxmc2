@@ -10,6 +10,7 @@
 
 #include "std.h"
 
+///exceptions for the boostbase mechanism
 namespace boostbase{ namespace exception {
 
     class file_not_found:public std::exception {};
@@ -28,7 +29,7 @@ namespace boostbase{ namespace exception {
     class sqlite_command_error:public std::exception {};
     class wrong_md5:public std::exception {};
 
-};};
+}}
 
 
 #endif	/* _BB_EXCEPTIONS_H */

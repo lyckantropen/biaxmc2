@@ -10,70 +10,7 @@ std::ostream & operator<<(std::ostream & s, const Particle & p)
     return s;
 }
 
-const Particle &Particle::operator=(Particle && s)
-{
-    R = std::move(s.R);
-    x = std::move(s.x);
-    ex = std::move(s.ex);
-    ey = std::move(s.ey);
-    ez = std::move(s.ez);
-    Qx = std::move(s.Qx);
-    Qy = std::move(s.Qy);
-    Qz = std::move(s.Qz);
-    T = std::move(s.T);
-    parity = s.parity;
-    energy = s.energy;
-    neighbors = std::move(s.neighbors);
-    neighbors_indices = std::move(s.neighbors_indices);
-    return * this;
-}
 
-void Particle::Nudge(MCProto *proto, int &acc_rot, int &acc_p)
-{
-    Particle old_state = *this;
-    vect newX = proto->OrientationNudge(x);
-    short newP = proto->ParityNudge(parity);
-
-
-    //SetOrientation(proto->OrientationNudge(x),proto->ParityNudge(parity));
-
-    //ruch rotacyjny
-    SetOrientation(newX, parity);
-    UpdateEnergy(proto->GetHamiltonian());
-    // mnożymy przez 2 bo mamy energię na cząstkę
-    if(!proto->Accept(2.0 * (energy - old_state.energy)))
-    {
-        // ruch niezaakceptowany
-        RestoreState(old_state);
-        acc_rot += 0;
-    }
-    else
-    {
-        // ruch zaakceptowany
-        UpdateNeighborsEnergy(proto->GetHamiltonian());
-        acc_rot += 1;
-    }
-    //--
-
-    old_state = *this;
-    //ruch parzystości
-    SetOrientation(x, newP);
-    UpdateEnergy(proto->GetHamiltonian());
-    // mnożymy przez 2 bo mamy energię na cząstkę
-    if(!proto->Accept(2.0 * (energy - old_state.energy)))
-    {
-        // ruch niezaakceptowany
-        RestoreState(old_state);
-        acc_p += 0;
-    }
-    else
-    {
-        // ruch zaakceptowany
-        UpdateNeighborsEnergy(proto->GetHamiltonian());
-        acc_p += 1;
-    }
-    //--
-}
 
 void Particle::PlaceAt(int x, int y, int z)
 {
@@ -159,25 +96,6 @@ void Particle::Connect(Particle &n, const int &i)
 }
 
 
-Particle::Particle(Particle && s):
-    x(std::move(s.x)),
-    ex(std::move(s.ex)),
-    ey(std::move(s.ey)),
-    ez(std::move(s.ez)),
-    Qx(std::move(s.Qx)),
-    Qy(std::move(s.Qy)),
-    Qz(std::move(s.Qz)),
-    T(std::move(s.T)),
-    R(std::move(s.R)),
-    neighbors(std::move(s.neighbors)),
-    parity(s.parity),
-    energy(s.energy),
-    neighbors_indices(std::move(s.neighbors_indices))
-{
-
-}
-
-
 void Particle::RestoreState(const Particle &p)
 {
     R = p.R;
@@ -193,27 +111,9 @@ void Particle::RestoreState(const Particle &p)
     energy = p.energy;
 }
 
-void Particle::UpdateEnergy(const Hamiltonian *hamiltonian)
-{
-    if(hamiltonian == NULL) return;
-    energy = 0;
-    //std::cout << neighbors.size() << " neighbors and " ;
-    for(int i = 0; i < neighbors.size(); i++)
-    {
-        energy += hamiltonian->TwoParticleEnergy(*this, *neighbors[i]) / 2.0;
-    }
-    energy += hamiltonian->ExternalInteractionEnergy(*this);
 
-    //std::cout << energy << " energy\n";
-}
 
-void Particle::UpdateNeighborsEnergy(const Hamiltonian *h)
-{
-    for(Particle * n : neighbors)
-    {
-        n->UpdateEnergy(h);
-    }
-}
+
 
 void Particle::SetOrientation(const vect &X, const short &p)
 {
@@ -313,59 +213,4 @@ Particle::Particle():
     //,e2p(coord_num){
     parity = 1;
     energy = 0;
-}
-
-Particle::Particle(const Particle &s)
-{
-    x.resize(4, 0.0);
-    ex.resize(3, 0.0);
-    ey.resize(3, 0.0);
-    ez.resize(3, 0.0);
-    Qx.resize(6, 0.0);
-    Qy.resize(6, 0.0);
-    Qz.resize(6, 0.0);
-    T.resize(10, 0.0);
-    R.resize(3, 0.0);
-    neighbors.resize(0);
-    x = s.x;
-    ex = s.ex;
-    ey = s.ey;
-    ez = s.ez;
-    Qx = s.Qx;
-    Qy = s.Qy;
-    Qz = s.Qz;
-    T = s.T;
-    R = s.R;
-    parity = s.parity;
-    energy = s.energy;
-    neighbors = s.neighbors;
-    neighbors_indices = s.neighbors_indices;
-}
-
-const Particle &Particle::operator=(const Particle &s)
-{
-    x.resize(4, 0.0);
-    ex.resize(3, 0.0);
-    ey.resize(3, 0.0);
-    ez.resize(3, 0.0);
-    Qx.resize(6, 0.0);
-    Qy.resize(6, 0.0);
-    Qz.resize(6, 0.0);
-    T.resize(10, 0.0);
-    R.resize(3, 0.0);
-    neighbors.resize(0);
-    R = s.R;
-    x = s.x;
-    ex = s.ex;
-    ey = s.ey;
-    ez = s.ez;
-    Qx = s.Qx;
-    Qy = s.Qy;
-    Qz = s.Qz;
-    T = s.T;
-    parity = s.parity;
-    energy = s.energy;
-    neighbors = s.neighbors;
-    neighbors_indices = s.neighbors_indices;
-    return * this;
 }

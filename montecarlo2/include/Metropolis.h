@@ -28,8 +28,6 @@ class Metropolis: public MCProto, protected ILoggable
     const Settings * settings;
 public:
     Metropolis(const Settings & set, const Hamiltonian * h);
-    Metropolis(const Metropolis & s);
-    const Metropolis & operator=(const Metropolis & s);
     virtual vect OrientationNudge(const vect & old) const;
     virtual short ParityNudge(const short & old) const;
     virtual bool Accept(const double & dE)const;

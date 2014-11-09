@@ -36,9 +36,15 @@ private:
     void ConstructNNN(const Lattice * lat)
     {
         if(readonly) return;
+
+        nnn.resize(lat->GetN());
         for(int site = 0; site < nnn.size(); site++)
-            for(int n = 0; n < lat->GetParticles()[site].GetNNeighbors(); n++)
-                for(int dist = 0; dist < (max + 1); dist++)
+        {
+            nnn[site].resize(lat->GetParticles()[site].GetNNeighbors());
+            for(int n = 0; n < nnn[site].size() ; n++)
+            {
+                nnn[site][n].resize(max+1);
+                for(int dist = 0; dist < (max+1) ; dist++)
                 {
                     if(dist == 0)
                         nnn[site][n][dist] = site;
@@ -47,6 +53,8 @@ private:
                     else
                         nnn[site][n][dist] = lat->GetParticles()[nnn[site][n][dist - 1]].GetNeighborIndex(n);
                 }
+            }
+        }
     }
 
 protected:
@@ -61,11 +69,25 @@ private:
         int NN = 0;
         for(int site = 0; site < lat->GetN(); site++)
             for(int n = 0; n < lat->GetParticles()[site].GetNNeighbors(); n++)
+            {
+                int maxL,maxW,maxH;
+                vect R = lat->GetParticles()[site].GetR();
+                maxL = n==0 ? lat->GetL()-R[0] : R[0];
+                maxW = n==2 ? lat->GetW()-R[1] : R[1];
+                maxH = n==4 ? lat->GetH()-R[2] : R[2];
+                std::cout << "direction " << n << " at " << R << ", max= " << maxL <<"," <<maxW << ", " << maxH << std::endl;
                 for(int dist = 0; dist < (max + 1); dist++)
                 {
+
+                    if(((n==0 || n==1) && !lat->GetPeriodicL() && dist==maxL) ||
+                       ((n==2 || n==3) && !lat->GetPeriodicW() && dist==maxW) ||
+                       ((n==4 || n==5) && !lat->GetPeriodicH() && dist==maxH))
+                            break;
+
                     result[dist] += CalculateContraction(lat->GetParticles()[site], lat->GetParticles()[nnn[site][n][dist]]);
                     NN += lat->GetParticles()[site].GetNNeighbors();
                 }
+            }
         correlation[acc_idx] = result / double(NN);
     }
 protected:
@@ -84,13 +106,7 @@ protected:
         for(int i = 0; i < ncycles; i++)
             correlation.push_back(vect(max + 1));
 
-        nnn.resize(lat->GetN());
-        for(int i = 0; i < nnn.size(); i++)
-        {
-            nnn[i].resize(6);
-            for(int j = 0; j < 6; j++)
-                nnn[i][j].resize(max + 1);
-        }
+
         ConstructNNN(lat);
     }
     template<class serializer_t>

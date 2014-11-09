@@ -11,6 +11,7 @@
 #include "Maths.h"
 #include "Hamiltonian.h"
 
+/// Prototype for a Monte Carlo mechanism, such as Metropolis
 class MCProto
 {
 public:
