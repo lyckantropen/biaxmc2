@@ -17,6 +17,9 @@
 #include "serializer.h"
 #include "ILoggable.h"
 
+/// A mechanism used to calculate the autocorrelation time
+/// for the energy time series of a lattice during the
+/// simulation
 class AutoCorrelationTimeCalculator: public ILoggable
 {
     const Lattice * lattice;
@@ -30,10 +33,6 @@ class AutoCorrelationTimeCalculator: public ILoggable
     Value CalculateMeanEnergy();
 public:
     AutoCorrelationTimeCalculator(const Lattice * l, int _nc, int _nh);
-
-    AutoCorrelationTimeCalculator(const AutoCorrelationTimeCalculator & s);
-
-    const AutoCorrelationTimeCalculator & operator=(const AutoCorrelationTimeCalculator & s);
     void Update();
     const int & GetT() const;
     const vect & GetR() const;

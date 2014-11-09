@@ -20,31 +20,6 @@ AutoCorrelationTimeCalculator::AutoCorrelationTimeCalculator(const Lattice *l, i
     //SetStream(&std::cout);
 }
 
-AutoCorrelationTimeCalculator::AutoCorrelationTimeCalculator(const AutoCorrelationTimeCalculator &s)
-{
-    ec.resize(s.ec.size(), 0.0);
-    R.resize(s.R.size(), 0.0);
-    ec = s.ec;
-    R = s.R;
-    t = s.t;
-    lattice = s.lattice;
-    ncycles = s.ncycles;
-    acc_idx = s.acc_idx;
-}
-
-const AutoCorrelationTimeCalculator &AutoCorrelationTimeCalculator::operator=(const AutoCorrelationTimeCalculator &s)
-{
-    ec.resize(s.ec.size(), 0.0);
-    R.resize(s.R.size(), 0.0);
-    ec = s.ec;
-    R = s.R;
-    t = s.t;
-    lattice = s.lattice;
-    ncycles = s.ncycles;
-    acc_idx = s.acc_idx;
-    return *this;
-}
-
 void AutoCorrelationTimeCalculator::Update()
 {
     ec[acc_idx] = double(CalculateMeanEnergy());

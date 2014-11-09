@@ -60,7 +60,19 @@ class Particle
      *
      * @param hamiltonian Pointer to the hamiltonian implementation.
      */
-    void UpdateEnergy(const Hamiltonian * hamiltonian);
+    inline void UpdateEnergy(const Hamiltonian * hamiltonian)
+    {
+        if(hamiltonian == NULL) return;
+        energy = 0;
+        //std::cout << neighbors.size() << " neighbors and " ;
+        for(int i = 0; i < neighbors.size(); i++)
+        {
+            energy += hamiltonian->TwoParticleEnergy(*this, *neighbors[i]) / 2.0;
+        }
+        energy += hamiltonian->ExternalInteractionEnergy(*this);
+
+        //std::cout << energy << " energy\n";
+    }
     /**
      * Update the energy of the neighboring particles. This necessarily implies
      * that a particle can have its energy updated many times during a sweep.
@@ -69,27 +81,16 @@ class Particle
      *
      * @param h Pointer to the hamiltonian implementation
      */
-    void UpdateNeighborsEnergy(const Hamiltonian * h);
+    inline void UpdateNeighborsEnergy(const Hamiltonian * h)
+    {
+        for(Particle * n : neighbors)
+        {
+            n->UpdateEnergy(h);
+        }
+    }
 public:
     ///Constructor
     Particle();
-    /**
-     * Copying constructor
-     * @param s Source particle
-     */
-    Particle(const Particle & s);
-    ///move constructor
-    Particle(Particle && s);
-
-    /**
-     * Assignment operator
-     * @param s Source particle
-     * @return A copy of the assigned particle
-     */
-    const Particle & operator=(const Particle & s);
-
-    ///move assignment operator
-    const Particle & operator=(Particle && s);
 
     /**
      * Populate the lists #neighbors and #neighbors_indices by connecting the
@@ -119,7 +120,52 @@ public:
      * @param acc_rot   The parameter which is incremented by 1 if the rotational trial move is accepted
      * @param acc_p     The parameter which is incremented by 1 if the parity trial move is accepted
      */
-    void Nudge(MCProto * proto, int & acc_rot, int & acc_p);
+    inline void Nudge(MCProto * proto, int & acc_rot, int & acc_p)
+    {
+        Particle old_state = *this;
+        vect newX = proto->OrientationNudge(x);
+        short newP = proto->ParityNudge(parity);
+
+
+        //SetOrientation(proto->OrientationNudge(x),proto->ParityNudge(parity));
+
+        //ruch rotacyjny
+        SetOrientation(newX, parity);
+        UpdateEnergy(proto->GetHamiltonian());
+        // mnożymy przez 2 bo mamy energię na cząstkę
+        if(!proto->Accept(2.0 * (energy - old_state.energy)))
+        {
+            // ruch niezaakceptowany
+            RestoreState(old_state);
+            acc_rot += 0;
+        }
+        else
+        {
+            // ruch zaakceptowany
+            UpdateNeighborsEnergy(proto->GetHamiltonian());
+            acc_rot += 1;
+        }
+        //--
+
+        old_state = *this;
+        //ruch parzystości
+        SetOrientation(x, newP);
+        UpdateEnergy(proto->GetHamiltonian());
+        // mnożymy przez 2 bo mamy energię na cząstkę
+        if(!proto->Accept(2.0 * (energy - old_state.energy)))
+        {
+            // ruch niezaakceptowany
+            RestoreState(old_state);
+            acc_p += 0;
+        }
+        else
+        {
+            // ruch zaakceptowany
+            UpdateNeighborsEnergy(proto->GetHamiltonian());
+            acc_p += 1;
+        }
+        //--
+    }
 
     /**
      * Restore all variables from another copy of a particle. Used primarily when a

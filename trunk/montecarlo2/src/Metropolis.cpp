@@ -14,27 +14,6 @@ Metropolis::Metropolis(const Settings &set, const Hamiltonian * h):
 
 }
 
-Metropolis::Metropolis(const Metropolis &s):
-    settings(s.settings)
-{
-    hamiltonian = s.hamiltonian;
-    radius = s.radius;
-    acc_llimit = s.acc_llimit;
-    acc_ulimit = s.acc_ulimit;
-    parity_prob = s.parity_prob;
-}
-
-const Metropolis &Metropolis::operator=(const Metropolis &s)
-{
-    hamiltonian = s.hamiltonian;
-    radius = s.radius;
-    acc_llimit = s.acc_llimit;
-    acc_ulimit = s.acc_ulimit;
-    parity_prob = s.parity_prob;
-    settings = s.settings;
-    return *this;
-}
-
 vect Metropolis::OrientationNudge(const vect &old) const
 {
     return RandomWalkOn4DSphere(radius, old);

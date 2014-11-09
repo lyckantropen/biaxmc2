@@ -48,9 +48,6 @@ int main(int argc, char** argv)
     Settings setup(cfg);
     setup.SetStream(&std::cout);
 
-    /// only needed with the mwc_wrap RNG
-    //mwc_wrap::setup(setup.openmp.number_of_threads);
-
     if(argc > 2)
         mode = argv[2];
 

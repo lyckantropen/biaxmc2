@@ -11,6 +11,7 @@
 #include "std.h"
 #include "boost.h"
 
+/// UNUSED
 
 /*
  * klasa quantity_iterator zastępuje klasę Krata
@@ -181,7 +182,7 @@ ranged_quantity_proxy<value_type> with(value_type & val, const value_type & a, c
     std::list<ranged_quantity<value_type> > values;
     values.push_back(ranged_quantity<value_type>(val, a, b, c));
     return ranged_quantity_proxy<value_type>(values);
-};
+}
 template ranged_quantity_proxy<double> with<double>(double &, const double &, const double &, const double &);
 
 

@@ -21,30 +21,12 @@ std::string MathematicaForm(const vect & v){
     return s.str();
 }
 
-double  DotProduct(const vect & a, const vect & b){
-    return (a*b).sum();
-}
 
-double MatrixDotProduct(const vect & a, const vect & b){
-    return a[0]*b[0]+
-	   a[3]*b[3]+
-	   a[5]*b[5]+
-	   2.0*a[1]*b[1]+
-	   2.0*a[2]*b[2]+
-	   2.0*a[4]*b[4];
-}
 
-double  Norm(const vect & v){
-    vect result = std::pow(v,2.0);
-    return std::sqrt(result.sum());
-}
-vect Identity(const int & dim){
-    //TODO: wyższe wymiary niż 3
-    vect out(6);
-    out[0]=out[3]=out[5]=1.0;
-    out[1]=out[2]=out[4]=0.0;
-    return out;
-}
+
+
+
+
 
 double Minimum(const vect & a){
     double min=a[0];

@@ -286,3 +286,18 @@ const double Lattice::GetMeanEPM() const
     }
     return epm / N;
 }
+
+const bool &Lattice::GetPeriodicL() const
+{
+    return periodic_L;
+}
+
+const bool &Lattice::GetPeriodicW() const
+{
+    return periodic_W;
+}
+
+const bool &Lattice::GetPeriodicH() const
+{
+    return periodic_H;
+}

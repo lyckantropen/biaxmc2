@@ -12,6 +12,11 @@
 #include "PRE79Simulation.h"
 class PRE79Scanning;
 
+/// UNUSED and UNFINISHED interface whose purpose
+/// was to retrieve serialized data (e.g. state of
+/// the Lattice) at runtime from outside of the
+/// application upon request
+
 class RuntimePropertiesServer: public FIFOInterface
 {
     const Settings * settings;

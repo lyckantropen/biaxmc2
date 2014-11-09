@@ -35,18 +35,40 @@ typedef std::valarray<double>   vect;
 
 /** Several handy functions for vect **/
 
-extern double  DotProduct(const vect & a, const vect & b);
+inline double DotProduct(const vect & a, const vect & b)
+{
+    return (a*b).sum();
+}
 
 ///euclidean norm
-extern double  Norm(const vect &);
+inline double Norm(const vect & v)
+{
+    vect result = std::pow(v,2.0);
+    return std::sqrt(result.sum());
+}
 
 /// Identity matrix
 /// Note: only dimension 3 is supported
-extern vect Identity(const int & dim = 3);
+inline vect Identity(const int & dim = 3)
+{
+    //TODO: wyższe wymiary niż 3
+    vect out(6);
+    out[0]=out[3]=out[5]=1.0;
+    out[1]=out[2]=out[4]=0.0;
+    return out;
+}
 
 /// Matrix dot product for 2 SYMMETRIC matrices parametrized
 /// as 6-component 'vect' arrays
-extern double MatrixDotProduct(const vect & a, const vect & b);
+inline double MatrixDotProduct(const vect & a, const vect & b)
+{
+    return a[0]*b[0]+
+            a[3]*b[3]+
+            a[5]*b[5]+
+            2.0*a[1]*b[1]+
+            2.0*a[2]*b[2]+
+            2.0*a[4]*b[4];
+}
 
 
 extern double Minimum(const vect & a);
@@ -65,20 +87,6 @@ std::vector<V>  operator|(const std::vector<V> & src, const std::valarray<bool> 
         if(mask[i]) ret.push_back(src[i]);
     return ret;
 }
-
-/// Reimplementation of serialization operators needed for GCC
-//#ifdef
-//template<class stream_t>
-//void operator|(boostbase::outserializer<stream_t> & s, std::vector<vect> & v)
-//{
-//    s.template operator | <vect>(v);
-//}
-//template<class stream_t>
-//void operator|(boostbase::inserializer<stream_t> & s, std::vector<vect> & v)
-//{
-//    s.template operator | <vect>(v);
-//}
-//#endif
 
 #endif  /* _Maths_H */
 

@@ -110,6 +110,7 @@ void    do_count(const std::string & data_type, const std::vector<std::string> &
     if(data_type == "properties_evolution" || data_type == "thermalization_history")
         std::cout << db.get<PRE79StandardProperties>(wheres, betweens).size() << std::endl;
 }
+
 void    table_output(const std::string & data_type, const std::vector<std::string> & columns, boostbase::base & db, const boostbase::tween_t_proxy & betweens, const boostbase::pair_t_proxy & wheres, bool recalculate = false)
 {
 

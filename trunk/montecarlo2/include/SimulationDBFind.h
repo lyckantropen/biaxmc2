@@ -10,6 +10,12 @@
 
 #include "SimulationDB.h"
 
+/**
+ * Functions used for locating various objects in the database.
+ *
+ */
+
+
 Lattice FindFinalState(const Settings & settings, bool & success);
 
 Lattice FindState(const Settings & settings, int production_cycle, bool & success);

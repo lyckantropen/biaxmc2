@@ -16,8 +16,8 @@
 #endif
 
 /**
- * Manages different variants of scanning over a set of parameters. This is an
- * ugly class. Definitely some things could have been done more elegantly.
+ * Manages different variants of scanning over a set of parameters, e.g. field or temperature.
+ *
  */
 class PRE79Scanning: public ILoggable
 {
@@ -445,7 +445,7 @@ public:
                 if(settings->scanning.separate_values)
                     value = settings->scanning.values[t];
                 else
-                    value = start + double(t) * delta;
+                    value = nstart + double(t) * delta;
 
                 Log() << "Thread: " << omp_get_thread_num() << "/" << omp_get_num_threads() << ", Value: " << value << std::endl;
 

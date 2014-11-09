@@ -19,6 +19,9 @@
 #include <cstdio>
 #include <cstring>
 
+/// CURRENTLY UNUSED interface prototype
+/// opens two FIFO file objects which provide a way to communicate
+/// with the application through commandline or other applications
 class FIFOInterface
 {
     //std::ifstream in;
