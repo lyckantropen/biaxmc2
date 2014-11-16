@@ -298,8 +298,9 @@ public:
     struct _pbs
     {
         std::string queue;              ///<the PBS queue
+        std::string cput;
         _pbs():
-            queue("normal") {}
+            queue("normal"), cput("100:00:00") {}
     } pbs;
 private:
 
@@ -370,7 +371,8 @@ private:
         ("openmp.number_of_threads", po::value<int>(&openmp.number_of_threads), "Number of threads in threaded scanning")
         ("openmp.dynamic", po::value<std::string>(&openmp.v_dynamic), "(yes/no) Should the number of threads be assigned dynamically (not recommended)")
         ("project.name_format", po::value<std::string>(&project.name_format), "Formatted name: any value from the settings file can be substituted by prepending it with & (e.g. &hamiltonian.temperature)")
-        ("pbs.queue", po::value<std::string>(&pbs.queue), "PBS queue name (for Shiva)")
+        ("pbs.queue", po::value<std::string>(&pbs.queue), "PBS queue name")
+        ("pbs.cput", po::value<std::string>(&pbs.cput), "PBS CPU time limit")
         ;
     }
     /**
@@ -468,37 +470,6 @@ public:
     Settings()
     {
         SetupDescription();
-    }
-    ///Copy constructor
-    Settings(const Settings & s)
-    {
-        lattice_boundary_conditions = s.lattice_boundary_conditions;
-        lattice = s.lattice;
-        initial = s.initial;
-        openmp = s.openmp;
-        output = s.output;
-        pbs = s.pbs;
-        project = s.project;
-        scanning = s.scanning;
-        simulation = s.simulation;
-        sqlite = s.sqlite;
-        hamiltonian = s.hamiltonian;
-    }
-    ///Assignment operator
-    const Settings & operator=(const Settings & s)
-    {
-        lattice_boundary_conditions = s.lattice_boundary_conditions;
-        lattice = s.lattice;
-        initial = s.initial;
-        openmp = s.openmp;
-        output = s.output;
-        pbs = s.pbs;
-        project = s.project;
-        scanning = s.scanning;
-        simulation = s.simulation;
-        sqlite = s.sqlite;
-        hamiltonian = s.hamiltonian;
-        return *this;
     }
     std::string ListOptions()
     {
