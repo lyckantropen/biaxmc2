@@ -84,27 +84,12 @@ int main(int argc, char** argv)
     else
     {
         std::stringstream pt;
-        std::string cput;
         std::string exec = argv[0];
-        if(setup.pbs.queue == "normal")
-            cput = "12:00:00";
-        if(setup.pbs.queue == "long")
-            cput = "72:00:00";
-        if(setup.pbs.queue == "vlong")
-            cput = "10000:00:00";
-        if(setup.pbs.queue == "mp4")
-            cput = "340:00:00";
-        if(setup.pbs.queue == "mp8")
-            cput = "2000:00:00";
-        if(setup.pbs.queue == "mp16")
-            cput = "900:00:00";
-        if(setup.pbs.queue == "mp24")
-            cput = "1200:00:00";
 
 
         pt      << "#!/bin/bash\n"
                 << "#PBS -N " << setup.project.name << std::endl
-                << "#PBS -l cput=" << cput << std::endl
+                << "#PBS -l cput=" << setup.pbs.cput << std::endl
                 << "#PBS -q " << setup.pbs.queue << std::endl
                 << "#PBS -m ae\n"
                 << std::endl
